@@ -1,0 +1,423 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Normalize CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="css/style.css"/>
+  <title>Klinik Pradnya Usadha</title>
+</head>
+<body class="bg-gray-100">
+<div class="py-3 bg-white ">
+<img class="mx-auto" src="../img/logo.JPG" width="100px" alt="">
+</div>
+<!--nav-->
+<div class="font-poppins sticky top-0 z-50">
+  <nav class="relative px-4 py-1 md:py-4 flex justify-between items-center bg-[#297A2C] ">
+
+		<div class="lg:hidden">
+			<button class="navbar-burger flex items-center text-white p-3">
+				<svg class="block h-4 w-4 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+					<title>Mobile menu</title>
+					<path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
+				</svg>
+			</button>
+		</div>
+		<ul class="hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:flex lg:mx-auto lg:flex lg:items-center lg:w-auto lg:space-x-6">
+			<li><a class="text-xs text-white hover:text-gray-200" href="#">Home</a></li>
+			
+			</li>
+			<li><a class="text-xs mx-2 text-white hover:text-gray-200 " href="#">Tentang Kami</a></li>
+			
+			<li><a class="text-xs mx-2 text-white hover:text-gray-200" href="#">Dokter</a></li>
+		
+			<li><a class="text-xs mx-2 text-white hover:text-gray-200" href="#">Pelayanan Poli</a></li>
+	
+			<li><a class="text-xs mx-2 text-white hover:text-gray-200" href="#">Fasilitas</a></li>
+		
+      <li><a class="text-xs mx-2 text-white hover:text-gray-200" href="#">Hubungi Kami</a></li>
+
+      <li><a class="text-xs mx-2 text-white hover:text-gray-200" href="#">Pendaftaran Online</a></li>
+		</ul>
+	</nav>
+</div>
+<!--akhir nav-->
+
+<!--nav mobile-->
+<div class="font-poppins">
+  <div class="navbar-menu relative z-50 hidden">
+		<div class="navbar-backdrop fixed inset-0 bg-gray-800 opacity-25"></div>
+		<nav class="fixed top-0 left-0 bottom-0 flex flex-col w-5/6 max-w-sm py-6 px-6 bg-white border-r overflow-y-auto">
+			<div class="flex items-center mb-8">
+				
+				<button class="navbar-close">
+					<svg class="h-6 w-6 text-gray-400 cursor-pointer hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</div>
+			<div>
+				<ul>
+					<li class="mb-1">
+						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="#">Home</a>
+					</li>
+					<li class="mb-1">
+						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="#">Tentang kami</a>
+					</li>
+					<li class="mb-1">
+						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="#">Dokter</a>
+					</li>
+					<li class="mb-1">
+						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="#">Pelayanan Poli</a>
+					</li>
+					<li class="mb-1">
+						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="#">Fasilitas</a>
+					</li>
+          <li class="mb-1">
+						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="#">Hubungi kami</a>
+					</li>
+          <li class="mb-1">
+						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="#">Pendaftaran Online</a>
+					</li>
+				</ul>
+			</div>
+			<div class="mt-auto">
+			</div>
+		</nav>
+	</div>
+</div>
+<!--akhir nav mobile-->
+
+<!--header-->
+
+  <div class="grid md:grid-cols-12 grid-cols-8">
+    
+    <!-- Kolom Kiri (4 Grid) -->
+    <div class="col-span-4 md:col-span-4 bg-white pb-24 p-4 z-10">
+      <p class="font-poppins text-xl font-medium text-[#6F5F5F] ml-4 md:ml-14 mt-4 md:mt-10">Selamat Datang di</p>
+      <p class="font-poppins text-2xl font-extrabold text-[#297A2C] ml-4 md:ml-14">Klinik Pradnya Usadha</p>
+      <hr class="mt-2 w-50 md:w-72 shadow ml-4 md:ml-14 border-gray-500 border-2 opacity-35 backdrop-blur-xl shadow-lg">
+      <p class="font-poppins text-5xl font-extrabold text-[#6F5F5F] ml-14 md:ml-24 mt-14">We <span class="text-[#297A2C]">Care</span></p>
+      <p class="font-poppins text-5xl font-extrabold text-[#6F5F5F] ml-14 md:ml-24 mt-6 ">With <span class=" text-[#297A2C]">Cencerity</span></p>
+  <div class="mt-14"><a class="bg-[#297A2C] px-3 py-2 rounded-md text-white font-light font-poppins ml-4 md:ml-14" href="#">Hubungi Kami</a></div>
+    </div>
+
+    <!-- Kolom Kanan (8 Grid) -->
+    <div class="md:col-span-8 col-span-4 bg-white">
+      <img class="h-full  object-cover object-left" src="../img/depan.png" alt="">
+    </div>
+  
+  </div>
+
+<!--akhir header-->
+
+<!--Content 1-->
+<div class="container ">
+  <div class="container z-10  mx-auto w-10/12  md:w-9/12 bg-[#E5F4E8] px-4 py-4  shadow-lg shadow-gray-400 rounded-3xl -mt-16 relative  absolute">
+    <div class="grid grid-cols-12 ">
+      
+      <!-- Kolom Kiri (6 Grid) -->
+      <div class="col-span-12 md:col-span-6 px-4 py-4">
+        
+        <p class="text-[#297A2C] font-bold font-poppins">0831-17865-243</p>
+        <p class="text-[#6F5F5F] font-bold font-poppins mt-1">EMERGENCY SERVICE</p>
+        <p class="text-[#6F5F5F] font-medium font-poppins text-xs md:text-sm mt-1">Klik nomor telepon dibawah ini untuk terhubung
+          dengan Unit Gawat Darurat (UGD)</p>
+          <div class="mt-4"><a class="bg-transparent text-[#297A2C] border border-[#297A2C] px-3 py-1 rounded-lg font-poppins " href="#">Hubungi Kami</a></div>
+      </div>
+  
+      <!-- Kolom Kanan (6 Grid) -->
+      <div class="col-span-12 md:col-span-6 py-2 px-4">
+        <img class="w-8 h-8" src="../img/time.png" alt="">
+        <p class="text-[#6F5F5F] font-bold font-poppins mt-1">JAM BUKA</p>
+        <p class="text-[#6F5F5F] font-medium font-poppins text-xs md:text-sm mt-1">Klinik Pradnya Usadha beroperasi setiap hari
+          24 Jam. Hubungi kami untuk informasi lebih lanjut.</p>
+          <div class="mt-4"><a class="bg-transparent text-[#297A2C] border border-[#297A2C] px-3 py-1 rounded-lg font-poppins " href="#">Hubungi Kami</a></div>
+      </div>
+    
+    </div>
+  </div>
+
+</div>
+
+<!--Akhir Content 1-->
+
+<!--Conten 2-->
+<div class="container mx-auto p-6 mt-16 ">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+    <div>
+      <img class="rounded-md -mt-9 md:mt-2 w-96 md:w-9/12 mx-auto md:ml-20" src="../img/klinik.png" alt="">
+    </div>
+      
+      <div class="bg-white p-6 rounded-lg shadow-md md:mr-20 -mt-16 md:my-10 mx-auto md:-ml-20">
+          <p class="font-extrabold font-poppins text-xl text-[#297A2C]">Selamat Datang di Klinik Pradnya Usadha</p>
+          <p class="mt-3 font-medium opacity-50 font-poppins text-sm text-[#6F5F5F] text-justify">Kami hadir memberikan pelayanan kesehatan terbaik didukung oleh dokter-dokter yang ahli dan berpengalaman. Di Klinik Pradnya Usadha, kami senantiasa berinovasi demi memberikan layanan yang cepat, ramah, dan berkualitas tinggi. Terima kasih telah mempercayakan kesehatan Anda kepada kami.<br><br>
+
+            Layanan yang kami sediakan meliputi Poli Umum & UGD, Poli Gigi & Mulut, Poli Fisioterapi, Ruang Bersalin, Laboratorium, Instalasi Farmasi, Home Care, Penyuluhan Internal & Konsultasi Kesehatan Online, serta unit Ambulance yang siap antar jemput pasien emergency dan rujukan.</p>
+      </div>
+  </div>
+</div>
+<!--Akhir Conten 2-->
+
+<!--Conten 3-->
+<div class="container mx-auto">
+  <div>
+    <p class="mx-auto font-poppins font-extrabold text-xl text-center mt-2 md:mt-20 text-[#297A2C]">Team Medis Kami</p>
+    <hr class=" w-44 md:w-48 shadow mx-auto border-gray-500 border-2 opacity-20 backdrop-blur-xl shadow-lg">
+    <p class="mx-10 md:mx-80 opacity-60 font-poppins font-medium text-xs md:text-md text-center mt-6 text-[#6F5F5F]">Klinik Pradnya Usadha berkomitmen untuk menghadirkan inovasi layanan terbaik. Didukung oleh Dokter, Perawat, dan Staf yang ramah melayani pasien.  Kami yakin akan selalu menjadi pilihan Anda dan Keluarga. <br><br> "We <span class="text-[#297A2C]">Care</span>  With <span class="text-[#297A2C]">Cencerity</span>"</p>
+  </div>
+</div>
+<!--Akhir Conten 3-->
+
+<!--Card Coursel-->
+<style>
+  /* Carousel container styles */
+  .carousel {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+  }
+
+  .carousel-item {
+      min-width: 100%;
+  }
+
+  /* Styling to hide scrollbar for mobile carousel */
+  .carousel-wrapper {
+      overflow: hidden;
+  }
+
+  @media(min-width: 768px) {
+      .carousel-item {
+          min-width: 33.33%; /* 3 cards for desktop */
+      }
+  }
+</style>
+</head>
+<body class="bg-gray-100">
+
+<div class="container mx-0 px-0 md:mx-0 md:px-0 mt-10 flex justify-center">
+<div class="relative carousel-wrapper w-11/12  md:w-9/12 ">
+  <!-- Carousel Wrapper -->
+  <div id="carousel" class="carousel overflow-hidden relative">
+    <div class="carousel-track flex transition-transform duration-500 ease-in-out">
+        <!-- Slide 1 -->
+        <div class="carousel-item p-1 sm:p-4 min-w-full">
+            <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                <img src="../img/dokter.jpg" alt="Card Image 1" class="w-full">
+                <div class="p-4">
+                    <p class="text-md font-bold opacity-50 font-poppins font-extrabold text-[#297A2C]">I Komang Riko Raditya S.MIK</p>
+                    <p class="text-[#808881] opacity-40 font-bold italic">Dokter Mata</p>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="carousel-item p-1 sm:p-4 min-w-full">
+            <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                <img src="../img/dokter.jpg" alt="Card Image 2" class="w-full">
+                <div class="p-4">
+                    <p class="text-md font-bold opacity-50 font-poppins font-extrabold text-[#297A2C]">I Komang Riko Raditya S.MIK</p>
+                    <p class="text-[#808881] opacity-40 font-bold italic">Dokter Gigi</p>
+                </div>
+            </div>
+        </div>
+        <!-- Slide 3 -->
+        <div class="carousel-item p-1 sm:p-4 min-w-full">
+          <div class="bg-white shadow-md rounded-lg overflow-hidden">
+              <img src="../img/dokter.jpg" alt="Card Image 2" class="w-full">
+              <div class="p-4">
+                  <p class="text-md font-bold opacity-50 font-poppins font-extrabold text-[#297A2C]">I Komang Riko Raditya S.MIK</p>
+                  <p class="text-[#808881] opacity-40 font-bold italic">Dokter Spesialis</p>
+              </div>
+          </div>
+      </div>
+        <!-- Slide 4 -->
+        <div class="carousel-item p-1 sm:p-4 min-w-full">
+            <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                <img src="../img/dokter.jpg" alt="Card Image 3" class="w-full">
+                <div class="p-4">
+                    <p class="text-md font-bold opacity-50 font-poppins font-extrabold text-[#297A2C]">I Komang Riko Raditya S.MIK</p>
+                    <p class="text-[#808881] opacity-40 font-bold italic">Dokter Umum</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- Script for Auto-Slide Carousel with Animation -->
+<script>
+const carouselTrack = document.querySelector('.carousel-track');
+const items = document.querySelectorAll('.carousel-item');
+let index = 0;
+const totalItems = items.length;
+
+function nextSlide() {
+    index = (index + 1) % totalItems;
+    updateCarousel();
+}
+
+function updateCarousel() {
+    const offset = -index * 100;
+    carouselTrack.style.transform = `translateX(${offset}%)`;
+}
+
+setInterval(nextSlide, 3000);
+</script>
+
+<style>
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+</style>
+
+<!--Akhir Card Coursel-->
+
+<!--Lokasi-->
+
+<div class="container mx-auto mt-6 bg-[#E5F4E8] pb-2">
+  <!-- Lokasi Kami Section -->
+  <div class="grid grid-cols-1 ">
+    <h1 class="text-lg font-bold bg-[#E5F4E8] mt-2 p-2 text-[#297A2C] font-poppins text-center">Lokasi Kami</h1>
+    
+  </div>
+
+  <!-- Jalan Flamboyan & Map Section -->
+  
+
+</div>
+</div>
+<!--Akhir Lokasi-->
+
+<!--map-->
+<div class="bg-[#E5F4E8] text-[#6F5F5F] text-xs font-poppins">
+  <div class="container mx-auto pb-8 md:pb-4">
+     
+          <div class="grid grid-cols-1 md:grid-cols-2 text-center md:text-justify">
+              <!-- Kolom 1 -->
+              <div class="md:ml-24 col-start-1">
+                <p class="md:mt-16">Jl. Flamboyan No. 55 Klungkung</p>
+                <p class="mt-2 md:mt-2">Telp. (0366) 23792</p>
+                <p class="mt-2 md:mt-2">Email: <a href="mailto:pradnyausadha@yahoo.com" class="underline text-xs text-[#6F5F5F]">pradnyausadha@yahoo.com</a></p>
+                <br>
+                <a class="bg-[#297A2C] px-4 py-2 rounded-xs text-white"  href="https://maps.app.goo.gl/xa91WzGDictmz7X79">Telusuri Lokasi</a>
+              </div>
+              
+              <!-- Kolom 2 -->
+              <div class="col-start-2">
+                <div class="bg-white shadow-lg rounded-lg map-container hidden md:block -ml-60" style="height: 250px; width: 900px;">
+                  <div class="w-full h-full">
+                    <!-- Google Maps Iframe -->
+                    <iframe
+                      class="top-0 left-0 w-full h-full"
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3945.588470179182!2d115.39262457456613!3d-8.539271586544137!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd211ad6c88adb1%3A0x43935ef0d13c61ee!2sApotek%20Pradnya%20Medika!5e0!3m2!1sid!2sid!4v1730183239957!5m2!1sid!2sid"
+                      frameborder="0"
+                      allowfullscreen="false"
+                      aria-hidden="false"
+                      tabindex="0">
+                    </iframe>
+                  </div>
+                </div>
+              </div>
+          </div>
+          
+          
+  
+  </div>
+</div>
+<!--map-->
+
+
+
+
+<!--Footer-->
+<div class="bg-green-900 text-white font-poppins">
+    <div class="container mx-auto pt-8 pb-8 md:pb-4">
+        <footer>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-justify">
+                <!-- Kolom 1 -->
+                <div class="md:ml-24">
+                    <img src="../img/logo.JPG" width="100px" alt="Pradnya Usadha" class="mx-auto md:mx-0 mb-4">
+                    <p class="text-xs text-[#AFDDC7]">Menjadi Pelayanan Kesehatan yang selalu berinovasi dan mengedepankan peningkatan kualitas hidup pasien dengan motto "We Care With Cencerity"</p>
+                </div>
+                
+                <!-- Kolom 2 -->
+                <div class="md:ml-24">
+                    <h2 class="text-lg font-bold mb-2">Jam Operasional</h2>
+                    <p class="text-[#AFDDC7] text-xs">Beroperasi setiap hari 24 Jam</p>
+                </div>
+                
+                <!-- Kolom 3 -->
+                <div class="md:ml-24">
+                    <h2 class="text-lg font-bold mb-2">Kontak Kami</h2>
+                    <p class="text-[#AFDDC7] text-xs">Jl. Flamboyan No. 55 Klungkung</p>
+                    <p class="text-[#AFDDC7] text-xs">Telp. (0366) 23792</p>
+                    <p class="text-[#AFDDC7] text-xs">Email: <a href="mailto:pradnyausadha@yahoo.com" class="underline text-xs text-[#AFDDC7]">pradnyausadha@yahoo.com</a></p>
+                </div>
+            </div>
+            
+            <!-- Garis Pemisah -->
+            <hr class="border-t border-[#AFDDC7] my-4">
+            
+            <!-- Copyright -->
+            <p class="text-center text-sm text-[#AFDDC7] text-xs">2024 Klinik Pradnya Usadha</p>
+        </footer>
+    </div>
+</div>
+
+
+<!--Akhir Footer-->
+
+
+<script>
+// Burger menus
+document.addEventListener('DOMContentLoaded', function() {
+    // open
+    const burger = document.querySelectorAll('.navbar-burger');
+    const menu = document.querySelectorAll('.navbar-menu');
+
+    if (burger.length && menu.length) {
+        for (var i = 0; i < burger.length; i++) {
+            burger[i].addEventListener('click', function() {
+                for (var j = 0; j < menu.length; j++) {
+                    menu[j].classList.toggle('hidden');
+                }
+            });
+        }
+    }
+
+    // close
+    const close = document.querySelectorAll('.navbar-close');
+    const backdrop = document.querySelectorAll('.navbar-backdrop');
+
+    if (close.length) {
+        for (var i = 0; i < close.length; i++) {
+            close[i].addEventListener('click', function() {
+                for (var j = 0; j < menu.length; j++) {
+                    menu[j].classList.toggle('hidden');
+                }
+            });
+        }
+    }
+
+    if (backdrop.length) {
+        for (var i = 0; i < backdrop.length; i++) {
+            backdrop[i].addEventListener('click', function() {
+                for (var j = 0; j < menu.length; j++) {
+                    menu[j].classList.toggle('hidden');
+                }
+            });
+        }
+    }
+});
+
+
+</script>
+    <!--Nav-->
+
+  </div>
+</body>
+</html>
