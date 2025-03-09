@@ -2,8 +2,7 @@
   "devDependencies": {
     "tailwindcss": "^3.4.13"
   },
-  "scripts" :{
-    "dev" : "npx tailwindcss -i ./src/css/input.css -o .public/css/style.css --watch"
-
+  "scripts": {
+    "dev": "npx tailwindcss -i ./src/css/input.css -o .public/css/style.css --watch"
   }
 }

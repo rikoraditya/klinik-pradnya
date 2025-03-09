@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
   <link rel="stylesheet" href="css/style.css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
   <title>Klinik Pradnya Usadha</title>
 </head>
 <body class="bg-gray-100">
@@ -15,7 +16,7 @@
 </div>
 <!--nav-->
 <div class="font-poppins sticky top-0 z-50">
-  <nav class="relative px-4 py-1 md:py-4 flex justify-between items-center bg-[#297A2C] ">
+  <nav class="navbar relative px-4 py-1 md:py-4 flex justify-between items-center bg-[#297A2C] ">
 
 		<div class="lg:hidden">
 			<button class="navbar-burger flex items-center text-white p-3">
@@ -25,25 +26,33 @@
 				</svg>
 			</button>
 		</div>
-		<ul class="hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:mx-auto lg:flex lg:items-center lg:w-auto lg:space-x-6">
-			<li><a class="text-xs text-white hover:text-gray-200" href="#">Home</a></li>
+		<ul class="menu hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:mx-auto lg:flex lg:items-center lg:w-auto lg:space-x-6">
+			<li><a class="text-xs text-white hover:text-gray-200" href="index.html">Home</a></li>
 			
 			</li>
-			<li><a class="text-xs mx-2 text-white hover:text-gray-200 " href="#">Tentang Kami</a></li>
+			<li><a class="text-xs mx-2 text-white hover:text-gray-200 " href="about.html">Tentang Kami</a></li>
 			
-			<li><a class="text-xs mx-2 text-white hover:text-gray-200" href="#">Dokter</a></li>
+			<li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200" href="dokter.html">Dokter</a></li>
 		
-			<li><a class="text-xs mx-2 text-white hover:text-gray-200" href="#">Pelayanan Poli</a></li>
+			<li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200" href="pelayanan.html">Pelayanan Poli</a></li>
 	
-			<li><a class="text-xs mx-2 text-white hover:text-gray-200" href="#">Fasilitas</a></li>
+			<li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200" href="fasilitas.html">Fasilitas</a></li>
 		
-      <li><a class="text-xs mx-2 text-white hover:text-gray-200" href="#">Hubungi Kami</a></li>
+      <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200" href="hubungi.html">Hubungi Kami</a></li>
 
-      <li><a class="text-xs mx-2 text-white hover:text-gray-200" href="#">Pendaftaran Online</a></li>
+      <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200" href="pendaftaran.html">Pendaftaran Online</a></li>
 		</ul>
+   
 	</nav>
 </div>
 <!--akhir nav-->
+
+<!--Script Nav-->
+
+
+
+
+<!--Script Nav-->
 
 <!--nav mobile-->
 <div class="font-poppins">
@@ -59,27 +68,27 @@
 				</button>
 			</div>
 			<div>
-				<ul>
-					<li class="mb-1">
-						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="#">Home</a>
+				<ul class="mobile-menu">
+					<li class="mb-1 nav-item">
+						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="index.html">Home</a>
 					</li>
-					<li class="mb-1">
-						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="#">Tentang kami</a>
+					<li class="mb-1 nav-item">
+						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="about.html">Tentang kami</a>
 					</li>
-					<li class="mb-1">
-						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="#">Dokter</a>
+					<li class="mb-1 nav-item">
+						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="dokter.html">Dokter</a>
 					</li>
-					<li class="mb-1">
-						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="#">Pelayanan Poli</a>
+					<li class="mb-1 nav-item">
+						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="pelayanan.html">Pelayanan Poli</a>
 					</li>
-					<li class="mb-1">
-						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="#">Fasilitas</a>
+					<li class="mb-1 nav-item">
+						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="fasilitas.html">Fasilitas</a>
 					</li>
-          <li class="mb-1">
-						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="#">Hubungi kami</a>
+          <li class="mb-1 nav-item">
+						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="hubungi.html">Hubungi kami</a>
 					</li>
-          <li class="mb-1">
-						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="#">Pendaftaran Online</a>
+          <li class="mb-1 nav-item">
+						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="pendaftaran.html">Pendaftaran Online</a>
 					</li>
 				</ul>
 			</div>
@@ -114,8 +123,8 @@
 <!--akhir header-->
 
 <!--Content 1-->
-<div class="flex items-center justify-center min-h-screen">
-  <div class="z-10  w-10/12  md:w-9/12 bg-[#E5F4E8] px-4 py-4  shadow-lg shadow-gray-400 rounded-3xl -mt-16  flex items-center justify-center min-h-screen relative">
+<div class="flex items-center justify-center ">
+  <div class="z-10  w-10/12  md:w-9/12 bg-[#E5F4E8] px-4 py-4  shadow-lg shadow-gray-400 rounded-3xl -mt-16  flex items-center justify-center  relative">
     <div class="grid grid-cols-12 ">
       
       <!-- Kolom Kiri (6 Grid) -->
@@ -331,7 +340,7 @@ setInterval(nextSlide, 3000);
 
 
 <!--Footer-->
-<div class="bg-green-900 text-white font-poppins">
+<div class=" bg-green-900  text-white font-poppins">
     <div class="mx-auto pt-8 pb-8 md:pb-4">
         <footer>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-justify">
