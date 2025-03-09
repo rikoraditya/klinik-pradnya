@@ -781,6 +781,10 @@ video {
   height: 100%;
 }
 
+.min-h-screen {
+  min-height: 100vh;
+}
+
 .w-10\/12 {
   width: 83.333333%;
 }
@@ -857,6 +861,10 @@ video {
 
 .flex-col {
   flex-direction: column;
+}
+
+.place-items-center {
+  place-items: center;
 }
 
 .items-center {
@@ -1328,6 +1336,14 @@ video {
     margin-top: 5rem;
   }
 
+  .md\:ml-36 {
+    margin-left: 9rem;
+  }
+
+  .md\:ml-28 {
+    margin-left: 7rem;
+  }
+
   .md\:block {
     display: block;
   }
@@ -1342,6 +1358,10 @@ video {
 
   .md\:w-9\/12 {
     width: 75%;
+  }
+
+  .md\:w-10\/12 {
+    width: 83.333333%;
   }
 
   .md\:grid-cols-12 {
