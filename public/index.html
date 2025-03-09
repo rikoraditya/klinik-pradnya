@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
   <link rel="stylesheet" href="css/style.css"/>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
   <title>Klinik Pradnya Usadha</title>
 </head>
 <body class="bg-gray-100">
@@ -108,8 +109,8 @@
       <p class="font-poppins text-xl font-medium text-[#6F5F5F] ml-4 md:ml-14 mt-4 md:mt-10">Selamat Datang di</p>
       <p class="font-poppins text-2xl font-extrabold text-[#297A2C] ml-4 md:ml-14">Klinik Pradnya Usadha</p>
       <hr class="mt-2 w-50 md:w-72 ml-4 md:ml-14 border-gray-500 border-2 opacity-35 backdrop-blur-xl shadow-lg">
-      <p class="font-poppins text-5xl font-extrabold text-[#6F5F5F] ml-14 md:ml-24 mt-14">We <span class="text-[#297A2C]">Care</span></p>
-      <p class="font-poppins text-5xl font-extrabold text-[#6F5F5F] ml-14 md:ml-24 mt-6 ">With <span class=" text-[#297A2C]">Cencerity</span></p>
+        <p class="font-poppins text-5xl font-extrabold text-[#6F5F5F] ml-14 md:ml-24 mt-14">We <span class="text-[#297A2C]">Care</span></p>
+        <p class="font-poppins text-5xl font-extrabold text-[#6F5F5F] ml-14 md:ml-24 mt-6 ">With <span class=" text-[#297A2C]">Cencerity</span></p>
   <div class="mt-14"><a class="bg-[#297A2C] px-3 py-2 rounded-md text-white font-light font-poppins ml-4 md:ml-14" href="#">Hubungi Kami</a></div>
     </div>
 
@@ -124,7 +125,7 @@
 
 <!--Content 1-->
 <div class="flex items-center justify-center ">
-  <div class="z-10  w-10/12  md:w-9/12 bg-[#E5F4E8] px-4 py-4  shadow-lg shadow-gray-400 rounded-3xl -mt-16  flex items-center justify-center  relative">
+  <div data-aos="fade-up" data-aos-duration="2000" class="z-10  w-10/12  md:w-9/12 bg-[#E5F4E8] px-4 py-4  shadow-lg shadow-gray-400 rounded-3xl -mt-16  flex items-center justify-center  relative">
     <div class="grid grid-cols-12 ">
       
       <!-- Kolom Kiri (6 Grid) -->
@@ -157,10 +158,10 @@
 <div class="container mx-auto p-6 mt-16 ">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 ">
     <div>
-      <img class="rounded-md -mt-9 md:mt-2 w-96 md:w-9/12 mx-auto md:ml-20" src="img/klinik.png" alt="">
+      <img class="rounded-md -mt-9 md:mt-2 w-96 md:w-9/12 mx-auto md:ml-20" src="img/klinik.png" alt="" data-aos="fade-up" data-aos-duration="2000"> 
     </div>
       
-      <div class="bg-white p-6 rounded-lg shadow-md md:mr-20 -mt-16 md:my-10 mx-auto md:-ml-20">
+      <div class="bg-white p-6 rounded-lg shadow-md md:mr-20 -mt-16 md:my-10 mx-auto md:-ml-20" data-aos="fade-up" data-aos-duration="2000">
           <p class="font-extrabold font-poppins text-xl text-[#297A2C]">Selamat Datang di Klinik Pradnya Usadha</p>
           <p class="mt-3 font-medium opacity-50 font-poppins text-sm text-[#6F5F5F] text-justify">Kami hadir memberikan pelayanan kesehatan terbaik didukung oleh dokter-dokter yang ahli dan berpengalaman. Di Klinik Pradnya Usadha, kami senantiasa berinovasi demi memberikan layanan yang cepat, ramah, dan berkualitas tinggi. Terima kasih telah mempercayakan kesehatan Anda kepada kami.<br><br>
 
@@ -172,7 +173,7 @@
 
 <!--Conten 3-->
 <div class="container mx-auto">
-  <div>
+  <div data-aos="fade-up" data-aos-duration="2000">
     <p class="mx-auto font-poppins font-extrabold text-xl text-center mt-2 md:mt-20 text-[#297A2C]">Team Medis Kami</p>
     <hr class=" w-44 md:w-48 mx-auto border-gray-500 border-2 opacity-20 backdrop-blur-xl shadow-lg">
     <p class="mx-10 md:mx-80 opacity-60 font-poppins font-medium text-xs md:text-md text-center mt-6 text-[#6F5F5F]">Klinik Pradnya Usadha berkomitmen untuk menghadirkan inovasi layanan terbaik. Didukung oleh Dokter, Perawat, dan Staf yang ramah melayani pasien.  Kami yakin akan selalu menjadi pilihan Anda dan Keluarga. <br><br> "We <span class="text-[#297A2C]">Care</span>  With <span class="text-[#297A2C]">Cencerity</span>"</p>
@@ -425,5 +426,38 @@ document.addEventListener('DOMContentLoaded', function() {
     <!--Nav-->
 
   </div>
+<!--AOS Animate scrool-->
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    AOS.init();
+    AOS.init();
+
+// You can also pass an optional settings object
+// below listed default settings
+AOS.init({
+  // Global settings:
+  disable: false, // accepts following values: 'phone', 'tablet', 'mobile', boolean, expression or function
+  startEvent: 'DOMContentLoaded', // name of the event dispatched on the document, that AOS should initialize on
+  initClassName: 'aos-init', // class applied after initialization
+  animatedClassName: 'aos-animate', // class applied on animation
+  useClassNames: false, // if true, will add content of `data-aos` as classes on scroll
+  disableMutationObserver: false, // disables automatic mutations' detections (advanced)
+  debounceDelay: 50, // the delay on debounce used while resizing window (advanced)
+  throttleDelay: 99, // the delay on throttle used while scrolling the page (advanced)
+  
+
+  // Settings that can be overridden on per-element basis, by `data-aos-*` attributes:
+  offset: 120, // offset (in px) from the original trigger point
+  delay: 0, // values from 0 to 3000, with step 50ms
+  duration: 400, // values from 0 to 3000, with step 50ms
+  easing: 'ease', // default easing for AOS animations
+  once: false, // whether animation should happen only once - while scrolling down
+  mirror: false, // whether elements should animate out while scrolling past them
+  anchorPlacement: 'top-bottom', // defines which position of the element regarding to window should trigger the animation
+
+});
+  </script>
+
+  
 </body>
 </html>

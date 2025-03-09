@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
   <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
   <title>Klinik Pradnya Usadha</title>
 </head>
 <body class="bg-gray-100">
@@ -97,10 +98,10 @@
 <div class="container mx-auto p-6 mt-16 ">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 ">
       <div>
-        <img class="rounded-md -mt-9 md:mt-2 w-96 md:w-9/12 mx-auto md:ml-20" src="img/klinik.png" alt="">
+        <img class="rounded-md -mt-9 md:mt-2 w-96 md:w-9/12 mx-auto md:ml-20" src="img/klinik.png" alt="" data-aos="fade-up" data-aos-duration="2000">
       </div>
         
-        <div class="bg-white p-6 rounded-lg shadow-md md:mr-20 -mt-16 md:my-10 mx-auto md:-ml-20">
+        <div class="bg-white p-6 rounded-lg shadow-md md:mr-20 -mt-16 md:my-10 mx-auto md:-ml-20" data-aos="fade-up" data-aos-duration="2000">
             <p class="font-extrabold font-poppins text-xl text-[#297A2C]">Klinik Pradnya Usadha Klungkung</p>
             <p class="mt-3 font-medium opacity-50 font-poppins text-sm text-[#6F5F5F] text-justify">Klinik Pradnya Usadha Klungkung merupakan sarana kesehatan yang berdiri sejak  25 Juli  2011. Klinik Pradnya Usadha berkomitment turut serta berpartisipasi dalam memberikan pelayanan kesehatan kepada masyarakat secara efisien dan terjangkau bagi seluruh lapisan masyarakat.
                 Tidak dapat dipungkiri bahwa peningkatan taraf hidup masyarakat  telah memberikan tuntunan baru terhadap peningkatan jasa-jasa pelayanan termasuk jasa pelayanan kesehatan. Berangkat dari itulah Klinik Pradnya Usadha mempunyai komitmen untuk selalu memberikan pelayanan yang optimal kepada masyarakat.
@@ -112,18 +113,18 @@
 <!--akhir conten 1-->
         
         <!-- Visi dan Misi -->
-        <div class="mt-16 ">
+        <div class="mt-16 " data-aos="fade-up" data-aos-duration="2000">
             <h2 class="text-xl font-bold font-poppins text-[#297A2C] text-center">Visi dan Misi</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                 <!-- Visi -->
-                <div class="p-6 rounded-lg">
+                <div class="p-6 rounded-lg" data-aos="fade-up" data-aos-duration="2000">
                     <h3 class="text-xl font-semibold text-[#297A2C]">Visi</h3>
                     <p class="mt-2 text-[#6F5F5F] opacity-50 text-xs text-justify font-medium leading-relaxed font-poppins">
                         Mewujudkan pelayanan kesehatan yang aman, terpercaya, dan terjangkau yang berdasarkan pada nilai-nilai kepedulian dan kesigapan dalam melayani seluruh golongan dan lapisan masyarakat
                     </p>
                 </div>
                 <!-- Misi -->
-                <div class="p-6 w-3/4 rounded-lg">
+                <div class="p-6 w-3/4 rounded-lg" data-aos="fade-up" data-aos-duration="2000">
                     <h3 class="text-xl font-semibold text-[#297A2C]">Misi</h3>
                     <ul class="mt-2  opacity-50 text-xs text-justify font-poppins font-medium text-[#6F5F5F] leading-relaxed list-disc pl-5">
                         <li>1. Menciptakan suasana pelayanan yang nyaman dan aman bagi pasien, keluarga pasien, dan para tamu serta pengunjung klinik</li>
@@ -228,5 +229,37 @@ document.addEventListener('DOMContentLoaded', function() {
     <!--Nav-->
 
   </div>
+
+  <!--AOS Animate scrool-->
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    AOS.init();
+    AOS.init();
+
+// You can also pass an optional settings object
+// below listed default settings
+AOS.init({
+  // Global settings:
+  disable: false, // accepts following values: 'phone', 'tablet', 'mobile', boolean, expression or function
+  startEvent: 'DOMContentLoaded', // name of the event dispatched on the document, that AOS should initialize on
+  initClassName: 'aos-init', // class applied after initialization
+  animatedClassName: 'aos-animate', // class applied on animation
+  useClassNames: false, // if true, will add content of `data-aos` as classes on scroll
+  disableMutationObserver: false, // disables automatic mutations' detections (advanced)
+  debounceDelay: 50, // the delay on debounce used while resizing window (advanced)
+  throttleDelay: 99, // the delay on throttle used while scrolling the page (advanced)
+  
+
+  // Settings that can be overridden on per-element basis, by `data-aos-*` attributes:
+  offset: 120, // offset (in px) from the original trigger point
+  delay: 0, // values from 0 to 3000, with step 50ms
+  duration: 400, // values from 0 to 3000, with step 50ms
+  easing: 'ease', // default easing for AOS animations
+  once: false, // whether animation should happen only once - while scrolling down
+  mirror: false, // whether elements should animate out while scrolling past them
+  anchorPlacement: 'top-bottom', // defines which position of the element regarding to window should trigger the animation
+
+});
+  </script>
 </body>
 </html>
