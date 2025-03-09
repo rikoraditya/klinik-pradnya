@@ -8,88 +8,118 @@
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
   <link rel="stylesheet" href="css/style.css"/>
   <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
   <title>Klinik Pradnya Usadha</title>
 </head>
 <body class="bg-gray-100">
 <div class="py-3 bg-white ">
-<img class="mx-auto" src="img/logo.JPG" width="100px" alt="">
+    <!--Loading Page-->
+<div id="loading-overlay" class="fixed z-50 inset-0 bg-white bg-opacity-80 backdrop-blur-md justify-center place-items-center ease-in-out flex hidden">
+    <div class="w-12 h-12 border-4 border-[#297A2C] border-solid border-t-transparent rounded-full animate-spin"></div>
+</div>
+<!--Loading Page Akhir-->
+<img class="mx-auto animate-pulse" src="img/logo.JPG" width="100px" alt="">
 </div>
 <!--nav-->
-<div class="font-poppins sticky top-0 z-50">
+<div class="font-poppins sticky top-0 z-40">
   <nav class="relative px-4 py-1 md:py-4 flex justify-between items-center bg-[#297A2C] ">
+      <div class="lg:hidden">
+          <button class="navbar-burger flex items-center text-white p-3">
+              <svg class="block h-4 w-4 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <title>Mobile menu</title>
+                  <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
+              </svg>
+          </button>
+      </div>
+      <ul class="menu hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:mx-auto lg:flex lg:items-center lg:w-auto lg:space-x-6">
+          <li><a class="text-xs text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="index.html">Home</a></li>
+          
+          </li>
+          <li><a class="text-xs mx-2 text-white hover:text-gray-200  transition" onclick="showLoading(event)" href="about.html">Tentang Kami</a></li>
+          
+          <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="dokter.html">Dokter</a></li>
+      
+          <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="pelayanan.html">Pelayanan Poli</a></li>
+  
+          <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="fasilitas.html">Fasilitas</a></li>
+      
+    <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="hubungi.html">Hubungi Kami</a></li>
 
-		<div class="lg:hidden">
-			<button class="navbar-burger flex items-center text-white p-3">
-				<svg class="block h-4 w-4 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-					<title>Mobile menu</title>
-					<path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
-				</svg>
-			</button>
-		</div>
-		<ul class="hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:mx-auto lg:flex lg:items-center lg:w-auto lg:space-x-6">
-			<li><a class="text-xs text-white hover:text-gray-200" href="index.html">Home</a></li>
-			
-			</li>
-			<li><a class="text-xs mx-2 text-white hover:text-gray-200 " href="about.html">Tentang Kami</a></li>
-			
-			<li><a class="text-xs mx-2 text-white hover:text-gray-200" href="dokter.html">Dokter</a></li>
-		
-			<li><a class="text-xs mx-2 text-white hover:text-gray-200" href="pelayanan.html">Pelayanan Poli</a></li>
-	
-			<li><a class="text-xs mx-2 text-white hover:text-gray-200" href="fasilitas.html">Fasilitas</a></li>
-		
-      <li><a class="text-xs mx-2 text-white hover:text-gray-200" href="hubungi.html">Hubungi Kami</a></li>
-
-      <li><a class="text-xs mx-2 text-white hover:text-gray-200" href="pendaftaran.html">Pendaftaran Online</a></li>
-		</ul>
-	</nav>
+    <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="pendaftaran.html">Pendaftaran Online</a></li>
+      </ul>
+ 
+  </nav>
 </div>
 <!--akhir nav-->
 
-<!--nav mobile-->
-<div class="font-poppins">
-  <div class="navbar-menu relative z-50 hidden">
-		<div class="navbar-backdrop fixed inset-0 bg-gray-800 opacity-25"></div>
-		<nav class="fixed top-0 left-0 bottom-0 flex flex-col w-5/6 max-w-sm py-6 px-6 bg-white border-r overflow-y-auto">
-			<div class="flex items-center mb-8">
-				
-				<button class="navbar-close">
-					<svg class="h-6 w-6 text-gray-400 cursor-pointer hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-					</svg>
-				</button>
-			</div>
-			<div>
-				<ul>
-					<li class="mb-1">
-						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="index.html">Home</a>
-					</li>
-					<li class="mb-1">
-						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="about.html">Tentang kami</a>
-					</li>
-					<li class="mb-1">
-						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="dokter.html">Dokter</a>
-					</li>
-					<li class="mb-1">
-						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="pelayanan.html">Pelayanan Poli</a>
-					</li>
-					<li class="mb-1">
-						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="fasilitas.html">Fasilitas</a>
-					</li>
-          <li class="mb-1">
-						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="hubungi.html">Hubungi kami</a>
-					</li>
-          <li class="mb-1">
-						<a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded" href="pendaftaran.html">Pendaftaran Online</a>
-					</li>
-				</ul>
-			</div>
-			<div class="mt-auto">
-			</div>
-		</nav>
-	</div>
-</div>
-<!--akhir nav mobile-->
+<!--Script Nav-->
+
+<script>
+    function showLoading(event) {
+        event.preventDefault(); // Mencegah pindah halaman langsung
+        document.getElementById('loading-overlay').classList.remove('hidden'); // Tampilkan spinner
+  
+        // Tunggu sebentar, lalu pindah halaman
+        setTimeout(() => {
+            window.location.href = event.target.href; // Redirect ke halaman tujuan
+        }, 1000); // Delay 1.5 detik agar efek loading terlihat
+    }
+    // Menambahkan event listener ke semua link di menu mobile
+    document.addEventListener("DOMContentLoaded", function() {
+        let mobileLinks = document.querySelectorAll('.mobile-menu a');
+        mobileLinks.forEach(link => {
+            link.addEventListener("click", showLoading);
+        });
+    });
+  </script>
+  
+  
+  <!--Script Nav-->
+  
+  <!--nav mobile-->
+  <div class="font-poppins">
+  
+    <div class="navbar-menu relative z-40 hidden">
+          <div class="navbar-backdrop fixed inset-0 bg-gray-800 opacity-25"></div>
+          <nav class="fixed top-0 left-0 bottom-0 flex flex-col w-5/6 max-w-sm py-6 px-6 bg-white border-r overflow-y-auto">
+              <div class="flex items-center mb-8">
+                  <button class="navbar-close">
+                      <svg class="h-6 w-6 text-gray-400 cursor-pointer hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                  </button>
+              </div>
+              <div>
+                  <ul class="mobile-menu">
+                      <li class="mb-1 nav-item">
+                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded transition" onclick="showLoading(event)" href="index.html">Home</a>
+                      </li>
+                      <li class="mb-1 nav-item">
+                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded transition" onclick="showLoading(event)" href="about.html">Tentang kami</a>
+                      </li>
+                      <li class="mb-1 nav-item">
+                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded transition" onclick="showLoading(event)" href="dokter.html">Dokter</a>
+                      </li>
+                      <li class="mb-1 nav-item">
+                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded transition" onclick="showLoading(event)" href="pelayanan.html">Pelayanan Poli</a>
+                      </li>
+                      <li class="mb-1 nav-item">
+                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded transition" onclick="showLoading(event)" href="fasilitas.html">Fasilitas</a>
+                      </li>
+            <li class="mb-1 nav-item">
+                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded transition" onclick="showLoading(event)" href="hubungi.html">Hubungi kami</a>
+                      </li>
+            <li class="mb-1 nav-item">
+                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded transition" onclick="showLoading(event)" href="pendaftaran.html">Pendaftaran Online</a>
+                      </li>
+                  </ul>
+              </div>
+              <div class="mt-auto">
+              </div>
+          </nav>
+      </div>
+  </div>
+  <!--akhir nav mobile-->
 
 
 <h2 class="text-xl font-bold text-[#297A2C] text-center font-poppins mt-4 md:mt-10">Tentang Kami</h2>
@@ -115,23 +145,23 @@
         <!-- Visi dan Misi -->
         <div class="mt-16 " data-aos="fade-up" data-aos-duration="2000">
             <h2 class="text-xl font-bold font-poppins text-[#297A2C] text-center">Visi dan Misi</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mx-6 md:mx-24 mb-8 mt-4">
                 <!-- Visi -->
-                <div class="p-6 rounded-lg" data-aos="fade-up" data-aos-duration="2000">
-                    <h3 class="text-xl font-semibold text-[#297A2C]">Visi</h3>
-                    <p class="mt-2 text-[#6F5F5F] opacity-50 text-xs text-justify font-medium leading-relaxed font-poppins">
+                <div class="rounded-lg bg-white shadow-md px-6 py-6 w-full" data-aos="fade-up" data-aos-duration="2000">
+                    <h3 class="text-xl  font-poppins font-semibold text-[#297A2C]">Visi</h3>
+                    <p class=" text-[#6F5F5F] opacity-50 text-xs text-justify font-medium leading-relaxed font-poppins">
                         Mewujudkan pelayanan kesehatan yang aman, terpercaya, dan terjangkau yang berdasarkan pada nilai-nilai kepedulian dan kesigapan dalam melayani seluruh golongan dan lapisan masyarakat
                     </p>
                 </div>
                 <!-- Misi -->
-                <div class="p-6 w-3/4 rounded-lg" data-aos="fade-up" data-aos-duration="2000">
-                    <h3 class="text-xl font-semibold text-[#297A2C]">Misi</h3>
-                    <ul class="mt-2  opacity-50 text-xs text-justify font-poppins font-medium text-[#6F5F5F] leading-relaxed list-disc pl-5">
-                        <li>1. Menciptakan suasana pelayanan yang nyaman dan aman bagi pasien, keluarga pasien, dan para tamu serta pengunjung klinik</li>
-                        <li>2. Membangun hubungan saling percaya diantara seluruh elemen yang terkait antara mitra medis pelayanan kesehatan dengan pasien dan keluarganya yang mendukung pola pelayanan kesehatan yang optimal.</li>
-                        <li>3. Membangun citra pelayanan Klinik di masyarakat luas sehingga klinik mendapatkan simpati dan rasa percaya masyarakat untuk mendapatkan penanganan medis diklinik.</li>
-                        <li>4. Menyediakan fasilitas pelayanan yang dapat menyerap aspirasi masyarakat baik dari segi biaya, letak geografis serta budaya sehingga dapat menjangkau seluruh golongan dan lapisan masyarakat.</li>
-                        <li>5. Memegang teguh sikap pelayanan yang menjunjung tinggi nilai-nilai kepedulian dan kesigapan dalam melayani masyarakat.</li>
+                <div class="w-full rounded-lg bg-white shadow-md px-6 py-6" data-aos="fade-up" data-aos-duration="2000">
+                    <h3 class="text-xl font-poppins font-semibold text-[#297A2C]">Misi</h3>
+                    <ul class="opacity-50 text-xs text-justify font-poppins font-medium text-[#6F5F5F] leading-relaxed list-disc">
+                        <li>Menciptakan suasana pelayanan yang nyaman dan aman bagi pasien, keluarga pasien, dan para tamu serta pengunjung klinik</li>
+                        <li>Membangun hubungan saling percaya diantara seluruh elemen yang terkait antara mitra medis pelayanan kesehatan dengan pasien dan keluarganya yang mendukung pola pelayanan kesehatan yang optimal.</li>
+                        <li>Membangun citra pelayanan Klinik di masyarakat luas sehingga klinik mendapatkan simpati dan rasa percaya masyarakat untuk mendapatkan penanganan medis diklinik.</li>
+                        <li>Menyediakan fasilitas pelayanan yang dapat menyerap aspirasi masyarakat baik dari segi biaya, letak geografis serta budaya sehingga dapat menjangkau seluruh golongan dan lapisan masyarakat.</li>
+                        <li>Memegang teguh sikap pelayanan yang menjunjung tinggi nilai-nilai kepedulian dan kesigapan dalam melayani masyarakat.</li>
                     </ul>
                 </div>
             </div>
