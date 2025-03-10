@@ -16,10 +16,41 @@
 <div class="py-3 bg-white ">
     <!--Loading Page-->
 <div id="loading-overlay" class="fixed z-50 inset-0 bg-white bg-opacity-80 backdrop-blur-md justify-center place-items-center ease-in-out flex hidden">
-    <div class="w-12 h-12 border-4 border-[#297A2C] border-solid border-t-transparent rounded-full animate-spin"></div>
+    <div class="flex space-x-2">
+        <div class="w-3 h-3 bg-[#297A2C] rounded-full dot"></div>
+        <div class="w-3 h-3 bg-[#297A2C] rounded-full dot"></div>
+        <div class="w-3 h-3 bg-[#297A2C] rounded-full dot"></div>
+      </div>
+    
+      
 </div>
+<!--Script Loading-->
+<style>
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.2); opacity: 1; }
+    }
+
+    .fade-in {
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .dot {
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+  </style>
+
+
 <!--Loading Page Akhir-->
-<img class="mx-auto animate-pulse" src="img/logo.JPG" width="100px" alt="">
+<img class="mx-auto" src="img/logo.JPG" width="100px" alt="">
 </div>
 <!--nav-->
 <div class="font-poppins sticky top-0 z-40">
@@ -89,6 +120,9 @@
   <!-- Sidebar -->
    <div class="font-poppins">
       <div class="navbar-menu relative z-40 ">
+
+<!-- Overlay Blur -->
+<div id="overlay" class="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-md opacity-0 invisible transition-opacity duration-300"></div>
           <div id="sidebar" class="fixed top-0 left-0 bottom-0 w-5/6 max-w-sm bg-white border-r font-poppins py-6 px-6 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out z-50">
               <div class="p-4 flex justify-between items-center">
                   <h2 class="text-lg font-semibold">Menu</h2>
@@ -131,6 +165,29 @@
   
   
     <!--akhir nav mobile-->
+
+    <!--Blur BG Sidebar-->
+    <script>
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("overlay");
+        const menuButton = document.getElementById("menuButton");
+        const closeButton = document.getElementById("closeButton");
+    
+        menuButton.addEventListener("click", () => {
+          sidebar.classList.remove("-translate-x-full");
+          overlay.classList.remove("opacity-0", "invisible");
+          document.body.classList.add("overflow-hidden"); // Hilangkan scroll
+        });
+    
+        function closeMenu() {
+          sidebar.classList.add("-translate-x-full");
+          overlay.classList.add("opacity-0", "invisible");
+          document.body.classList.remove("overflow-hidden"); // Aktifkan scroll kembali
+        }
+    
+        closeButton.addEventListener("click", closeMenu);
+        overlay.addEventListener("click", closeMenu);
+      </script>
   
     <!--Animasi Sidebar klik-->
     <script>
