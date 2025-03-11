@@ -310,7 +310,22 @@
   .carousel-container::-webkit-scrollbar {
       display: none;
   }
+  
 </style>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let audio = new Audio("./audio/audioo.mp3"); // Ganti dengan URL file audio
+    
+    // Memastikan audio hanya diputar setelah interaksi pengguna (dibutuhkan di beberapa browser)
+    function playAudio() {
+        audio.play().catch(error => console.error("Gagal memutar audio:", error));
+        document.removeEventListener("click", playAudio);
+    }
+    
+    document.addEventListener("click", playAudio);
+});
+
+</script>
 
 </head>
 
