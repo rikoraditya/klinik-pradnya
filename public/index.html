@@ -13,6 +13,14 @@
   <title>Klinik Pradnya Usadha</title>
 </head>
 <body class="bg-gray-100">
+
+  <!--Audio-->
+  
+<!--Script Audio-->
+
+<script src="sw.js"></script>
+
+<!--Audio-->
 <!--Loading Page-->
 <div id="loading-overlay" class="fixed z-50 inset-0 bg-white bg-opacity-80 backdrop-blur-md flex justify-center items-center ease-in-out hidden">
   <div class="flex space-x-2">
@@ -312,21 +320,6 @@
   }
   
 </style>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    let audio = new Audio("./audio/audioo.mp3"); // Ganti dengan URL file audio
-    
-    // Memastikan audio hanya diputar setelah interaksi pengguna (dibutuhkan di beberapa browser)
-    function playAudio() {
-        audio.play().catch(error => console.error("Gagal memutar audio:", error));
-        document.removeEventListener("click", playAudio);
-    }
-    
-    document.addEventListener("click", playAudio);
-});
-
-</script>
-
 </head>
 
 <!--TES-->
