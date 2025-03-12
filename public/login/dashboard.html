@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrasi & Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    
+    <!-- Form Registrasi -->
+    <div class="bg-white p-6 rounded-lg shadow-md w-80 mb-6" id="registerForm">
+        <div class="flex justify-center mb-4">
+            <img src="logo.png" alt="Logo" class="w-16 h-16">
+        </div>
+        <h2 class="text-xl font-semibold mb-4 text-center">Registrasi</h2>
+        <label for="nik" class="block text-left font-medium">NIK</label>
+        <input type="text" id="nik" maxlength="16" class="w-full p-2 border rounded mb-2">
+        <label for="phone" class="block text-left font-medium">Nomor HP</label>
+        <input type="tel" id="phone" class="w-full p-2 border rounded mb-2">
+        <label for="password" class="block text-left font-medium">Password</label>
+        <input type="password" id="password" class="w-full p-2 border rounded mb-2">
+        <button onclick="register()" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-700">Daftar</button>
+    </div>
+    
+    <!-- Form Login -->
+    <div class="bg-white p-6 rounded-lg shadow-md w-80" id="loginForm">
+        <div class="flex justify-center mb-4">
+            <img src="logo.png" alt="Logo" class="w-16 h-16">
+        </div>
+        <h2 class="text-xl font-semibold mb-4 text-center">Login</h2>
+        <label for="loginPhone" class="block text-left font-medium">Nomor HP</label>
+        <input type="tel" id="loginPhone" class="w-full p-2 border rounded mb-2">
+        <label for="loginPassword" class="block text-left font-medium">Password</label>
+        <input type="password" id="loginPassword" class="w-full p-2 border rounded mb-2">
+        <button onclick="login()" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-700">Masuk</button>
+    </div>
+
+    <script>
+        let users = {};
+        function register() {
+            let nik = document.getElementById("nik").value;
+            let phone = document.getElementById("phone").value;
+            let password = document.getElementById("password").value;
+            
+            if (nik.length !== 16 || isNaN(nik)) {
+                alert("NIK harus 16 digit angka");
+                return;
+            }
+            if (phone.length < 10 || isNaN(phone)) {
+                alert("Nomor HP tidak valid");
+                return;
+            }
+            if (password.length < 6) {
+                alert("Password minimal 6 karakter");
+                return;
+            }
+            
+            users[phone] = { nik, password };
+            alert("Registrasi berhasil! Silakan login.");
+        }
+
+        function login() {
+            let phone = document.getElementById("loginPhone").value;
+            let password = document.getElementById("loginPassword").value;
+            
+            if (users[phone] && users[phone].password === password) {
+                alert("Login berhasil!");
+            } else {
+                alert("Nomor HP atau password salah");
+            }
+        }
+    </script>
+</body>
+</html>
