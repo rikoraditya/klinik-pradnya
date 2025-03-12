@@ -14,11 +14,33 @@
 </head>
 <body class="bg-gray-100">
 
-  <!--Audio-->
-  
-<!--Script Audio-->
+<!--PopUp-->
+<div id="popup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 flex z-50">
+  <div class="bg-white p-7 md:p-8 rounded-lg shadow-lg max-w-sm text-center">
+      <h2 class="text-lg font-semibold">Selamat Datang</h2>
+      <p class="text-gray-600 mt-2 text-sm font-poppins">Di Website Klinik Pradnya Usadha Klungkung</p>
+      <button id="closePopup" class="mt-4 bg-[#297A2C] text-white px-4 py-1 rounded hover:bg-green-900">
+          OK
+      </button>
+  </div>
+</div>
+<script>
+  document.getElementById("closePopup").addEventListener("click", function() {
+            document.getElementById("popup").style.display = "none";
+        });
+        
+</script>
 
-<script src="sw.js"></script>
+<!--Audio-->
+<script>
+document.addEventListener("click", function playAudio() {
+    let audio = new Audio("audio/audio.mp3"); // Pastikan file ini ada di lokasi yang benar
+    audio.play().catch(error => console.log("Autoplay dicegah:", error));
+    document.removeEventListener("click", playAudio);
+});
+
+</script>
+
 
 <!--Audio-->
 <!--Loading Page-->
@@ -219,7 +241,7 @@
     
     <!-- Kolom Kiri (4 Grid) -->
     <div class="col-span-4 md:col-span-4 bg-white pb-24 p-4 z-10">
-      <p class="font-poppins text-xl font-medium text-[#6F5F5F] ml-4 md:ml-14 mt-4 md:mt-10">Selamat Datang di</p>
+      <p class="font-poppins text-xl font-medium text-[#6F5F5F] ml-4 md:ml-14 mt-4 md:mt-10 ">Selamat Datang di</p>
       <p class="font-poppins text-2xl font-extrabold text-[#297A2C] ml-4 md:ml-14">Klinik Pradnya Usadha</p>
       <hr class="mt-2 w-50 md:w-72 ml-4 md:ml-14 border-gray-500 border-2 opacity-35 backdrop-blur-xl shadow-lg">
         <p class="font-poppins text-5xl font-extrabold text-[#6F5F5F] ml-14 md:ml-24 mt-14">We <span class="text-[#297A2C]">Care</span></p>
