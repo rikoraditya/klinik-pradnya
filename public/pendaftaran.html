@@ -210,12 +210,12 @@
             <!-- Informasi Pendaftaran -->
             <div class="font-poppins" data-aos="fade-up" data-aos-duration="2000">
                 <h2 class="text-green-700 font-bold text-sm">PENDAFTARAN PASIEN RAWAT JALAN</h2>
-                <h1 class="text-3xl font-bold mt-2">Lakukan Pendaftaran Untuk <br> Keluarga Tercinta Anda</h1>
+                <h1 class="text-xl md:text-3xl font-bold mt-2">Lakukan Pendaftaran Untuk <br> Keluarga Tercinta Anda</h1>
                 <img src="img/pendaftaran.PNG" alt="" class="w-full mt-6 -ml-14 hidden md:block">
             </div>
             <!-- Form Pendaftaran -->
             <div class="bg-white p-6 rounded-lg shadow-md font-poppins" data-aos="fade-up" data-aos-duration="2000">
-                <h2 class="text-xl font-bold mb-4">Pendaftaran Pasien Rawat Jalan</h2>
+                <h2 class="text-md md:text-xl font-bold mb-4">Pendaftaran Pasien Rawat Jalan</h2>
                 <form class="space-y-3 text-xs">
                     <div>
                         <label class="block text-gray-700">No. Pendaftaran Pasien</label>
@@ -276,10 +276,24 @@
                             <option value="">...</option>
                             <option value="umum">Poli Umum</option>
                             <option value="gigi">Poli Gigi</option>
-                            <option value="anak">Poli Anak</option>
-                            <option value="mata">Poli Mata</option>
-                            <option value="jantung">Poli Jantung</option>
+                            
                         </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700">Jenis Pasien</label>
+                        <select name="poli_tujuan" required class="w-full border border-gray-300 rounded-md p-2">
+                            <option value="">...</option>
+                            <option value="gigi">Umum</option>
+                            <option value="gigi">BPJS</option>
+                        </select>
+                    </div>
+                    <div>
+                        <input type="text" name="no_kepesertaan" required pattern="\d{16}" placeholder="Masukkan NIK / No. BPJS" class="w-full border border-gray-300 rounded-md p-2">
+                        <div class="mt-1 text-xs ml-2 opacity-50">
+                            <li>Masukkan NIK Jika Pasien Umum</li>
+                            <li>Masukkan No. BPJS Jika Kepesertaan BPJS</li>
+                        </div>
+                        
                     </div>
                     <button class="w-full bg-green-700 text-white p-2 rounded-md">Daftar</button>
                 </form>

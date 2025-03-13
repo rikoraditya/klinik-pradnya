@@ -1,75 +1,45 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrasi & Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-    
-    <!-- Form Registrasi -->
-    <div class="bg-white p-6 rounded-lg shadow-md w-80 mb-6" id="registerForm">
-        <div class="flex justify-center mb-4">
-            <img src="logo.png" alt="Logo" class="w-16 h-16">
-        </div>
-        <h2 class="text-xl font-semibold mb-4 text-center">Registrasi</h2>
-        <label for="nik" class="block text-left font-medium">NIK</label>
-        <input type="text" id="nik" maxlength="16" class="w-full p-2 border rounded mb-2">
-        <label for="phone" class="block text-left font-medium">Nomor HP</label>
-        <input type="tel" id="phone" class="w-full p-2 border rounded mb-2">
-        <label for="password" class="block text-left font-medium">Password</label>
-        <input type="password" id="password" class="w-full p-2 border rounded mb-2">
-        <button onclick="register()" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-700">Daftar</button>
-    </div>
-    
-    <!-- Form Login -->
-    <div class="bg-white p-6 rounded-lg shadow-md w-80" id="loginForm">
-        <div class="flex justify-center mb-4">
-            <img src="logo.png" alt="Logo" class="w-16 h-16">
-        </div>
-        <h2 class="text-xl font-semibold mb-4 text-center">Login</h2>
-        <label for="loginPhone" class="block text-left font-medium">Nomor HP</label>
-        <input type="tel" id="loginPhone" class="w-full p-2 border rounded mb-2">
-        <label for="loginPassword" class="block text-left font-medium">Password</label>
-        <input type="password" id="loginPassword" class="w-full p-2 border rounded mb-2">
-        <button onclick="login()" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-700">Masuk</button>
-    </div>
+<p class="animated-text font-poppins text-5xl font-extrabold text-brown ml-14 md:ml-24 mt-14">We <span class="animated-text text-green">Care</span></p>
+<p class="animated-text font-poppins text-5xl font-extrabold text-brown ml-14 md:ml-24 mt-6 ">With <span class="animated-text text-green">Cencerity</span></p>
+        <div class="mt-14">
+          <a href="pendaftaran.html"  class="relative font-extralight px-3 py-2 text-white font-poppins rounded-md ml-4 md:ml-14 shadow-lg transition-all transform overflow-hidden text-center" 
+        style="background: linear-gradient(45deg, #32CD32, #008000, #228B22);
+               background-size: 200% 200%;
+               animation: gradient-move 3s infinite alternate ease-in-out;">DAFTAR ONLINE</a>
+</div>
 
-    <script>
-        let users = {};
-        function register() {
-            let nik = document.getElementById("nik").value;
-            let phone = document.getElementById("phone").value;
-            let password = document.getElementById("password").value;
-            
-            if (nik.length !== 16 || isNaN(nik)) {
-                alert("NIK harus 16 digit angka");
-                return;
-            }
-            if (phone.length < 10 || isNaN(phone)) {
-                alert("Nomor HP tidak valid");
-                return;
-            }
-            if (password.length < 6) {
-                alert("Password minimal 6 karakter");
-                return;
-            }
-            
-            users[phone] = { nik, password };
-            alert("Registrasi berhasil! Silakan login.");
-        }
-
-        function login() {
-            let phone = document.getElementById("loginPhone").value;
-            let password = document.getElementById("loginPassword").value;
-            
-            if (users[phone] && users[phone].password === password) {
-                alert("Login berhasil!");
-            } else {
-                alert("Nomor HP atau password salah");
-            }
-        }
-    </script>
-</body>
-</html>
+<!--Script Text-->
+<style>
+  .text-brown { color: #8B4513; }
+  .text-green { color: #228B22; }
+  .animated-text {
+      position: relative;
+      display: inline-block;
+      font-weight: bold;
+      text-transform: capitalize;
+      opacity: 0;
+      transform: scale(0.8);
+      animation: fadeInBounce 1s ease-out forwards;
+      transition: transform 0.3s ease-out, letter-spacing 0.3s ease-out, color 0.3s ease-out;
+  }
+  .animated-text:nth-child(2) { animation-delay: 0.3s; }
+  .animated-text:nth-child(3) { animation-delay: 0.6s; }
+  .animated-text:nth-child(4) { animation-delay: 0.9s; }
+  
+  .animated-text:hover {
+      transform: scale(1.1);
+      letter-spacing: 2px;
+      color: #ff8c00;
+  }
+  
+  @keyframes fadeInBounce {
+      0% { opacity: 0; transform: scale(0.8) translateY(20px); }
+      50% { opacity: 1; transform: scale(1.05) translateY(-5px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  
+  @keyframes colorWave {
+      0% { color: #8B4513; }
+      50% { color: #ff8c00; }
+      100% { color: #228B22; }
+  }
+</style>
