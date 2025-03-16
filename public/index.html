@@ -17,7 +17,7 @@
 <body class="bg-gray-100">
 
 <!--PopUp-->
-<div id="popup" class="fixed font-poppins inset-0 flex items-center justify-center bg-black bg-opacity-70 flex z-50">
+<div id="popup" class="fixed font-poppins inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
   <div class="bg-white p-7 md:p-6 md:w-full  rounded-lg shadow-lg max-w-sm md:max-w-xl text-center">
     <img class="mx-auto md:w-32" src="img/logo.JPG" width="100px" alt="">
       <h2 class="text-lg md:text-3xl font-semibold">Selamat Datang</h2>
@@ -46,7 +46,6 @@
   <img src="img/bpjs.png" class="slide" alt="Slide 2">
   <img src="img/pelayanan_gigi.png" class="slide" alt="Slide 3">
   <div class="absolute inset-0 bg-black bg-opacity-10 flex items-center justify-center">
-      
   </div>
 </div>
 
@@ -126,19 +125,14 @@ document.addEventListener("click", function playAudio() {
       </div>
       <ul class="menu hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:mx-auto lg:flex lg:items-center lg:w-auto lg:space-x-6">
           <li><a class="text-xs text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="index.html">Home</a></li>
-          
           </li>
-          <li><a class="text-xs mx-2 text-white hover:text-gray-200  transition" onclick="showLoading(event)" href="about.html">Tentang Kami</a></li>
-          
+          <li><a class="text-xs mx-2 text-white hover:text-gray-200  transition" onclick="showLoading(event)" href="about.html">Tentang Kami</a></</li>
           <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="dokter.html">Dokter</a></li>
-      
           <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="pelayanan.html">Pelayanan Poli</a></li>
-  
           <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="fasilitas.html">Fasilitas</a></li>
-      
     <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="hubungi.html">Hubungi Kami</a></li>
 
-    <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="pendaftaran.html">Pendaftaran Online</a></li>
+    <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="login/login.html">Pendaftaran Online</a></li>
       </ul>
  
   </nav>
@@ -184,7 +178,7 @@ document.addEventListener("click", function playAudio() {
 <div id="overlay" class="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-md opacity-0 invisible transition-opacity duration-300"></div>
         <div id="sidebar" class="fixed top-0 left-0 bottom-0 w-5/6 max-w-sm bg-white border-r font-poppins py-6 px-6 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out z-50">
             <div class="p-4 flex justify-between items-center">
-                <h2 class="text-lg font-semibold">Menu</h2>
+              <img class="-ml-1" src="img/logo.JPG" width="100px" alt="">
                 <button id="closeButton" class="text-gray-400 hover:text-gray-500 focus:outline-none">
                     <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -194,25 +188,25 @@ document.addEventListener("click", function playAudio() {
             <div>
                 <ul class="mobile-menu">
                     <li class="mb-1 nav-item">
-                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded transition" onclick="showLoading(event)" href="index.html">Home</a>
+                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="index.html">Home</a>
                     </li>
                     <li class="mb-1 nav-item">
-                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded transition" onclick="showLoading(event)" href="about.html">Tentang kami</a>
+                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900  rounded transition" onclick="showLoading(event)" href="about.html">Tentang kami</a>
                     </li>
                     <li class="mb-1 nav-item">
-                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded transition" onclick="showLoading(event)" href="dokter.html">Dokter</a>
+                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900  rounded transition" onclick="showLoading(event)" href="dokter.html">Dokter</a>
                     </li>
                     <li class="mb-1 nav-item">
-                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded transition" onclick="showLoading(event)" href="pelayanan.html">Pelayanan Poli</a>
+                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900  rounded transition" onclick="showLoading(event)" href="pelayanan.html">Pelayanan Poli</a>
                     </li>
                     <li class="mb-1 nav-item">
-                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded transition" onclick="showLoading(event)" href="fasilitas.html">Fasilitas</a>
+                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900  rounded transition" onclick="showLoading(event)" href="fasilitas.html">Fasilitas</a>
                     </li>
           <li class="mb-1 nav-item">
-                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded transition" onclick="showLoading(event)" href="hubungi.html">Hubungi kami</a>
+                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900  rounded transition" onclick="showLoading(event)" href="hubungi.html">Hubungi kami</a>
                     </li>
           <li class="mb-1 nav-item">
-                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-green-100 hover:text-green-400 rounded transition" onclick="showLoading(event)" href="pendaftaran.html">Pendaftaran Online</a>
+                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900  rounded transition" onclick="showLoading(event)" href="login/login.html">Pendaftaran Online</a>
                     </li>
                 </ul>
             </div>
@@ -335,7 +329,6 @@ document.addEventListener("click", function playAudio() {
     
     </div>
   </div>
-
 </div>
 
 <!--Akhir Content 1-->
@@ -624,7 +617,6 @@ AOS.init({
   disableMutationObserver: false, // disables automatic mutations' detections (advanced)
   debounceDelay: 50, // the delay on debounce used while resizing window (advanced)
   throttleDelay: 99, // the delay on throttle used while scrolling the page (advanced)
-  
 
   // Settings that can be overridden on per-element basis, by `data-aos-*` attributes:
   offset: 120, // offset (in px) from the original trigger point
