@@ -112,7 +112,7 @@
         <nav>
           <div class="mb-4">
             <a
-              href="user.html"
+              href="buat_kunjungan.html"
               class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded"
             >
               <i class="fas fa-book"></i>
@@ -232,29 +232,27 @@
                 data-aos="fade-up"
                 data-aos-duration="2000"
               >
-                <h2 class="text-green-700 font-bold mt-14 text-sm">
+                <h2 class="text-green-700 font-bold mt-14 md:mt-7 text-sm">
                   PENDAFTARAN PASIEN RAWAT JALAN
                 </h2>
-                <h1 class="text-xl md:text-3xl font-bold mt-2">
+                <h1 class="text-xl md:text-2xl font-bold">
                   Lakukan Pendaftaran Untuk <br />
                   Keluarga Tercinta Anda
                 </h1>
                 <img
                   src="../../img/pendaftaran.PNG"
                   alt=""
-                  class="w-full mt-6 -ml-14 hidden md:block"
+                  class="w-11/12 mt-3 -ml- hidden md:block"
                 />
               </div>
               <!-- Form Pendaftaran -->
               <div
-                class="bg-white p-6 rounded-lg shadow-md md:mt-4 font-poppins"
+                class="bg-white p-6 md:h-max rounded-lg shadow-md md:mt-2 font-poppins"
                 data-aos="fade-up"
                 data-aos-duration="2000"
               >
-                <h2 class="text-md md:text-xl font-bold mb-4">
-                  Pendaftaran Pasien Rawat Jalan
-                </h2>
-                <form class="space-y-3 text-xs">
+                <h2 class="text-md font-bold mb-4">Form Data Diri</h2>
+                <form class="space-y-3 md:space-y-2 text-xs">
                   <div class="grid grid-cols-2 gap-4">
                     <div>
                       <label class="block text-gray-700">Nama Pasien</label>
@@ -333,15 +331,29 @@
                       />
                     </div>
                   </div>
-                  <div>
-                    <label class="block text-gray-700">Alamat</label>
-                    <input
-                      type="text"
-                      name="alamat"
-                      required
-                      class="w-full border border-gray-300 rounded-md p-2"
-                    />
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-gray-700">Alamat</label>
+                      <input
+                        type="text"
+                        name="alamat"
+                        required
+                        class="w-full border border-gray-300 rounded-md p-2"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-gray-700"
+                        >Tanggal Kunjungan</label
+                      >
+                      <input
+                        type="date"
+                        name="tanggal_kunjungan"
+                        required
+                        class="w-full border border-gray-300 rounded-md p-2"
+                      />
+                    </div>
                   </div>
+
                   <div>
                     <label class="block text-gray-700">Keluhan</label>
                     <textarea
@@ -350,15 +362,7 @@
                       class="w-full border border-gray-300 rounded-md p-2"
                     ></textarea>
                   </div>
-                  <div>
-                    <label class="block text-gray-700">Tanggal Kunjungan</label>
-                    <input
-                      type="date"
-                      name="tanggal_kunjungan"
-                      required
-                      class="w-full border border-gray-300 rounded-md p-2"
-                    />
-                  </div>
+
                   <div>
                     <label class="block text-gray-700">Poli Tujuan</label>
                     <select
