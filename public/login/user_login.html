@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Normalize CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
   <link rel="stylesheet" href="../css/style.css"/>
   <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
@@ -22,7 +23,39 @@
       </div>
 </div>
 
+<script>
+    function showLoading(event) {
+        event.preventDefault(); // Mencegah pindah halaman langsung
+        let overlay = document.getElementById('loading-overlay');
+        
+        if (overlay) {
+            overlay.classList.remove('hidden'); // Tampilkan spinner
+        }
+  
+        // Tunggu sebentar, lalu pindah halaman
+        setTimeout(() => {
+            window.location.href = event.target.href; // Redirect ke halaman tujuan
+        }, 1000); // Delay 1 detik agar efek loading terlihat
+    }
+  
+    // Menambahkan event listener ke semua link dalam menu mobile dan desktop
+    document.addEventListener("DOMContentLoaded", function() {
+        let allLinks = document.querySelectorAll('a[href]'); // Ambil semua link dalam halaman
+        allLinks.forEach(link => {
+            link.addEventListener("click", showLoading);
+        });
+    });
+  </script>
 <!--Script Loading-->
+
+ <!--Loading Page-->
+ <div id="loading-overlay" class="fixed z-50 inset-0 bg-white bg-opacity-80 backdrop-blur-md flex justify-center items-center ease-in-out hidden">
+    <div class="flex space-x-2">
+        <div class="w-3 h-3 bg-[#297A2C] rounded-full dot"></div>
+        <div class="w-3 h-3 bg-[#297A2C] rounded-full dot"></div>
+        <div class="w-3 h-3 bg-[#297A2C] rounded-full dot"></div>
+      </div>
+</div>
 <style>
     @keyframes fadeIn {
       0% { opacity: 0; }
@@ -51,7 +84,7 @@
 </div>
 <!--nav-->
 <div class="font-poppins sticky top-0 z-40">
-    <nav class="relative px-4 py-1 md:py-4 flex justify-between items-center bg-[#297A2C] ">
+    <nav class="relative px-4 py-1 flex justify-between items-center bg-[#297A2C] ">
   
         <div class="lg:hidden">
           <button id="menuButton" class="text-white hover:text-emerald-100 focus:outline-none flex items-center p-3">
@@ -77,36 +110,41 @@
   
       <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="../login/login.html">Pendaftaran Online</a></li>
         </ul>
-   
+        <!--Login Amnin-->
+      <div class="ml-auto hidden md:block">
+        <div class="relative inline-block text-left">
+          <button id="dropdownButton" class="flex items-center px-4 py-2 text-white rounded-lg">
+              <i class="fas fa-user-circle text-white text-sm mr-2"></i>
+              <span class="text-white text-xs">System Administrator</span>
+              <i class="fas fa-chevron-down text-white text-sm ml-2"></i>
+          </button>
+          <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200">
+              <div class="p-4 border-b">
+                  <p class="text-gray-800 font-semibold">Admin Panel</p>
+                  <p class="text-sm text-gray-500">Klinik Pradnya Usadha</p>
+              </div>
+              <a href="admin_login.html" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
+                  <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path>
+                  </svg>
+                  Login Admin
+              </a>
+          </div>
+      </div>
+      </div>
+      <script>
+        document.getElementById('dropdownButton').addEventListener('click', function() {
+            document.getElementById('dropdownMenu').classList.toggle('hidden');
+        });
+    </script>
+      <!--Akhir Admin-->
     </nav>
   </div>
   <!--akhir nav-->
   
   <!--Script Nav-->
   
-  <script>
-      function showLoading(event) {
-          event.preventDefault(); // Mencegah pindah halaman langsung
-          let overlay = document.getElementById('loading-overlay');
-          
-          if (overlay) {
-              overlay.classList.remove('hidden'); // Tampilkan spinner
-          }
-    
-          // Tunggu sebentar, lalu pindah halaman
-          setTimeout(() => {
-              window.location.href = event.target.href; // Redirect ke halaman tujuan
-          }, 1000); // Delay 1 detik agar efek loading terlihat
-      }
-    
-      // Menambahkan event listener ke semua link dalam menu mobile dan desktop
-      document.addEventListener("DOMContentLoaded", function() {
-          let allLinks = document.querySelectorAll('a[href]'); // Ambil semua link dalam halaman
-          allLinks.forEach(link => {
-              link.addEventListener("click", showLoading);
-          });
-      });
-    </script>
+  
     
        
     <!--Script Nav-->
@@ -129,29 +167,29 @@
                   </button>
               </div>
               <div>
-                  <ul class="mobile-menu">
-                      <li class="mb-1 nav-item">
-                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../index.html">Home</a>
-                      </li>
-                      <li class="mb-1 nav-item">
-                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../about.html">Tentang kami</a>
-                      </li>
-                      <li class="mb-1 nav-item">
-                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../dokter.html">Dokter</a>
-                      </li>
-                      <li class="mb-1 nav-item">
-                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../pelayanan.html">Pelayanan Poli</a>
-                      </li>
-                      <li class="mb-1 nav-item">
-                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../fasilitas.html">Fasilitas</a>
-                      </li>
-            <li class="mb-1 nav-item">
-                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../hubungi.html">Hubungi kami</a>
-                      </li>
-            <li class="mb-1 nav-item">
-                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../login/login.html">Pendaftaran Online</a>
-                      </li>
-                  </ul>
+                <ul class="mobile-menu">
+                    <li class="mb-1 nav-item">
+                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../index.html">Home</a>
+                    </li>
+                    <li class="mb-1 nav-item">
+                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../about.html">Tentang kami</a>
+                    </li>
+                    <li class="mb-1 nav-item">
+                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../dokter.html">Dokter</a>
+                    </li>
+                    <li class="mb-1 nav-item">
+                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../pelayanan.html">Pelayanan Poli</a>
+                    </li>
+                    <li class="mb-1 nav-item">
+                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../fasilitas.html">Fasilitas</a>
+                    </li>
+          <li class="mb-1 nav-item">
+                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../hubungi.html">Hubungi kami</a>
+                    </li>
+          <li class="mb-1 nav-item">
+                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../login/login.html">Pendaftaran Online</a>
+                    </li>
+                </ul>
               </div>
           </div>
   
@@ -210,7 +248,7 @@
             <!-- Informasi Pendaftaran -->
             <div class="font-poppins" data-aos="fade-up" data-aos-duration="2000">
                 <h2 class="text-green-700 font-bold text-sm">PENDAFTARAN PASIEN RAWAT JALAN</h2>
-                <h1 class="text-2xl font-bold mt-2">Buat Akun Terlebih Dahulu<br> Untuk Melakukan Pendaftaran</h1>
+                <h1 class="text-2xl font-bold mt-2">Silakan Login Untuk <br> Melakukan Pendaftaran</h1>
                 <img src="img/pendaftaran.PNG" alt="" class="w-full mt-6 -ml-14 hidden md:block">
             </div>
             <!-- Form Pendaftaran -->
@@ -222,16 +260,75 @@
            
         </div>
         <img src="../img/profil.png" alt="" class="w-20 pb-3 mx-auto">
-        <h2 class="text-xl font-poppins font-bold mb-4 text-center">Registrasi</h2>
-        <label for="nik" class="block text-xs mb-1 text-left font-medium">NIK</label>
-        <input type="text" id="nik" maxlength="16" class="w-full text-xs p-2 border rounded mb-2">
-        <label for="phone" class="block text-xs mb-1 text-left font-medium">Nomor HP</label>
-        <input type="tel" id="phone" class="w-full p-2 border text-xs rounded mb-2">
-        <label for="password" class="block text-left mb-1 text-xs font-medium">Password</label>
-        <input type="password" id="password" class="w-full p-2 border text-xs rounded mb-2">
-        <button onclick="register()" class="w-full bg-[#297A2C] text-white px-4 py-2 mt-1 text-xs rounded hover:bg-green-900">Daftar</button>
+        <h2 class="text-xl font-poppins font-bold mb-4 text-center">Login</h2>
+
+        <!--Form Login-->
+        <form onsubmit="handleLoading(event)">
+            <label for="nik" class="block text-xs mb-1 text-left font-medium">NIK</label>
+            <input type="text" id="nik" maxlength="16" required class="w-full p-2 text-xs border rounded mb-2">
+            
+            <label for="password" class="block text-left mb-1 text-xs font-medium">Password</label>
+            <input type="password" id="password" required class="w-full p-2 text-xs border rounded mb-2">
+            
+            <button type="submit" class="w-full bg-[#297A2C] text-xs text-white px-4 py-2 mt-1 rounded hover:bg-green-900">Login</button>
+        </form>
+        
+        <div id="loading" class="fixed z-50 inset-0 bg-white bg-opacity-90 backdrop-blur-sm  flex flex-col justify-center items-center hidden">
+            <div class="loader"></div>
+            <p class="mt-2 text-[#010101] font-medium">Mencari Akun...</p>
+        </div>
+        
+        <style>
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        
+            .loader {
+                width: 40px;
+                height: 40px;
+                border: 4px solid rgba(41, 122, 44, 0.3);
+                border-top: 4px solid #297A2C;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+        </style>
+        
+        
+        <script>
+        function handleLoading(event) {
+            event.preventDefault(); // Mencegah submit langsung
+        
+            const form = event.target;
+            if (!form.checkValidity()) {
+                form.reportValidity(); // Menampilkan pesan error bawaan browser
+                return;
+            }
+        
+            const nikInput = document.getElementById("nik").value;
+            const passwordInput = document.getElementById("password").value;
+        
+            // Dummy Data NIK dan Password
+            const validUser = {
+                nik: "123",
+                password: "user123"
+            };
+        
+            if (nikInput === validUser.nik && passwordInput === validUser.password) {
+                // Tampilkan loading dan sembunyikan form
+                document.getElementById("loading").classList.remove("hidden");
+        
+                setTimeout(() => {
+                    window.location.href = "user/buat_kunjungan.html"; // Redirect otomatis setelah 1 detik
+                }, 1000);
+            } else {
+                alert("NIK dan Password tidak ditemukan!");
+            }
+        }
+        </script>
+<!--Form Login-->        
     
-                <p class="text-center text-xs text-gray-600 mt-4">Sudah Terdaftar? <a href="login.html" class="text-green-700 hover:text-emerald-800 font-bold text-xs">Klik Disini untuk Login</a></p>
+                <p class="text-center text-xs text-gray-600 mt-4">Belum memiliki akun? <a href="user_register.html" class="text-green-700 hover:text-emerald-800 font-bold text-xs">Daftar Sekarang</a></p>
             </div>
         </div>
     </div>

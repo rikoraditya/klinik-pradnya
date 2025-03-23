@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html>
 <head>
@@ -12,6 +11,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="./js/jumb.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <title>Klinik Pradnya Usadha</title>
 </head>
 <body class="bg-gray-100">
@@ -113,7 +113,7 @@ document.addEventListener("click", function playAudio() {
 </div>
 <!--nav-->
 <div class="font-poppins sticky top-0 z-40">
-  <nav class="relative px-4 py-1 md:py-4 flex justify-between items-center bg-[#297A2C] ">
+  <nav class="relative px-4 py-1 flex justify-between items-center bg-[#297A2C] ">
 
       <div class="lg:hidden">
         <button id="menuButton" class="text-white hover:text-emerald-100 focus:outline-none flex items-center p-3">
@@ -126,15 +126,42 @@ document.addEventListener("click", function playAudio() {
       <ul class="menu hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:mx-auto lg:flex lg:items-center lg:w-auto lg:space-x-6">
           <li><a class="text-xs text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="index.html">Home</a></li>
           </li>
-          <li><a class="text-xs mx-2 text-white hover:text-gray-200  transition" onclick="showLoading(event)" href="about.html">Tentang Kami</a></</li>
+          <li><a class="text-xs mx-2 text-white hover:text-gray-200  transition" onclick="showLoading(event)" href="about.html">Tentang Kami</a></li>
           <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="dokter.html">Dokter</a></li>
           <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="pelayanan.html">Pelayanan Poli</a></li>
           <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="fasilitas.html">Fasilitas</a></li>
     <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="hubungi.html">Hubungi Kami</a></li>
 
-    <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="login/login.html">Pendaftaran Online</a></li>
+    <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="login/user_login.html">Pendaftaran Online</a></li>
       </ul>
- 
+      <!--Login Amnin-->
+      <div class="ml-auto hidden md:block">
+        <div class="relative inline-block text-left">
+          <button id="dropdownButton" class="flex items-center px-4 py-2 text-white rounded-lg">
+              <i class="fas fa-user-circle text-white text-sm mr-2"></i>
+              <span class="text-white text-xs">System Administrator</span>
+              <i class="fas fa-chevron-down text-white text-sm ml-2"></i>
+          </button>
+          <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200">
+              <div class="p-4 border-b">
+                  <p class="text-gray-800 font-semibold">Admin Panel</p>
+                  <p class="text-sm text-gray-500">Klinik Pradnya Usadha</p>
+              </div>
+              <a href="login/admin_login.html" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
+                  <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path>
+                  </svg>
+                  Login Admin
+              </a>
+          </div>
+      </div>
+      </div>
+      <script>
+        document.getElementById('dropdownButton').addEventListener('click', function() {
+            document.getElementById('dropdownMenu').classList.toggle('hidden');
+        });
+    </script>
+      <!--Akhir Admin-->
   </nav>
 </div>
 <!--akhir nav-->
@@ -206,7 +233,7 @@ document.addEventListener("click", function playAudio() {
                         <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900  rounded transition" onclick="showLoading(event)" href="hubungi.html">Hubungi kami</a>
                     </li>
           <li class="mb-1 nav-item">
-                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900  rounded transition" onclick="showLoading(event)" href="login/login.html">Pendaftaran Online</a>
+                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900  rounded transition" onclick="showLoading(event)" href="login/user_login.html">Pendaftaran Online</a>
                     </li>
                 </ul>
             </div>
@@ -274,7 +301,7 @@ document.addEventListener("click", function playAudio() {
         <p class="font-poppins text-5xl font-extrabold text-[#6F5F5F] ml-14 md:ml-24 mt-14">We <span class="text-[#297A2C]">Care</span></p>
         <p class="font-poppins text-5xl font-extrabold text-[#6F5F5F] ml-14 md:ml-24 mt-6 ">With <span class=" text-[#297A2C]">Cencerity</span></p>
         <div class="mt-14">
-          <a href="login/login.html"  class="relative font-extralight px-3 py-2 text-white font-poppins rounded-md ml-4 md:ml-14 shadow-lg transition-all transform overflow-hidden text-center" 
+          <a href="login/login.html"  class="relative  font-extralight px-3 py-2 text-white font-poppins rounded-md ml-4 md:ml-14 shadow-lg transition-all transform overflow-hidden text-center" 
         style="background: linear-gradient(45deg, #32CD32, #008000, #228B22);
                background-size: 200% 200%;
                animation: gradient-move 3s infinite alternate ease-in-out;">DAFTAR ONLINE</a>
@@ -315,7 +342,7 @@ document.addEventListener("click", function playAudio() {
         <p class="text-[#6F5F5F] font-bold font-poppins mt-1">EMERGENCY SERVICE</p>
         <p class="text-[#6F5F5F] font-medium font-poppins text-xs md:text-sm mt-1">Klik nomor telepon dibawah ini untuk terhubung
           dengan Unit Gawat Darurat (UGD)</p>
-          <div class="mt-4"><a class="bg-transparent text-[#297A2C] border border-[#297A2C] px-3 py-1 rounded-lg font-poppins " href="#">Hubungi Kami</a></div>
+          <div class="mt-4"><a class="bg-transparent text-[#297A2C] border hover:text-white hover:bg-[#216523] border-[#297A2C] px-3 py-1 rounded-lg font-poppins " href="#">Hubungi Kami</a></div>
       </div>
   
       <!-- Kolom Kanan (6 Grid) -->
@@ -324,7 +351,7 @@ document.addEventListener("click", function playAudio() {
         <p class="text-[#6F5F5F] font-bold font-poppins mt-1">JAM BUKA</p>
         <p class="text-[#6F5F5F] font-medium font-poppins text-xs md:text-sm mt-1">Klinik Pradnya Usadha beroperasi setiap hari
           24 Jam. Hubungi kami untuk informasi lebih lanjut.</p>
-          <div class="mt-4"><a class="bg-transparent text-[#297A2C] border border-[#297A2C] px-3 py-1 rounded-lg font-poppins " href="#">Hubungi Kami</a></div>
+          <div class="mt-4"><a class="bg-transparent text-[#297A2C] border hover:text-white hover:bg-[#216523] border-[#297A2C] px-3 py-1 rounded-lg font-poppins " href="#">Hubungi Kami</a></div>
       </div>
     
     </div>

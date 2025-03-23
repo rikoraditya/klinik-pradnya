@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Normalize CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
-  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="../css/style.css"/>
   <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -47,11 +48,11 @@
   </style>
 <!--Loading Page Akhir-->
 <div class="py-3 bg-white ">
-<img class="mx-auto" src="img/logo.JPG" width="100px" alt="">
+<img class="mx-auto" src="../img/logo.JPG" width="100px" alt="">
 </div>
 <!--nav-->
 <div class="font-poppins sticky top-0 z-40">
-    <nav class="relative px-4 py-1 md:py-4 flex justify-between items-center bg-[#297A2C] ">
+    <nav class="relative px-4 py-1  flex justify-between items-center bg-[#297A2C] ">
   
         <div class="lg:hidden">
           <button id="menuButton" class="text-white hover:text-emerald-100 focus:outline-none flex items-center p-3">
@@ -62,52 +63,80 @@
       </button>
         </div>
         <ul class="menu hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:mx-auto lg:flex lg:items-center lg:w-auto lg:space-x-6">
-            <li><a class="text-xs text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="index.html">Home</a></li>
+            <li><a class="text-xs text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="../index.html">Home</a></li>
             
             </li>
-            <li><a class="text-xs mx-2 text-white hover:text-gray-200  transition" onclick="showLoading(event)" href="about.html">Tentang Kami</a></li>
+            <li><a class="text-xs mx-2 text-white hover:text-gray-200  transition" onclick="showLoading(event)" href="../about.html">Tentang Kami</a></li>
             
-            <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="dokter.html">Dokter</a></li>
+            <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="../dokter.html">Dokter</a></li>
         
-            <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="pelayanan.html">Pelayanan Poli</a></li>
+            <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="../pelayanan.html">Pelayanan Poli</a></li>
     
-            <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="fasilitas.html">Fasilitas</a></li>
+            <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="../fasilitas.html">Fasilitas</a></li>
         
-      <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="hubungi.html">Hubungi Kami</a></li>
+      <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="../hubungi.html">Hubungi Kami</a></li>
   
-      <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="login/login.html">Pendaftaran Online</a></li>
+      <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="../login/login.html">Pendaftaran Online</a></li>
         </ul>
-   
+        <!--Login Amnin-->
+      <div class="ml-auto hidden md:block">
+        <div class="relative inline-block text-left">
+          <button id="dropdownButton" class="flex items-center px-4 py-2 text-white rounded-lg">
+              <i class="fas fa-user-circle text-white text-sm mr-2"></i>
+              <span class="text-white text-xs">System Administrator</span>
+              <i class="fas fa-chevron-down text-white text-sm ml-2"></i>
+          </button>
+          <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200">
+              <div class="p-4 border-b">
+                  <p class="text-gray-800 font-semibold">Admin Panel</p>
+                  <p class="text-sm text-gray-500">Klinik Pradnya Usadha</p>
+              </div>
+              <a href="admin_login.html" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
+                  <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path>
+                  </svg>
+                  Login Admin
+              </a>
+          </div>
+      </div>
+      </div>
+      <script>
+        document.getElementById('dropdownButton').addEventListener('click', function() {
+            document.getElementById('dropdownMenu').classList.toggle('hidden');
+        });
+    </script>
+      <!--Akhir Admin-->
     </nav>
   </div>
   <!--akhir nav-->
   
-  <!--Script Nav-->
+
   
+
   <script>
-      function showLoading(event) {
-          event.preventDefault(); // Mencegah pindah halaman langsung
-          let overlay = document.getElementById('loading-overlay');
-          
-          if (overlay) {
-              overlay.classList.remove('hidden'); // Tampilkan spinner
-          }
-    
-          // Tunggu sebentar, lalu pindah halaman
-          setTimeout(() => {
-              window.location.href = event.target.href; // Redirect ke halaman tujuan
-          }, 1000); // Delay 1 detik agar efek loading terlihat
-      }
-    
-      // Menambahkan event listener ke semua link dalam menu mobile dan desktop
-      document.addEventListener("DOMContentLoaded", function() {
-          let allLinks = document.querySelectorAll('a[href]'); // Ambil semua link dalam halaman
-          allLinks.forEach(link => {
-              link.addEventListener("click", showLoading);
-          });
-      });
-    </script>
-    
+    function showLoading(event) {
+        event.preventDefault(); // Mencegah pindah halaman langsung
+        let overlay = document.getElementById('loading-overlay');
+        
+        if (overlay) {
+            overlay.classList.remove('hidden'); // Tampilkan spinner
+        }
+  
+        // Tunggu sebentar, lalu pindah halaman
+        setTimeout(() => {
+            window.location.href = event.target.href; // Redirect ke halaman tujuan
+        }, 1000); // Delay 1 detik agar efek loading terlihat
+    }
+  
+    // Menambahkan event listener ke semua link dalam menu mobile dan desktop
+    document.addEventListener("DOMContentLoaded", function() {
+        let allLinks = document.querySelectorAll('a[href]'); // Ambil semua link dalam halaman
+        allLinks.forEach(link => {
+            link.addEventListener("click", showLoading);
+        });
+    });
+  </script>
+<!--Script Loading-->
        
     <!--Script Nav-->
     
@@ -121,7 +150,7 @@
 <div id="overlay" class="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-md opacity-0 invisible transition-opacity duration-300"></div>
           <div id="sidebar" class="fixed top-0 left-0 bottom-0 w-5/6 max-w-sm bg-white border-r font-poppins py-6 px-6 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out z-50">
               <div class="p-4 flex justify-between items-center">
-                <img class="-ml-1" src="img/logo.JPG" width="100px" alt="">
+                <img class="-ml-1" src="../img/logo.JPG" width="100px" alt="">
                   <button id="closeButton" class="text-gray-400 hover:text-gray-500 focus:outline-none">
                       <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -131,25 +160,25 @@
               <div>
                   <ul class="mobile-menu">
                       <li class="mb-1 nav-item">
-                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900  rounded transition" onclick="showLoading(event)" href="index.html">Home</a>
+                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../index.html">Home</a>
                       </li>
                       <li class="mb-1 nav-item">
-                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900  rounded transition" onclick="showLoading(event)" href="about.html">Tentang kami</a>
+                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../about.html">Tentang kami</a>
                       </li>
                       <li class="mb-1 nav-item">
-                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900  rounded transition" onclick="showLoading(event)" href="dokter.html">Dokter</a>
+                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../dokter.html">Dokter</a>
                       </li>
                       <li class="mb-1 nav-item">
-                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900  rounded transition" onclick="showLoading(event)" href="pelayanan.html">Pelayanan Poli</a>
+                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../pelayanan.html">Pelayanan Poli</a>
                       </li>
                       <li class="mb-1 nav-item">
-                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900  rounded transition" onclick="showLoading(event)" href="fasilitas.html">Fasilitas</a>
+                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../fasilitas.html">Fasilitas</a>
                       </li>
             <li class="mb-1 nav-item">
-                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900  rounded transition" onclick="showLoading(event)" href="hubungi.html">Hubungi kami</a>
+                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../hubungi.html">Hubungi kami</a>
                       </li>
             <li class="mb-1 nav-item">
-                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900  rounded transition" onclick="showLoading(event)" href="login/login.html">Pendaftaran Online</a>
+                          <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="../login/login.html">Pendaftaran Online</a>
                       </li>
                   </ul>
               </div>
@@ -210,94 +239,26 @@
             <!-- Informasi Pendaftaran -->
             <div class="font-poppins" data-aos="fade-up" data-aos-duration="2000">
                 <h2 class="text-green-700 font-bold text-sm">PENDAFTARAN PASIEN RAWAT JALAN</h2>
-                <h1 class="text-xl md:text-3xl font-bold mt-2">Lakukan Pendaftaran Untuk <br> Keluarga Tercinta Anda</h1>
+                <h1 class="text-2xl font-bold mt-2">Buat Akun Terlebih Dahulu<br> Untuk Melakukan Pendaftaran</h1>
                 <img src="img/pendaftaran.PNG" alt="" class="w-full mt-6 -ml-14 hidden md:block">
             </div>
             <!-- Form Pendaftaran -->
             <div class="bg-white p-6 rounded-lg shadow-md font-poppins" data-aos="fade-up" data-aos-duration="2000">
-                <h2 class="text-md md:text-xl font-bold mb-4">Pendaftaran Pasien Rawat Jalan</h2>
-                <form class="space-y-3 text-xs">
-                    <div>
-                        <label class="block text-gray-700">No. Pendaftaran Pasien</label>
-                        <input type="text" name="no_pendaftaran" required class="w-full border border-gray-300 rounded-md p-2">
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-gray-700">Nama Pasien</label>
-                            <input type="text" name="nama_pasien" required class="w-full border border-gray-300 rounded-md p-2">
-                        </div>
-                        <div>
-                            <label class="block text-gray-700">No. KTP</label>
-                            <input type="text" name="no_ktp" required pattern="\d{16}" class="w-full border border-gray-300 rounded-md p-2">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-gray-700">Jenis Kelamin</label>
-                            <div class="flex space-x-4 mt-2">
-                                <label class="flex items-center text-xs">
-                                    <input type="radio" name="jenis_kelamin" value="Laki-laki" required class="mr-2"> Laki-laki
-                                </label>
-                                <label class="flex items-center text-xs">
-                                    <input type="radio" name="jenis_kelamin" value="Perempuan" required class="mr-2"> Perempuan
-                                </label>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-gray-700">No. HP</label>
-                            <input type="text" name="no_hp" required pattern="\d{10,13}" class="w-full border border-gray-300 rounded-md p-2">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-gray-700">Tempat Lahir</label>
-                            <input type="text" name="tempat_lahir" required class="w-full border border-gray-300 rounded-md p-2">
-                        </div>
-                        <div>
-                            <label class="block text-gray-700">Tanggal Lahir</label>
-                            <input type="date" name="tanggal_lahir" required class="w-full border border-gray-300 rounded-md p-2">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-gray-700">Alamat</label>
-                        <input type="text" name="alamat" required class="w-full border border-gray-300 rounded-md p-2">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700">Keluhan</label>
-                        <textarea name="keluhan" required class="w-full border border-gray-300 rounded-md p-2"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-gray-700">Tanggal Kunjungan</label>
-                        <input type="date" name="tanggal_kunjungan" required class="w-full border border-gray-300 rounded-md p-2">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700">Poli Tujuan</label>
-                        <select name="poli_tujuan" required class="w-full border border-gray-300 rounded-md p-2">
-                            <option value="">...</option>
-                            <option value="umum">Poli Umum</option>
-                            <option value="gigi">Poli Gigi</option>
-                            
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-gray-700">Jenis Pasien</label>
-                        <select name="poli_tujuan" required class="w-full border border-gray-300 rounded-md p-2">
-                            <option value="">...</option>
-                            <option value="gigi">Umum</option>
-                            <option value="gigi">BPJS</option>
-                        </select>
-                    </div>
-                    <div>
-                        <input type="text" name="no_kepesertaan" required pattern="\d{16}" placeholder="Masukkan NIK / No. BPJS" class="w-full border border-gray-300 rounded-md p-2">
-                        <div class="mt-1 text-xs ml-2 opacity-50">
-                            <li>Masukkan NIK Jika Pasien Umum</li>
-                            <li>Masukkan No. BPJS Jika Kepesertaan BPJS</li>
-                        </div>
-                        
-                    </div>
-                    <button class="w-full bg-green-700 text-white p-2 rounded-md">Daftar</button>
-                </form>
-               
+                
+            <!-- Form Registrasi -->
+    
+        <div class="flex justify-center mb-4">
+           
+        </div>
+        <img src="../img/profil.png" alt="" class="w-20 pb-3 mx-auto">
+        <h2 class="text-xl font-poppins font-bold mb-4 text-center">Registrasi</h2>
+        <label for="nik" class="block text-xs mb-1 text-left font-medium">NIK</label>
+        <input type="text" id="nik" maxlength="16" class="w-full text-xs p-2 border rounded mb-2">
+        <label for="password" class="block text-left mb-1 text-xs font-medium">Password</label>
+        <input type="password" id="password" class="w-full p-2 border text-xs rounded mb-2">
+        <button onclick="register()" class="w-full bg-[#297A2C] text-white px-4 py-2 mt-1 text-xs rounded hover:bg-green-900">Daftar</button>
+    
+                <p class="text-center text-xs text-gray-600 mt-4">Sudah Terdaftar? <a href="user_login.html" class="text-green-700 hover:text-emerald-800 font-bold text-xs">Klik Disini untuk Login</a></p>
             </div>
         </div>
     </div>
@@ -314,7 +275,7 @@
             <div class="px-1 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-justify">
                 <!-- Kolom 1 -->
                 <div class="md:ml-24">
-                    <img src="img/logo.JPG" width="100px" alt="Pradnya Usadha" class="mx-auto md:mx-0 mb-4">
+                    <img src="../img/logo.JPG" width="100px" alt="Pradnya Usadha" class="mx-auto md:mx-0 mb-4">
                     <p class="text-xs text-[#5d8d75]">Menjadi Pelayanan Kesehatan yang selalu berinovasi dan mengedepankan peningkatan kualitas hidup pasien dengan motto "We Care With Cencerity"</p>
                 </div>
                 

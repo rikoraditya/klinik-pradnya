@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/style.css"/>
   <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <title>Klinik Pradnya Usadha</title>
 </head>
@@ -51,7 +52,7 @@
 </div>
 <!--nav-->
 <div class="font-poppins sticky top-0 z-40">
-  <nav class="relative px-4 py-1 md:py-4 flex justify-between items-center bg-[#297A2C] ">
+  <nav class="relative px-4 py-1 flex justify-between items-center bg-[#297A2C] ">
 
       <div class="lg:hidden">
         <button id="menuButton" class="text-white hover:text-emerald-100 focus:outline-none flex items-center p-3">
@@ -75,9 +76,36 @@
       
     <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="hubungi.html">Hubungi Kami</a></li>
 
-    <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="login/login.html">Pendaftaran Online</a></li>
+    <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition" onclick="showLoading(event)" href="login/user_login.html">Pendaftaran Online</a></li>
       </ul>
- 
+      <!--Login Amnin-->
+      <div class="ml-auto hidden md:block">
+        <div class="relative inline-block text-left">
+          <button id="dropdownButton" class="flex items-center px-4 py-2 text-white rounded-lg">
+              <i class="fas fa-user-circle text-white text-sm mr-2"></i>
+              <span class="text-white text-xs">System Administrator</span>
+              <i class="fas fa-chevron-down text-white text-sm ml-2"></i>
+          </button>
+          <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200">
+              <div class="p-4 border-b">
+                  <p class="text-gray-800 font-semibold">Admin Panel</p>
+                  <p class="text-sm text-gray-500">Klinik Pradnya Usadha</p>
+              </div>
+              <a href="login/admin_login.html" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
+                  <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"></path>
+                  </svg>
+                  Login Admin
+              </a>
+          </div>
+      </div>
+      </div>
+      <script>
+        document.getElementById('dropdownButton').addEventListener('click', function() {
+            document.getElementById('dropdownMenu').classList.toggle('hidden');
+        });
+    </script>
+      <!--Akhir Admin-->
   </nav>
 </div>
 <!--akhir nav-->
@@ -149,7 +177,7 @@
                         <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="hubungi.html">Hubungi kami</a>
                     </li>
           <li class="mb-1 nav-item">
-                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="login/login.html">Pendaftaran Online</a>
+                        <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition" onclick="showLoading(event)" href="login/user_login.html">Pendaftaran Online</a>
                     </li>
                 </ul>
             </div>
