@@ -37,6 +37,11 @@
             window.location.href = event.target.href; // Redirect ke halaman tujuan
         }, 1000); // Delay 1 detik agar efek loading terlihat
     }
+    // Tangani tombol back agar overlay tidak tetap muncul
+    window.addEventListener("pageshow", function () {
+        overlay.classList.add('hidden');
+    });
+
   
     // Menambahkan event listener ke semua link dalam menu mobile dan desktop
     document.addEventListener("DOMContentLoaded", function() {
