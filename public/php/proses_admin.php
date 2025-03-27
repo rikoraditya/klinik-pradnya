@@ -51,7 +51,7 @@ if (
     if ($stmt->execute()) {
         echo "<script>
                 alert('Pendaftaran berhasil!');
-                window.location.href = '../login/user/buat_kunjungan.html';
+                window.location.href = '../login/admin/crud/pasien/registrasi.html';
               </script>";
     } else {
         echo "Error: " . $stmt->error;

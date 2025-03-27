@@ -218,6 +218,44 @@
       </script>
       <!--Logout-->
 
+      <style>
+        #sidebar-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.5);
+          backdrop-filter: blur(5px);
+          z-index: 30;
+          display: none;
+        }
+      </style>
+
+      <div id="sidebar-overlay"></div>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const sidebar = document.getElementById("sidebar");
+          const overlay = document.getElementById("sidebar-overlay");
+          const openBtn = document.getElementById("mobileMenuButton");
+          const closeBtn = document.getElementById("closeSidebar");
+
+          function openSidebar() {
+            sidebar.classList.remove("-translate-x-full");
+            overlay.style.display = "block";
+            document.body.classList.add("overflow-hidden");
+          }
+
+          function closeSidebar() {
+            sidebar.classList.add("-translate-x-full");
+            overlay.style.display = "none";
+            document.body.classList.remove("overflow-hidden");
+          }
+
+          openBtn.addEventListener("click", openSidebar);
+          closeBtn.addEventListener("click", closeSidebar);
+          overlay.addEventListener("click", closeSidebar);
+        });
+      </script>
+
       <!-- Main Content -->
       <main
         class="flex-1 p-4 transition-all md:ml-48 duration-300"
