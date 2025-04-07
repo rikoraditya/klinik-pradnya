@@ -47,12 +47,24 @@ if (
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssssssssssss", $nama, $nik, $jenis_kelamin, $no_hp, $tempat_lahir, $tanggal_lahir, $alamat, $tanggal_kunjungan, $keluhan, $poli_tujuan, $jenis_pasien, $nik_bpjs);
 
+    // HTML dan JS untuk SweetAlert
+    echo "<!DOCTYPE html><html><head>
+<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+</head><body>";
+
     // Eksekusi query
     if ($stmt->execute()) {
+        // Berhasil Daftar
         echo "<script>
-                alert('Pendaftaran berhasil!');
-                window.location.href = '../login/admin/crud/pasien/registrasi.html';
-              </script>";
+    Swal.fire({
+        icon: 'success',
+        title: 'Pendaftaran Berhasil',
+        confirmButtonText: 'Kembali'
+    }).then(() => {
+        window.location.href = '../login/admin/crud/pasien/registrasi.php';
+    });
+ </script>";
+
     } else {
         echo "Error: " . $stmt->error;
     }
@@ -64,4 +76,6 @@ if (
 }
 
 $conn->close();
+
+echo "</body></html>";
 ?>

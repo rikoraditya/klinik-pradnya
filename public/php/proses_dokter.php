@@ -55,12 +55,26 @@ if (isset($_POST["submit"])) {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssss", $new_id, $nama, $poliklinik, $profile_picture);
 
+    // HTML dan JS untuk SweetAlert
+    echo "<!DOCTYPE html><html><head>
+ <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+ </head><body>";
+
     // Eksekusi query
     if ($stmt->execute()) {
+
+
+        // Data Berhasil Ditambah
         echo "<script>
-                alert('Data Berhasil Ditambah!');
-                window.location.href = '../login/admin/crud/dokter/tambah.html'; // Redirect ke halaman dokter
-              </script>";
+           Swal.fire({
+               icon: 'success',
+               title: 'Data Berhasil Ditambah!',
+               confirmButtonText: 'Kembali'
+           }).then(() => {
+               window.location.href = '../login/admin/crud/dokter/tambah.php';
+           });
+        </script>";
+
     } else {
         echo "Error: " . $stmt->error;
     }
@@ -72,4 +86,6 @@ if (isset($_POST["submit"])) {
 }
 
 $conn->close();
+
+echo "</body></html>";
 ?>

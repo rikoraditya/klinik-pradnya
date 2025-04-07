@@ -101,21 +101,21 @@
       </h1>
       <nav>
         <div class="mb-4">
-          <a href="buat_kunjungan.html"
+          <a href="buat_kunjungan.php"
             class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
             <i class="fas fa-book"></i>
             <span class="sidebar-text">Buat Kunjungan</span>
           </a>
         </div>
         <div class="mb-4">
-          <a href="kunjungan.html"
+          <a href="kunjungan.php"
             class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
             <i class="fas fa-clock"></i>
             <span class="sidebar-text">Kunjungan Anda</span>
           </a>
         </div>
       </nav>
-      <button onclick="openLogoutModal();" data-href="../user_login.html"
+      <button onclick="openLogoutModal();" data-href="../user_login.php"
         class="flex items-center space-x-2 p-2 w-full font-poppins text-sm text-left hover:bg-red-600 rounded mt-6">
         <i class="fas fa-sign-out-alt"></i>
         <span class="sidebar-text">Logout</span>

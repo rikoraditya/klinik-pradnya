@@ -4,7 +4,23 @@ use LDAP\Result;
 
 require '../../../../php/functions.php';
 
-$pasien = query("SELECT * FROM pasien");
+$obat = query("SELECT * FROM obat");
+
+$no_antrian = $_GET['no_antrian'] ?? ''; // biar gak undefined
+$pasien = null;
+
+$pasien = null;
+if (isset($_GET['id'])) {
+    $id = mysqli_real_escape_string($conn, $_GET['id']);
+    $query = mysqli_query($conn, "SELECT * FROM pasien WHERE no_antrian = '$id'");
+
+    if ($query && mysqli_num_rows($query) > 0) {
+        $pasien = mysqli_fetch_assoc($query);
+    } else {
+        echo "<script>alert('Data tidak ditemukan!');</script>";
+    }
+}
+
 ?>
 
 
@@ -230,7 +246,7 @@ $pasien = query("SELECT * FROM pasien");
                 document.getElementById("loading").classList.remove("hidden");
 
                 setTimeout(() => {
-                    window.location.href = "../../../admin_login.html"; // Redirect otomatis setelah 1 detik
+                    window.location.href = "../../../admin_login.php"; // Redirect otomatis setelah 1 detik
                 }, 1000);
             }
         </script>
@@ -288,70 +304,83 @@ $pasien = query("SELECT * FROM pasien");
                 <div class="max-w-7xl bg-white p-6 rounded-lg shadow-md mt-4">
                     <h4 class="text-lg font-semibold mb-4">Form Rekam Medis</h4>
                     <div id="formContainer text-xs">
-                        <form id="formRekamMedis" class="space-y-4 text-xs text-gray-600">
-                            <div class="grid grid-cols-3 gap-4">
-                                <div>
-                                    <label class="block  font-medium">No. Rekam Medis</label>
-                                    <input type="text" class="w-full p-2 border rounded-md" value="RM-002" readonly>
-                                </div>
+
+
+
+                        <form action="db_rm.php" method="post" id="formRekamMedis"
+                            class="space-y-4 text-xs text-gray-600">
+                            <div class="grid grid-cols-2 gap-4">
+
                                 <div>
                                     <label class="block  font-medium">No. Pendaftaran Pasien</label>
-                                    <input type="text" class="w-full p-2 border rounded-md" value="REG-001" readonly>
+                                    <input type="text" name="no_antrian" class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['no_antrian'] ?? '' ?>" readonly>
                                 </div>
                                 <div>
-                                    <label class="block  font-medium">No. KTP</label>
-                                    <input type="text" class="w-full p-2 border rounded-md" value="tes" readonly>
+                                    <label class="block  font-medium">Nama Pasien</label>
+                                    <input type="text" name="nama" class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['nama'] ?? '' ?>" readonly>
                                 </div>
                             </div>
                             <div class="grid grid-cols-3 gap-4">
                                 <div>
-                                    <label class="block  font-medium">Nama Pasien</label>
-                                    <input type="text" class="w-full p-2 border rounded-md" value="tes">
+                                    <label class="block  font-medium">No. KTP</label>
+                                    <input type="text" name="nik" class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['nik'] ?? '' ?>" readonly>
                                 </div>
+
                                 <div>
                                     <label class="block  font-medium">Jenis Kelamin</label>
-                                    <input type="text" class="w-full p-2 border rounded-md" value="Laki-Laki" readonly>
+                                    <input type="text" name="jenis_kelamin" class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['jenis_kelamin'] ?? '' ?>" readonly>
                                 </div>
                                 <div>
                                     <label class="block  font-medium">No. HP</label>
-                                    <input type="text" class="w-full p-2 border rounded-md" value="test">
+                                    <input type="text" name="no_hp" class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['no_hp'] ?? '' ?>" readonly>
                                 </div>
                             </div>
                             <div class="grid grid-cols-3 gap-4">
                                 <div>
                                     <label class="block  font-medium">Tempat Lahir</label>
-                                    <input type="text" class="w-full p-2 border rounded-md" value="Klungkung" readonly>
+                                    <input type="text" name="tempat_lahir" class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['tempat_lahir'] ?? '' ?>" readonly>
                                 </div>
                                 <div>
                                     <label class="block  font-medium">Tanggal Lahir</label>
-                                    <input type="date" class="w-full p-2 border rounded-md" value="2023-06-18" readonly>
+                                    <input type="date" name="tanggal_lahir" class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['tanggal_lahir'] ?? '' ?>" readonly>
                                 </div>
                                 <div>
                                     <label class="block  font-medium">Poli Tujuan</label>
-                                    <select class="w-full p-2 border rounded-md">
-                                        <option selected>Bidan</option>
+                                    <select class="w-full p-2 border rounded-md" name="poli_tujuan">
+                                        <option value="<?= $pasien['poli_tujuan'] ?>" <?= ($pasien['poli_tujuan'] ?? '') === $pasien['poli_tujuan'] ? 'selected' : '' ?>>
+                                            <?= $pasien['poli_tujuan'] ?>
+                                        </option>
+
                                     </select>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-3 gap-4">
                                 <div>
                                     <label class="block  font-medium">Alamat</label>
-                                    <input type="text" class="w-full p-2 border rounded-md" value="tes">
+                                    <input type="text" name="alamat" class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['alamat'] ?>" readonly>
                                 </div>
                                 <div>
                                     <label class="block  font-medium">Tanggal Kunjungan</label>
-                                    <input type="date" class="w-full p-2 border rounded-md" value="2023-06-18" readonly>
+                                    <input type="date" name="tanggal_kunjungan" class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['tanggal_kunjungan'] ?>" readonly>
                                 </div>
-                            </div>
-                            <div>
-                                <label class="block  font-medium">Keluhan</label>
-                                <input type="text" class="w-full p-2 border rounded-md" value="tes">
-                            </div>
-                            <div class="grid grid-cols-4 gap-4">
                                 <div>
-                                    <label class="block  font-medium">Suhu Tubuh °C</label>
-                                    <input type="text" class="w-full p-2 border rounded-md">
+                                    <label class="block  font-medium">Keluhan</label>
+                                    <input type="text" name="keluhan" class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['keluhan'] ?>">
                                 </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-4">
+
                                 <div>
                                     <label class="block  font-medium">Denyut Nadi</label>
                                     <input type="text" class="w-full p-2 border rounded-md">
@@ -361,8 +390,14 @@ $pasien = query("SELECT * FROM pasien");
                                     <input type="text" class="w-full p-2 border rounded-md">
                                 </div>
                                 <div>
-                                    <label class="block  font-medium">Tekanan Darah</label>
-                                    <input type="text" class="w-full p-2 border rounded-md">
+                                    <label class="block  font-medium">Obat</label>
+
+                                    <select name="id" class="w-full p-2 border rounded-md" required>
+                                        <option value="">-- Pilih Obat --</option>
+                                        <?php foreach ($obat as $o): ?>
+                                            <option value="<?= $o['id']; ?>"><?= $o['nama_obat']; ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
                                 </div>
                             </div>
                             <div>
@@ -371,7 +406,8 @@ $pasien = query("SELECT * FROM pasien");
                             </div>
                         </form>
                     </div>
-                    <button class="mt-4 bg-green-800 hover:bg-green-900 text-white py-2 px-3 rounded-md text-xs"
+                    <button type="submit"
+                        class="mt-4 bg-green-800 hover:bg-green-900 text-white py-2 px-3 rounded-md text-xs"
                         onclick="tambahForm()">Tambah</button>
                     <button onclick="window.location.href='tambah.php'"
                         class="bg-red-700 hover:bg-red-900 text-white py-2 px-3 rounded-md text-xs relative">

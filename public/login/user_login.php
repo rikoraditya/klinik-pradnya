@@ -315,16 +315,13 @@
                     <h2 class="text-xl font-poppins font-bold mb-4 text-center">Login</h2>
 
                     <!--Form Login-->
-                    <form onsubmit="handleLoading(event)">
-                        <label for="nik" class="block text-xs mb-1 text-left font-medium">NIK</label>
-                        <input type="text" id="nik" maxlength="16" required
-                            class="w-full p-2 text-xs border rounded mb-2">
-
-                        <label for="password" class="block text-left mb-1 text-xs font-medium">Password</label>
-                        <input type="password" id="password" required class="w-full p-2 text-xs border rounded mb-2">
+                    <form method="post" action="send_otp.php">
+                        <label for="nik" class="block text-xs mb-1 text-left font-medium">Masukkan No. HP</label>
+                        <input type="text" name="no_hp" required class="w-full p-2 text-xs border rounded mb-2">
 
                         <button type="submit"
-                            class="w-full bg-[#297A2C] text-xs text-white px-4 py-2 mt-1 rounded hover:bg-green-900">Login</button>
+                            class="w-full bg-[#297A2C] text-xs text-white px-4 py-2 mt-1 rounded hover:bg-green-900">Kirim
+                            Kode</button>
                     </form>
 
                     <div id="loading"
@@ -388,8 +385,11 @@
                     </script>
                     <!--Form Login-->
 
-                    <p class="text-center text-xs text-gray-600 mt-4">Belum memiliki akun? <a href="user_register.php"
-                            class="text-green-700 hover:text-emerald-800 font-bold text-xs">Daftar Sekarang</a></p>
+
+                    <div class="ml-2 text-xs text-gray-600 mt-4">
+                        <li>Kode akan dikirim melalui Whatsapp</li>
+                        <li>Awali no dengan 62xxx</li>
+                    </div>
                 </div>
             </div>
         </div>

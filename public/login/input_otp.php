@@ -26,7 +26,45 @@
         </div>
     </div>
 
+    <script>
+        function showLoading(event) {
+            event.preventDefault(); // Mencegah pindah halaman langsung
+            let overlay = document.getElementById('loading-overlay');
+
+            if (overlay) {
+                overlay.classList.remove('hidden'); // Tampilkan spinner
+            }
+
+            // Tunggu sebentar, lalu pindah halaman
+            setTimeout(() => {
+                window.location.href = event.target.href; // Redirect ke halaman tujuan
+            }, 1000); // Delay 1 detik agar efek loading terlihat
+        }
+        // Tangani tombol back agar overlay tidak tetap muncul
+        window.addEventListener("pageshow", function () {
+            overlay.classList.add('hidden');
+        });
+
+
+        // Menambahkan event listener ke semua link dalam menu mobile dan desktop
+        document.addEventListener("DOMContentLoaded", function () {
+            let allLinks = document.querySelectorAll('a[href]'); // Ambil semua link dalam halaman
+            allLinks.forEach(link => {
+                link.addEventListener("click", showLoading);
+            });
+        });
+    </script>
     <!--Script Loading-->
+
+    <!--Loading Page-->
+    <div id="loading-overlay"
+        class="fixed z-50 inset-0 bg-white bg-opacity-80 backdrop-blur-md flex justify-center items-center ease-in-out hidden">
+        <div class="flex space-x-2">
+            <div class="w-3 h-3 bg-[#297A2C] rounded-full dot"></div>
+            <div class="w-3 h-3 bg-[#297A2C] rounded-full dot"></div>
+            <div class="w-3 h-3 bg-[#297A2C] rounded-full dot"></div>
+        </div>
+    </div>
     <style>
         @keyframes fadeIn {
             0% {
@@ -74,7 +112,7 @@
     </div>
     <!--nav-->
     <div class="font-poppins sticky top-0 z-40">
-        <nav class="relative px-4 py-1  flex justify-between items-center bg-[#297A2C] ">
+        <nav class="relative px-4 py-1 flex justify-between items-center bg-[#297A2C] ">
 
             <div class="lg:hidden">
                 <button id="menuButton"
@@ -143,33 +181,10 @@
     </div>
     <!--akhir nav-->
 
+    <!--Script Nav-->
 
 
 
-    <script>
-        function showLoading(event) {
-            event.preventDefault(); // Mencegah pindah halaman langsung
-            let overlay = document.getElementById('loading-overlay');
-
-            if (overlay) {
-                overlay.classList.remove('hidden'); // Tampilkan spinner
-            }
-
-            // Tunggu sebentar, lalu pindah halaman
-            setTimeout(() => {
-                window.location.href = event.target.href; // Redirect ke halaman tujuan
-            }, 1000); // Delay 1 detik agar efek loading terlihat
-        }
-
-        // Menambahkan event listener ke semua link dalam menu mobile dan desktop
-        document.addEventListener("DOMContentLoaded", function () {
-            let allLinks = document.querySelectorAll('a[href]'); // Ambil semua link dalam halaman
-            allLinks.forEach(link => {
-                link.addEventListener("click", showLoading);
-            });
-        });
-    </script>
-    <!--Script Loading-->
 
     <!--Script Nav-->
 
@@ -284,12 +299,11 @@
                 <!-- Informasi Pendaftaran -->
                 <div class="font-poppins" data-aos="fade-up" data-aos-duration="2000">
                     <h2 class="text-green-700 font-bold text-sm">PENDAFTARAN PASIEN RAWAT JALAN</h2>
-                    <h1 class="text-2xl font-bold mt-2">Buat Akun Terlebih Dahulu<br> Untuk Melakukan Pendaftaran</h1>
+                    <h1 class="text-2xl font-bold mt-2">Silakan Login Untuk <br> Melakukan Pendaftaran</h1>
                     <img src="img/pendaftaran.PNG" alt="" class="w-full mt-6 -ml-14 hidden md:block">
                 </div>
                 <!-- Form Pendaftaran -->
-                <div class="bg-white p-6 rounded-lg md:max-w-md md:ml-32 shadow-md font-poppins" data-aos="fade-up"
-                    data-aos-duration="2000">
+                <div class="bg-white p-6 md:max-w-md md:ml-32 rounded-lg shadow-md font-poppins">
 
                     <!-- Form Registrasi -->
 
@@ -297,19 +311,81 @@
 
                     </div>
                     <img src="../img/profil.png" alt="" class="w-20 pb-3 mx-auto">
-                    <h2 class="text-xl font-poppins font-bold mb-4 text-center">Registrasi</h2>
-                    <label for="nik" class="block text-xs mb-1 text-left font-medium">NIK</label>
-                    <input type="text" id="nik" maxlength="16" class="w-full text-xs p-2 border rounded mb-2">
-                    <label for="nama_lengkap" class="block text-xs mb-1 text-left font-medium">Nama Lengkap</label>
-                    <input type="text" id="nik" maxlength="16" class="w-full text-xs p-2 border rounded mb-2">
-                    <label for="password" class="block text-left mb-1 text-xs font-medium">Password</label>
-                    <input type="password" id="password" class="w-full p-2 border text-xs rounded mb-2">
-                    <button onclick="register()"
-                        class="w-full bg-[#297A2C] text-white px-4 py-2 mt-1 text-xs rounded hover:bg-green-900">Daftar</button>
+                    <h2 class="text-xl font-poppins font-bold mb-4 text-center">Login</h2>
 
-                    <p class="text-center text-xs text-gray-600 mt-4">Sudah Terdaftar? <a href="user_login.php"
-                            class="text-green-700 hover:text-emerald-800 font-bold text-xs">Klik Disini untuk Login</a>
-                    </p>
+                    <!--Form Login-->
+                    <form method="post" action="verify_otp.php">
+
+                        <input type="hidden" name="no_hp" class="w-full p-2 text-xs border rounded mb-2"
+                            value="<?= $_SESSION['no_hp']; ?>">
+                        <label for="nik" class="block text-xs mb-1 text-left font-medium">Masukkan Kode OTP</label>
+                        <input type="text" name="otp" required class="w-full p-2 text-xs border rounded mb-2">
+                        <button type="submit"
+                            class="w-full bg-[#297A2C] text-xs text-white px-4 py-2 mt-1 rounded hover:bg-green-900">Verifikasi</button>
+                    </form>
+
+                    <div id="loading"
+                        class="fixed z-50 inset-0 bg-white bg-opacity-90 backdrop-blur-sm  flex flex-col justify-center items-center hidden">
+                        <div class="loader"></div>
+                        <p class="mt-2 text-[#010101] font-medium">Mencari Akun...</p>
+                    </div>
+
+                    <style>
+                        @keyframes spin {
+                            0% {
+                                transform: rotate(0deg);
+                            }
+
+                            100% {
+                                transform: rotate(360deg);
+                            }
+                        }
+
+                        .loader {
+                            width: 40px;
+                            height: 40px;
+                            border: 4px solid rgba(41, 122, 44, 0.3);
+                            border-top: 4px solid #297A2C;
+                            border-radius: 50%;
+                            animation: spin 1s linear infinite;
+                        }
+                    </style>
+
+
+                    <script>
+                        function handleLoading(event) {
+                            event.preventDefault(); // Mencegah submit langsung
+
+                            const form = event.target;
+                            if (!form.checkValidity()) {
+                                form.reportValidity(); // Menampilkan pesan error bawaan browser
+                                return;
+                            }
+
+                            const nikInput = document.getElementById("nik").value;
+                            const passwordInput = document.getElementById("password").value;
+
+                            // Dummy Data NIK dan Password
+                            const validUser = {
+                                nik: "123",
+                                password: "user123"
+                            };
+
+                            if (nikInput === validUser.nik && passwordInput === validUser.password) {
+                                // Tampilkan loading dan sembunyikan form
+                                document.getElementById("loading").classList.remove("hidden");
+
+                                setTimeout(() => {
+                                    window.location.href = "user/buat_kunjungan.php"; // Redirect otomatis setelah 1 detik
+                                }, 1000);
+                            } else {
+                                alert("NIK dan Password tidak ditemukan!");
+                            }
+                        }
+                    </script>
+                    <!--Form Login-->
+
+                    <p class="text-center text-xs text-gray-600 mt-4">Masukkan Kode yang Valid</p>
                 </div>
             </div>
         </div>

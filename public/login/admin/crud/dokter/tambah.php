@@ -270,12 +270,12 @@
               <!-- Nama Lengkap -->
               <div>
                 <label class="block text-gray-700 font-semibold mb-2">Nama Lengkap</label>
-                <input type="text" name="nama" class="w-full p-2 border rounded-lg" />
+                <input type="text" name="nama" required class="w-full p-2 border rounded-lg" />
               </div>
               <!-- Poliklinik -->
               <div>
                 <label class="block text-gray-700 font-semibold mb-2">Poliklinik</label>
-                <select name="poliklinik" class="w-full p-2 border rounded-lg">
+                <select name="poliklinik" required class="w-full p-2 border rounded-lg">
                   <option value="">--Pilih Poli--</option>
                   <option value="Poli Umum">Poli Umum</option>
                   <option value="Poli Gigi">Poli Gigi</option>
@@ -284,7 +284,7 @@
               <!-- Profile Picture -->
               <div>
                 <label class="block text-gray-700 font-semibold mb-2">Profile Picture</label>
-                <input type="file" name="profile_picture" class="w-full p-2 border rounded-lg" />
+                <input type="file" name="profile_picture" required class="w-full p-2 border rounded-lg" />
               </div>
             </div>
             <!-- Tombol -->

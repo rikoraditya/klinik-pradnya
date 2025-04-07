@@ -305,11 +305,10 @@ $pasien = query("SELECT * FROM pasien");
                   <td class="border p-2 md"><?= $row["no_hp"]; ?></td>
                   <td class="border p-2 md"><?= $row["poli_tujuan"]; ?></td>
                   <td class="border p-2 space-x-1 w-56">
-                    <button onclick="window.location.href='rm.php'"
+
+                    <a href="rm.php?id=<?= $row['no_antrian']; ?>"
                       class="bg-green-700 text-white px-3 py-1 rounded text-xs flex items-center gap-2">
-                      <i class="fas fa-book"></i>
-                      Tambah Rekam Medis
-                    </button>
+                      <i class="fas fa-book"></i>Tambah Rekam Medis</a>
 
                   </td>
                 </tr>

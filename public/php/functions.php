@@ -13,6 +13,8 @@ function query($query)
     return $rows;
 }
 
+$obat = mysqli_query($conn, "SELECT * FROM obat");
+
 // Ambil jumlah pasien untuk setiap poli
 $query_poli_umum = "SELECT COUNT(*) AS total FROM pasien WHERE poli_tujuan = 'Poli Umum'";
 $query_poli_gigi = "SELECT COUNT(*) AS total FROM pasien WHERE poli_tujuan = 'Poli Gigi'";
@@ -46,5 +48,28 @@ if (isset($_POST['selesai'])) {
 // Ambil data pasien dari database
 $result = mysqli_query($conn, "SELECT * FROM pasien ORDER BY no_antrian ASC");
 $pasien = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+
+function data_pasien($id)
+{
+    global $conn;
+    mysqli_query($conn, "DELETE FROM pasien WHERE id = $id");
+    return mysqli_affected_rows($conn);
+}
+
+function data_dokter($id)
+{
+    global $conn;
+    mysqli_query($conn, "DELETE FROM dokter WHERE id_nomor = $id");
+    return mysqli_affected_rows($conn);
+}
+
+function data_obat($id)
+{
+    global $conn;
+    mysqli_query($conn, "DELETE FROM obat WHERE id = $id");
+    return mysqli_affected_rows($conn);
+}
+
 
 ?>

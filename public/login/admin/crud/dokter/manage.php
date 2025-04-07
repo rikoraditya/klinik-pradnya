@@ -297,15 +297,19 @@ $dokter = query("SELECT * FROM dokter");
                   </td>
                   <td class="border p-2 truncate w-80 md"><?= $row["poliklinik"]; ?></td>
                   <td class="border p-2 space-x-1">
-                    <button class="bg-gray-500 text-white px-2 py-1 rounded text-xs">
+                    <a href="view.php?id=<?= $data['id']; ?>" onclick="return confirm('Yakin ingin hapus?')"
+                      class="bg-gray-500 text-white px-2 py-1 rounded text-xs inline-block">
                       View
-                    </button>
-                    <button class="bg-blue-500 text-white px-2 py-1 rounded text-xs">
+                    </a>
+                    <a href="update.php?id=<?= $data['id']; ?>" onclick="return confirm('Yakin ingin hapus?')"
+                      class="bg-blue-500 text-white px-2 py-1 rounded text-xs inline-block">
                       Update
-                    </button>
-                    <button class="bg-red-700 text-white px-2 py-1 rounded text-xs">
+                    </a>
+
+                    <a href="delete.php?id=<?= $row['id_nomor']; ?>" onclick="return confirm('Yakin ingin hapus?')"
+                      class="bg-red-700 text-white px-2 py-1 rounded text-xs inline-block">
                       Delete
-                    </button>
+                    </a>
                   </td>
                 </tr>
 
