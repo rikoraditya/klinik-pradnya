@@ -72,4 +72,113 @@ function data_obat($id)
 }
 
 
+function data_rm($id)
+{
+    global $conn;
+    mysqli_query($conn, "DELETE FROM rekam_medis WHERE id = $id");
+    return mysqli_affected_rows($conn);
+}
+
+function update_pasien($data)
+{
+
+    global $conn;
+
+    $id = $data["id"];
+
+    $nama = $data['nama'];
+    $nik = $data['nik'];
+    $jenis_kelamin = $data['jenis_kelamin'];
+    $no_hp = $data['no_hp'];
+    $tempat_lahir = $data['tempat_lahir'];
+    $tanggal_lahir = $data['tanggal_lahir'];
+    $alamat = $data['alamat'];
+    $tanggal_kunjungan = $data['tanggal_kunjungan'];
+    $keluhan = $data['keluhan'];
+    $poli_tujuan = $data['poli_tujuan'];
+    $jenis_pasien = $data['jenis_pasien'];
+    $nik_bpjs = $data['nik_bpjs'];
+
+    $query = "UPDATE pasien SET
+    
+    nama = '$nama',
+    nik = '$nik',
+    jenis_kelamin = '$jenis_kelamin',
+    no_hp = '$no_hp',
+    tempat_lahir = '$tempat_lahir',
+    tanggal_lahir = '$tanggal_lahir',
+    alamat = '$alamat',
+    tanggal_kunjungan = '$tanggal_kunjungan',
+    keluhan = '$keluhan',
+    poli_tujuan = '$poli_tujuan',
+    jenis_pasien= '$jenis_pasien',
+    nik_bpjs = '$nik_bpjs'
+
+    WHERE id = $id
+    ";
+
+
+    mysqli_query($conn, $query);
+    return mysqli_affected_rows($conn);
+}
+
+
+function update_dokter($data)
+{
+
+    global $conn;
+
+    $id = $data["id_nomor"];
+    $id_dokter = $data['id_dokter'];
+    $nama = $data['nama'];
+    $poliklinik = $data['poliklinik'];
+    $profile_picture = $data['profile_picture'];
+
+
+    $query = "UPDATE dokter SET
+    
+    nama = '$nama',
+    poliklinik = '$poliklinik',
+    profile_picture = '$profile_picture'
+  
+
+    WHERE id_nomor = $id
+    ";
+
+
+    mysqli_query($conn, $query);
+    return mysqli_affected_rows($conn);
+}
+
+function update_obat($data)
+{
+
+    global $conn;
+
+    $id = $data["id"];
+    $kode_obat = $data['kode_obat'];
+    $nama_obat = $data['nama_obat'];
+    $jenis_obat = $data['jenis_obat'];
+    $dosis = $data['dosis'];
+    $keterangan = $data['keterangan'];
+
+
+    $query = "UPDATE obat SET
+    
+    nama_obat = '$nama_obat',
+    jenis_obat = '$jenis_obat',
+    dosis = '$dosis',
+    keterangan = '$keterangan'
+  
+    WHERE id = $id
+    ";
+
+
+    mysqli_query($conn, $query);
+    return mysqli_affected_rows($conn);
+}
+
+
+
+
 ?>

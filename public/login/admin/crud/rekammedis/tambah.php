@@ -5,6 +5,8 @@ use LDAP\Result;
 require '../../../../php/functions.php';
 
 $pasien = query("SELECT * FROM pasien");
+
+
 ?>
 
 
@@ -280,11 +282,12 @@ $pasien = query("SELECT * FROM pasien");
                 <th class="border p-2">No</th>
                 <th class="border p-2">No Antrian</th>
                 <th class="border p-2">Nama</th>
+                <th class="border p-2">NIK</th>
                 <th class="border p-2">Jenis Kelamin</th>
                 <th class="border p-2">Tanggal Lahir</th>
-                <th class="border p-2">Alamat</th>
+                <th class="border p-2">Tanggal Kunjungan</th>
                 <th class="border p-2">No HP</th>
-                <th class="border p-2">Poli Tujuan</th>
+                <th class="border p-2">Status Antrian</th>
                 <th class="border p-2">Action</th>
               </tr>
             </thead>
@@ -299,15 +302,16 @@ $pasien = query("SELECT * FROM pasien");
                   <td class="border p-2 md"><?= $i; ?></td>
                   <td class="border p-2 md"><?= $row["no_antrian"]; ?></td>
                   <td class="border p-2 truncate md"><?= $row["nama"]; ?></td>
+                  <td class="border p-2 truncate md"><?= $row["nik"]; ?></td>
                   <td class="border p-2 md"><?= $row["jenis_kelamin"]; ?></td>
                   <td class="border p-2 md"><?= $row["tanggal_lahir"]; ?></td>
-                  <td class="border p-2 md"><?= $row["alamat"]; ?></td>
+                  <td class="border p-2 md"><?= $row["tanggal_kunjungan"]; ?></td>
                   <td class="border p-2 md"><?= $row["no_hp"]; ?></td>
-                  <td class="border p-2 md"><?= $row["poli_tujuan"]; ?></td>
+                  <td class="border p-2 md"><?= $row["status_antrian"]; ?></td>
                   <td class="border p-2 space-x-1 w-56">
 
-                    <a href="rm.php?id=<?= $row['no_antrian']; ?>"
-                      class="bg-green-700 text-white px-3 py-1 rounded text-xs flex items-center gap-2">
+                    <a href="rm.php?id=<?= $row['id']; ?>"
+                      class="bg-green-700 text-white px-2 py-1 rounded text-xs flex items-center gap-2">
                       <i class="fas fa-book"></i>Tambah Rekam Medis</a>
 
                   </td>

@@ -23,6 +23,7 @@ if (
     $_POST['poli_tujuan'],
     $_POST['jenis_pasien'],
     $_POST['nik_bpjs']
+
 )
 ) {
 
@@ -60,7 +61,7 @@ if (
         echo "<script>
  Swal.fire({
      icon: 'success',
-     title: 'Data Berhasil Ditambah!',
+     title: 'Pendaftaran Berhasil!',
      confirmButtonText: 'Kembali'
  }).then(() => {
      window.location.href = '../login/user/buat_kunjungan.php';

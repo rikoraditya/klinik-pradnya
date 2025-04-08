@@ -1,12 +1,16 @@
 <?php
-// Konfigurasi database
-//Konkesi ke Database
+// Koneksi ke Database
 $conn = mysqli_connect("localhost", "root", "", "klinik");
 
 // Cek koneksi
 if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
+
+// HTML & SweetAlert di awal
+echo "<!DOCTYPE html><html><head>
+<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+</head><body>";
 
 // Pastikan data dari form tidak kosong
 if (
@@ -25,8 +29,7 @@ if (
     $_POST['nik_bpjs']
 )
 ) {
-
-    // Ambil data dari form dan bersihkan input
+    // Ambil dan bersihkan data
     $nama = htmlspecialchars($_POST['nama']);
     $nik = htmlspecialchars($_POST['nik']);
     $jenis_kelamin = htmlspecialchars($_POST['jenis_kelamin']);
@@ -40,42 +43,73 @@ if (
     $jenis_pasien = htmlspecialchars($_POST['jenis_pasien']);
     $nik_bpjs = htmlspecialchars($_POST['nik_bpjs']);
 
-    // Query menggunakan prepared statements untuk mencegah SQL Injection
+    // Cek apakah sudah daftar hari ini
+    $cek_pasien = $conn->prepare("SELECT COUNT(*) FROM pasien WHERE nik = ? AND tanggal_kunjungan = ?");
+    $cek_pasien->bind_param("ss", $nik, $tanggal_kunjungan);
+    $cek_pasien->execute();
+    $cek_pasien->bind_result($jumlah);
+    $cek_pasien->fetch();
+    $cek_pasien->close();
+
+    if ($jumlah > 0) {
+        // Sudah pernah daftar hari ini
+        echo "<script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Sudah Terdaftar!',
+                text: 'Pasien dengan NIK ini sudah melakukan pendaftaran pada tanggal tersebut.',
+                confirmButtonText: 'Kembali'
+            }).then(() => {
+                window.history.back();
+            });
+        </script>";
+        exit; // Hentikan proses insert
+    }
+
+    // Insert data baru
     $sql = "INSERT INTO pasien (nama, nik, jenis_kelamin, no_hp, tempat_lahir, tanggal_lahir, alamat, tanggal_kunjungan, keluhan, poli_tujuan, jenis_pasien, nik_bpjs) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssssssssssss", $nama, $nik, $jenis_kelamin, $no_hp, $tempat_lahir, $tanggal_lahir, $alamat, $tanggal_kunjungan, $keluhan, $poli_tujuan, $jenis_pasien, $nik_bpjs);
 
-    // HTML dan JS untuk SweetAlert
-    echo "<!DOCTYPE html><html><head>
-<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
-</head><body>";
-
-    // Eksekusi query
     if ($stmt->execute()) {
-        // Berhasil Daftar
         echo "<script>
-    Swal.fire({
-        icon: 'success',
-        title: 'Pendaftaran Berhasil',
-        confirmButtonText: 'Kembali'
-    }).then(() => {
-        window.location.href = '../login/admin/crud/pasien/registrasi.php';
-    });
- </script>";
-
+            Swal.fire({
+                icon: 'success',
+                title: 'Pendaftaran Berhasil',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = '../login/admin/crud/pasien/registrasi.php';
+            });
+        </script>";
     } else {
-        echo "Error: " . $stmt->error;
+        echo "<script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal Mendaftar!',
+                text: '" . addslashes($stmt->error) . "',
+                confirmButtonText: 'Kembali'
+            }).then(() => {
+                window.history.back();
+            });
+        </script>";
     }
 
-    // Tutup statement dan koneksi
     $stmt->close();
 } else {
-    echo "Semua data harus diisi!";
+    echo "<script>
+        Swal.fire({
+            icon: 'warning',
+            title: 'Data Tidak Lengkap!',
+            text: 'Mohon isi semua form sebelum mengirim.',
+            confirmButtonText: 'Kembali'
+        }).then(() => {
+            window.history.back();
+        });
+    </script>";
 }
 
 $conn->close();
-
 echo "</body></html>";
 ?>

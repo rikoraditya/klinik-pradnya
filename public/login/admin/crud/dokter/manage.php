@@ -297,11 +297,8 @@ $dokter = query("SELECT * FROM dokter");
                   </td>
                   <td class="border p-2 truncate w-80 md"><?= $row["poliklinik"]; ?></td>
                   <td class="border p-2 space-x-1">
-                    <a href="view.php?id=<?= $data['id']; ?>" onclick="return confirm('Yakin ingin hapus?')"
-                      class="bg-gray-500 text-white px-2 py-1 rounded text-xs inline-block">
-                      View
-                    </a>
-                    <a href="update.php?id=<?= $data['id']; ?>" onclick="return confirm('Yakin ingin hapus?')"
+
+                    <a href="update.php?id=<?= $row['id_nomor']; ?>"
                       class="bg-blue-500 text-white px-2 py-1 rounded text-xs inline-block">
                       Update
                     </a>

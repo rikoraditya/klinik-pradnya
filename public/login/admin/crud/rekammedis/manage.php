@@ -1,3 +1,13 @@
+<?php
+
+use LDAP\Result;
+
+require '../../../../php/functions.php';
+
+$rekam_medis = query("SELECT * FROM rekam_medis");
+?>
+
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -272,34 +282,53 @@
                 <th class="border p-2">Nama</th>
                 <th class="border p-2">Jenis Kelamin</th>
                 <th class="border p-2">Tanggal Lahir</th>
-                <th class="border p-2">Alamat</th>
-                <th class="border p-2">No HP</th>
-                <th class="border p-2">Poli Tujuan</th>
+                <th class="border p-2">Tanggal Kunjungan</th>
+                <th class="border p-2">No. HP</th>
+                <th class="border p-2">Obat</th>
+                <th class="border p-2">Dokter</th>
+
                 <th class="border p-2">Action</th>
               </tr>
             </thead>
             <tbody class="text-xs">
-              <tr>
-                <td class="border p-2 md">1</td>
-                <td class="border p-2 md">RM001</td>
-                <td class="border p-2 truncate md">I Komang Riko Raditya</td>
-                <td class="border p-2 md">Laki-laki</td>
-                <td class="border p-2 md">12-08-2002</td>
-                <td class="border p-2 md">Sengkiding</td>
-                <td class="border p-2 md">083114565754</td>
-                <td class="border p-2 md">Poli Umum</td>
-                <td class="border p-2 space-x-1">
-                  <button class="bg-gray-500 text-white px-2 py-1 rounded text-xs">
-                    View
-                  </button>
-                  <button class="bg-blue-500 text-white px-2 py-1 rounded text-xs">
-                    Update
-                  </button>
-                  <button class="bg-red-700 text-white px-2 py-1 rounded text-xs">
-                    Delete
-                  </button>
-                </td>
-              </tr>
+
+              <?php $i = 1; ?>
+              <?php foreach ($rekam_medis as $row)
+              : ?>
+
+                <tr>
+                  <td class="border p-2 md"><?= $i; ?></td>
+                  <td class="border p-2 md"><?= $row["no_rm"]; ?></td>
+                  <td class="border p-2 truncate md"><?= $row["nama"]; ?></td>
+                  <td class="border p-2 md"><?= $row["jenis_kelamin"]; ?></td>
+                  <td class="border p-2 md"><?= $row["tanggal_lahir"]; ?></td>
+                  <td class="border p-2"><?= $row["tanggal_kunjungan"]; ?></td>
+                  <td class="border p-2 md"><?= $row["no_hp"]; ?></td>
+                  <td class="border p-2 md"><?= $row["obat"]; ?></td>
+                  <td class="border p-2 md">
+                    <?= strlen($row['dokter']) > 15 ? substr($row['dokter'], 0, 15) . '...' : $row["dokter"]; ?>
+                  </td>
+
+                  <td class="border p-2 space-x-1">
+                    <button onclick="lihatPasien('<?= $row['id']; ?>')"
+                      class="bg-gray-500 text-white px-2 py-1 rounded text-xs">
+                      View
+                    </button>
+                    <a href="update.php?id=<?= $row['id']; ?>"
+                      class="bg-blue-500 text-white px-2 py-1 rounded text-xs inline-block">
+                      Update
+                    </a>
+
+                    <a href="delete.php?id=<?= $row['id']; ?>" onclick="return confirm('Yakin ingin hapus?')"
+                      class="bg-red-700 text-white px-2 py-1 rounded text-xs inline-block">
+                      Delete
+                    </a>
+                  </td>
+                </tr>
+
+                <?php $i++; ?>
+              <?php endforeach; ?>
+
             </tbody>
           </table>
         </div>
@@ -336,6 +365,82 @@
         menu.classList.toggle("hidden");
       }
     </script>
+
+
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
+      <div class="bg-white rounded-xl shadow-2xl w-full max-w-xl p-6 sm:p-7">
+
+        <!-- Header dengan Icon -->
+        <div class="flex items-center mb-5 border-b pb-3">
+          <!-- Icon Profil -->
+          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+            <svg class="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.9V22h19.2v-2.7c0-3.3-6.4-4.9-9.6-4.9z" />
+            </svg>
+          </div>
+          <!-- Judul -->
+          <h2 class="font-poppins text-xl font-semibold text-gray-800">Rekam Medis Pasien</h2>
+
+          <!-- Tombol Tutup -->
+          <button onclick="closeModal()" class="ml-auto text-gray-400 hover:text-red-600 text-2xl">&times;</button>
+        </div>
+
+        <!-- Konten Data Pasien -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 text-sm text-gray-700" id="modalContent">
+          <!-- Konten dinamis diisi via JS -->
+        </div>
+
+        <!-- Footer -->
+
+      </div>
+    </div>
+
+
+    <script>
+      function lihatPasien(id) {
+        fetch('view_pasien.php?id=' + id)
+          .then(response => response.json())
+          .then(data => {
+            const modal = document.getElementById('modalContent');
+            modal.innerHTML = `
+         <div><span class="font-semibold font-poppins">No. RM:</span><br>${data.no_rm}</div>
+        <div><span class="font-semibold font-poppins">Nama:</span><br>${data.nama}</div>
+        <div><span class="font-semibold font-poppins">NIK:</span><br>${data.nik}</div>
+        <div><span class="font-semibold font-poppins">Jenis Kelamin:</span><br>${data.jenis_kelamin}</div>
+        <div><span class="font-semibold font-poppins">No. HP:</span><br>${data.no_hp}</div>
+        <div><span class="font-semibold font-poppins">Tempat Lahir:</span><br>${data.tempat_lahir}</div>
+        <div><span class="font-semibold font-poppins">Tanggal Lahir:</span><br>${data.tanggal_lahir}</div>
+        <div><span class="font-semibold font-poppins">Alamat:</span><br>${data.alamat}</div>
+        <div><span class="font-semibold font-poppins">Tanggal Kunjungan:</span><br>${data.tanggal_kunjungan}</div>
+        <div><span class="font-semibold font-poppins">Keluhan:</span><br>${data.keluhan}</div>
+        <div><span class="font-semibold font-poppins">Poli Tujuan:</span><br>${data.poli_tujuan}</div>
+          <div><span class="font-semibold font-poppins">Jenis Pasien:</span><br>${data.jenis_pasien}</div>
+        <div><span class="font-semibold font-poppins">NIK/BPJS:</span><br>${data.nik_bpjs}</div>
+        <div><span class="font-semibold font-poppins">Denyut Nadi:</span><br>${data.denyut_nadi}</div>
+          <div><span class="font-semibold font-poppins">Laju Pernapasan:</span><br>${data.laju_pernapasan}</div>
+        <div><span class="font-semibold font-poppins">Diagnosa:</span><br>${data.diagnosa}</div>
+          <div><span class="font-semibold font-poppins">Obat:</span><br>${data.obat}</div>
+            <div><span class="font-semibold font-poppins">Dokter:</span><br>${data.dokter}</div>
+    
+      `;
+
+
+            document.getElementById('modal').classList.remove('hidden');
+          })
+          .catch(error => {
+            document.getElementById('modalContent').innerHTML = `<p class="text-red-600 col-span-2">Gagal memuat data pasien.</p>`;
+            document.getElementById('modal').classList.remove('hidden');
+          });
+      }
+
+      function closeModal() {
+        document.getElementById('modal').classList.add('hidden');
+      }
+
+    </script>
+
 </body>
 
 </html>

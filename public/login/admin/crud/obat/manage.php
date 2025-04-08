@@ -300,11 +300,8 @@ $obat = query("SELECT * FROM obat");
                   <td class="border p-2 truncate md"><?= $row["dosis"]; ?></td>
                   <td class="border p-2 truncate md"><?= $row["keterangan"]; ?></td>
                   <td class="border p-2 space-x-1">
-                    <a href="view.php?id=<?= $data['id']; ?>" onclick="return confirm('Yakin ingin hapus?')"
-                      class="bg-gray-500 text-white px-2 py-1 rounded text-xs inline-block">
-                      View
-                    </a>
-                    <a href="update.php?id=<?= $data['id']; ?>" onclick="return confirm('Yakin ingin hapus?')"
+
+                    <a href="update.php?id=<?= $row['id']; ?>"
                       class="bg-blue-500 text-white px-2 py-1 rounded text-xs inline-block">
                       Update
                     </a>

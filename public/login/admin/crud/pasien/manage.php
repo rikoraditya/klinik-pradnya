@@ -5,6 +5,7 @@ use LDAP\Result;
 require '../../../../php/functions.php';
 
 $pasien = query("SELECT * FROM pasien");
+
 ?>
 
 
@@ -304,15 +305,18 @@ $pasien = query("SELECT * FROM pasien");
                   <td class="border p-2 truncate w-20 md"> <?= $row["nik"]; ?></td>
                   <td class="border p-2 md"> <?= $row["jenis_kelamin"]; ?></td>
                   <td class="border p-2 truncate w-20 md"> <?= $row["no_hp"]; ?></td>
-                  <td class="border p-2 truncate w-20 md"> <?= $row["keluhan"]; ?></td>
+                  <td class="border p-2 truncate w-20 md">
+                    <?= strlen($row['keluhan']) > 15 ? substr($row['keluhan'], 0, 15) . '...' : $row["keluhan"]; ?>
+                  </td>
                   <td class="border p-2 truncate w-20 md"> <?= $row["poli_tujuan"]; ?></td>
                   <td class="border p-2 md"> <?= $row["tanggal_kunjungan"]; ?></td>
                   <td class="border p-2 space-x-1">
-                    <a href="view.php?id=<?= $data['id']; ?>" onclick="return confirm('Yakin ingin hapus?')"
-                      class="bg-gray-500 text-white px-2 py-1 rounded text-xs inline-block">
+                    <button onclick="lihatPasien('<?= $row['id']; ?>')"
+                      class="bg-gray-500 text-white px-2 py-1 rounded text-xs">
                       View
-                    </a>
-                    <a href="update.php?id=<?= $data['id']; ?>" onclick="return confirm('Yakin ingin hapus?')"
+                    </button>
+
+                    <a href="update.php?id=<?= $row['id']; ?>"
                       class="bg-blue-500 text-white px-2 py-1 rounded text-xs inline-block">
                       Update
                     </a>
@@ -363,6 +367,85 @@ $pasien = query("SELECT * FROM pasien");
         menu.classList.toggle("hidden");
       }
     </script>
+
+
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
+      <div class="bg-white rounded-xl shadow-2xl w-full max-w-xl p-6 sm:p-7">
+
+        <!-- Header dengan Icon -->
+        <div class="flex items-center mb-5 border-b pb-3">
+          <!-- Icon Profil -->
+          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+            <svg class="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.9V22h19.2v-2.7c0-3.3-6.4-4.9-9.6-4.9z" />
+            </svg>
+          </div>
+          <!-- Judul -->
+          <h2 class="font-poppins text-xl font-semibold text-gray-800">Data Pasien</h2>
+
+          <!-- Tombol Tutup -->
+          <button onclick="closeModal()" class="ml-auto text-gray-400 hover:text-red-600 text-2xl">&times;</button>
+        </div>
+
+        <!-- Konten Data Pasien -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 text-sm text-gray-700" id="modalContent">
+          <!-- Konten dinamis diisi via JS -->
+        </div>
+
+        <!-- Footer -->
+        <hr class="flex justify-end mt-6 pt-3 border-t">
+        <div class="mt-3 font-poppins p-3 bg-green-800 text-white text-center rounded-xl shadow-md">
+          <h3 class="text-sm font-semibold">Nomor Antrian Pasien</h3>
+          <p class="text-2xl font-bold mt-2" id="nomorAntrian"></p>
+
+        </div>
+      </div>
+    </div>
+
+
+    <script>
+      function lihatPasien(id) {
+        fetch('view_pasien.php?id=' + id)
+          .then(response => response.json())
+          .then(data => {
+            const modal = document.getElementById('modalContent');
+            modal.innerHTML = `
+     
+        <div><span class="font-semibold font-poppins">Nama:</span><br>${data.nama}</div>
+        <div><span class="font-semibold font-poppins">NIK:</span><br>${data.nik}</div>
+        <div><span class="font-semibold font-poppins">Jenis Kelamin:</span><br>${data.jenis_kelamin}</div>
+        <div><span class="font-semibold font-poppins">No. HP:</span><br>${data.no_hp}</div>
+        <div><span class="font-semibold font-poppins">Tempat Lahir:</span><br>${data.tempat_lahir}</div>
+        <div><span class="font-semibold font-poppins">Tanggal Lahir:</span><br>${data.tanggal_lahir}</div>
+        <div><span class="font-semibold font-poppins">Alamat:</span><br>${data.alamat}</div>
+        <div><span class="font-semibold font-poppins">Keluhan:</span><br>${data.keluhan}</div>
+        <div><span class="font-semibold font-poppins">Poli Tujuan:</span><br>${data.poli_tujuan}</div>
+        <div><span class="font-semibold font-poppins">Tanggal Kunjungan:</span><br>${data.tanggal_kunjungan}</div>
+        <div><span class="font-semibold font-poppins">Jenis Pasien:</span><br>${data.jenis_pasien}</div>
+        <div><span class="font-semibold font-poppins">NIK/BPJS:</span><br>${data.nik_bpjs}</div>
+    
+      `;
+            document.getElementById('nomorAntrian').textContent = data.no_antrian;
+
+            document.getElementById('modal').classList.remove('hidden');
+          })
+          .catch(error => {
+            document.getElementById('modalContent').innerHTML = `<p class="text-red-600 col-span-2">Gagal memuat data pasien.</p>`;
+            document.getElementById('modal').classList.remove('hidden');
+          });
+      }
+
+      function closeModal() {
+        document.getElementById('modal').classList.add('hidden');
+      }
+
+    </script>
+
+
+
+
 </body>
 
 </html>
