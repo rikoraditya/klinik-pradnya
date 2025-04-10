@@ -1,3 +1,55 @@
+<?php
+session_start();
+require '../../php/functions.php';
+
+// Fungsi normalisasi no HP
+function normalize_hp($no_hp)
+{
+  $no_hp = preg_replace('/[^0-9]/', '', $no_hp);
+  if (substr($no_hp, 0, 1) === '0') {
+    $no_hp = '62' . substr($no_hp, 1);
+  }
+  return $no_hp;
+}
+
+// Cek apakah user sudah login
+if (!isset($_SESSION['no_hp'])) {
+  echo "Anda belum login.";
+  exit;
+}
+
+// Ambil dan normalisasi nomor HP dari session
+$no_hp = normalize_hp($_SESSION['no_hp']);
+$row = null;
+
+// Cek koneksi database
+if (!$conn) {
+  die("Koneksi database gagal: " . mysqli_connect_error());
+}
+
+// Query ambil data pasien
+$stmt = mysqli_prepare($conn, "SELECT * FROM pasien WHERE no_hp = ? ORDER BY id DESC LIMIT 1");
+
+if ($stmt) {
+  mysqli_stmt_bind_param($stmt, 's', $no_hp);
+  mysqli_stmt_execute($stmt);
+  $result = mysqli_stmt_get_result($stmt);
+
+  if ($result && mysqli_num_rows($result) > 0) {
+    $row = mysqli_fetch_assoc($result);
+  } else {
+    echo "Data pasien tidak ditemukan untuk no HP: <b>$no_hp</b><br>Silakan periksa kembali atau hubungi admin.";
+  }
+
+  mysqli_stmt_close($stmt);
+} else {
+  echo "Gagal menyiapkan statement SQL.";
+}
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -250,58 +302,66 @@
               <h2 class="text-lg font-bold font-poppins text-gray-800 text-center mb-6">
                 Pendaftaran Anda
               </h2>
-              <div class="space-y-4 font-poppins">
-                <div class="grid grid-cols-2 gap-2 border-b pb-2">
-                  <span class="text-gray-600 font-extrabold">Nama Pasien</span>
-                  <span class="font-poppins text-gray-800" id="namaPasien">I Komang Riko raditya</span>
+
+              <?php if ($row)
+              : ?>
+
+                <div class="space-y-4 font-poppins">
+                  <div class="grid grid-cols-2 gap-2 border-b pb-2">
+                    <span class="text-gray-600 font-extrabold">Nama Pasien</span>
+                    <span class="font-poppins text-gray-800" name="nama"><?= $row["nama"]; ?></span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2 border-b pb-2">
+                    <span class="text-gray-600 font-extrabold">No. KTP</span>
+                    <span class="font-medium text-gray-800" name="nik"><?= $row["nik"]; ?></span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2 border-b pb-2">
+                    <span class="text-gray-600 font-extrabold">Jenis Kelamin</span>
+                    <span class="font-medium text-gray-800" name="jenis_kelamin"><?= $row["jenis_kelamin"]; ?></span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2 border-b pb-2">
+                    <span class="text-gray-600 font-extrabold">No. HP</span>
+                    <span class="font-medium text-gray-800" name="no_hp"><?= $row["no_hp"]; ?></span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2 border-b pb-2">
+                    <span class="text-gray-600 font-extrabold">Tanggal Lahir</span>
+                    <span class="font-medium text-gray-800" name="tanggal_lahir"><?= $row["tanggal_lahir"]; ?></span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2 border-b pb-2">
+                    <span class="text-gray-600 font-extrabold">Alamat</span>
+                    <span class="font-medium text-gray-800" name="alamat"><?= $row["alamat"]; ?></span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2 border-b pb-2">
+                    <span class="text-gray-600 font-extrabold">Keluhan</span>
+                    <span class="font-medium text-gray-800" name="keluhan"><?= $row["keluhan"]; ?></span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2 border-b pb-2">
+                    <span class="text-gray-600 font-extrabold">Tanggal Kunjungan</span>
+                    <span class="font-medium text-gray-800"
+                      name="tanggal_kunjungan"><?= $row["tanggal_kunjungan"]; ?></span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2 border-b pb-2">
+                    <span class="text-gray-600 font-extrabold">Poli Tujuan</span>
+                    <span class="font-medium text-gray-800" name="poli_tujuan"><?= $row["poli_tujuan"]; ?></span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2 border-b pb-2">
+                    <span class="text-gray-600 font-extrabold">Jenis Pasien</span>
+                    <span class="font-medium text-gray-800" name="jenis_pasien"><?= $row["jenis_pasien"]; ?></span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2 border-b pb-2">
+                    <span class="text-gray-600 font-extrabold">NIK / No. BPJS</span>
+                    <span class="font-medium text-gray-800" name="nik_bpjs"><?= $row["nik_bpjs"]; ?></span>
+                  </div>
                 </div>
-                <div class="grid grid-cols-2 gap-2 border-b pb-2">
-                  <span class="text-gray-600 font-extrabold">No. KTP</span>
-                  <span class="font-medium text-gray-800" id="noKTP">1234567890123456</span>
-                </div>
-                <div class="grid grid-cols-2 gap-2 border-b pb-2">
-                  <span class="text-gray-600 font-extrabold">Jenis Kelamin</span>
-                  <span class="font-medium text-gray-800" id="jenisKelamin">Laki-laki</span>
-                </div>
-                <div class="grid grid-cols-2 gap-2 border-b pb-2">
-                  <span class="text-gray-600 font-extrabold">No. HP</span>
-                  <span class="font-medium text-gray-800" id="noHP">081234567890</span>
-                </div>
-                <div class="grid grid-cols-2 gap-2 border-b pb-2">
-                  <span class="text-gray-600 font-extrabold">Tanggal Lahir</span>
-                  <span class="font-medium text-gray-800" id="ttl">01/01/1990</span>
-                </div>
-                <div class="grid grid-cols-2 gap-2 border-b pb-2">
-                  <span class="text-gray-600 font-extrabold">Alamat</span>
-                  <span class="font-medium text-gray-800" id="alamat">Sengkiding</span>
-                </div>
-                <div class="grid grid-cols-2 gap-2 border-b pb-2">
-                  <span class="text-gray-600 font-extrabold">Keluhan</span>
-                  <span class="font-medium text-gray-800" id="keluhan">Demam dan batuk</span>
-                </div>
-                <div class="grid grid-cols-2 gap-2 border-b pb-2">
-                  <span class="text-gray-600 font-extrabold">Tanggal Kunjungan</span>
-                  <span class="font-medium text-gray-800" id="tanggalKunjungan">20/03/2025</span>
-                </div>
-                <div class="grid grid-cols-2 gap-2 border-b pb-2">
-                  <span class="text-gray-600 font-extrabold">Poli Tujuan</span>
-                  <span class="font-medium text-gray-800" id="poliTujuan">Poli Umum</span>
-                </div>
-                <div class="grid grid-cols-2 gap-2 border-b pb-2">
-                  <span class="text-gray-600 font-extrabold">Jenis Pasien</span>
-                  <span class="font-medium text-gray-800" id="jenisPasien">BPJS</span>
-                </div>
-                <div class="grid grid-cols-2 gap-2 border-b pb-2">
-                  <span class="text-gray-600 font-extrabold">NIK / No. BPJS</span>
-                  <span class="font-medium text-gray-800" id="nikBPJS">9876543210987654</span>
+
+                <div class="mt-4 p-3 bg-green-800 text-white text-center rounded-xl shadow-md">
+                  <h3 class="text-sm font-semibold">Nomor Antrian Anda</h3>
+                  <p class="text-2xl font-bold mt-2" name="no_antrian"><?= $row["no_antrian"]; ?></p>
                 </div>
               </div>
 
-              <div class="mt-4 p-3 bg-green-800 text-white text-center rounded-xl shadow-md">
-                <h3 class="text-sm font-semibold">Nomor Antrian Anda</h3>
-                <p class="text-2xl font-bold mt-2" id="nomorAntrian">A-001</p>
-              </div>
-            </div>
+            <?php endif; ?>
+
           </div>
         </div>
       </div>

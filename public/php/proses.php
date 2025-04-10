@@ -1,6 +1,5 @@
 <?php
 // Konfigurasi database
-//Konkesi ke Database
 $conn = mysqli_connect("localhost", "root", "", "klinik");
 
 // Cek koneksi
@@ -23,7 +22,6 @@ if (
     $_POST['poli_tujuan'],
     $_POST['jenis_pasien'],
     $_POST['nik_bpjs']
-
 )
 ) {
 
@@ -41,44 +39,44 @@ if (
     $jenis_pasien = htmlspecialchars($_POST['jenis_pasien']);
     $nik_bpjs = htmlspecialchars($_POST['nik_bpjs']);
 
-    // Query menggunakan prepared statements untuk mencegah SQL Injection
+    // 🔁 Konversi no_hp ke awalan 62
+    $no_hp = preg_replace('/[^0-9]/', '', $no_hp); // Hanya ambil angka
+    if (substr($no_hp, 0, 1) === '0') {
+        $no_hp = '62' . substr($no_hp, 1);
+    }
+
+    // Query menggunakan prepared statements
     $sql = "INSERT INTO pasien (nama, nik, jenis_kelamin, no_hp, tempat_lahir, tanggal_lahir, alamat, tanggal_kunjungan, keluhan, poli_tujuan, jenis_pasien, nik_bpjs) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssssssssssss", $nama, $nik, $jenis_kelamin, $no_hp, $tempat_lahir, $tanggal_lahir, $alamat, $tanggal_kunjungan, $keluhan, $poli_tujuan, $jenis_pasien, $nik_bpjs);
 
-
     // HTML dan JS untuk SweetAlert
     echo "<!DOCTYPE html><html><head>
- <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
- </head><body>";
+    <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+    </head><body>";
 
     // Eksekusi query
     if ($stmt->execute()) {
-        // Data Berhasil Ditambah
-
         echo "<script>
- Swal.fire({
-     icon: 'success',
-     title: 'Pendaftaran Berhasil!',
-     confirmButtonText: 'Kembali'
- }).then(() => {
-     window.location.href = '../login/user/buat_kunjungan.php';
- });
-</script>";
-
+        Swal.fire({
+            icon: 'success',
+            title: 'Pendaftaran Berhasil!',
+            confirmButtonText: 'Kembali'
+        }).then(() => {
+            window.location.href = '../login/user/buat_kunjungan.php';
+        });
+        </script>";
     } else {
         echo "Error: " . $stmt->error;
     }
 
-    // Tutup statement dan koneksi
     $stmt->close();
 } else {
     echo "Semua data harus diisi!";
 }
 
 $conn->close();
-
 echo "</body></html>";
 ?>

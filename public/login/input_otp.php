@@ -1,3 +1,12 @@
+<?php
+
+session_start();
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+?>
+
 <!doctype html>
 <html>
 
@@ -315,13 +324,19 @@
 
                     <!--Form Login-->
                     <form method="post" action="verify_otp.php">
+                        <!-- Nomor HP disimpan di session, tidak perlu disertakan di form -->
 
-                        <input type="hidden" name="no_hp" class="w-full p-2 text-xs border rounded mb-2"
-                            value="<?= $_SESSION['no_hp']; ?>">
-                        <label for="nik" class="block text-xs mb-1 text-left font-medium">Masukkan Kode OTP</label>
-                        <input type="text" name="otp" required class="w-full p-2 text-xs border rounded mb-2">
+                        <label class="block text-xs mb-1 text-left font-medium">Masukkan Kode OTP</label>
+                        <input type="text" name="otp" pattern="\d{6}" maxlength="6" required
+                            class="w-full p-2 text-xs border rounded mb-2" placeholder="Masukkan 6 digit kode OTP">
+
+                        <!-- Token CSRF -->
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
+
                         <button type="submit"
-                            class="w-full bg-[#297A2C] text-xs text-white px-4 py-2 mt-1 rounded hover:bg-green-900">Verifikasi</button>
+                            class="w-full bg-[#297A2C] text-xs text-white px-4 py-2 mt-1 rounded hover:bg-green-900">
+                            Verifikasi
+                        </button>
                     </form>
 
                     <div id="loading"
@@ -352,40 +367,10 @@
                     </style>
 
 
-                    <script>
-                        function handleLoading(event) {
-                            event.preventDefault(); // Mencegah submit langsung
 
-                            const form = event.target;
-                            if (!form.checkValidity()) {
-                                form.reportValidity(); // Menampilkan pesan error bawaan browser
-                                return;
-                            }
 
-                            const nikInput = document.getElementById("nik").value;
-                            const passwordInput = document.getElementById("password").value;
-
-                            // Dummy Data NIK dan Password
-                            const validUser = {
-                                nik: "123",
-                                password: "user123"
-                            };
-
-                            if (nikInput === validUser.nik && passwordInput === validUser.password) {
-                                // Tampilkan loading dan sembunyikan form
-                                document.getElementById("loading").classList.remove("hidden");
-
-                                setTimeout(() => {
-                                    window.location.href = "user/buat_kunjungan.php"; // Redirect otomatis setelah 1 detik
-                                }, 1000);
-                            } else {
-                                alert("NIK dan Password tidak ditemukan!");
-                            }
-                        }
-                    </script>
-                    <!--Form Login-->
-
-                    <p class="text-center text-xs text-gray-600 mt-4">Masukkan Kode yang Valid</p>
+                    <p class="text-center text-xs text-gray-600 mt-4">Masukkan kode yang sudah dikirim melalui
+                        Whatsapp</p>
                 </div>
             </div>
         </div>

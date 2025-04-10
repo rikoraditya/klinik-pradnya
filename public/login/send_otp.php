@@ -1,10 +1,53 @@
 <?php
 session_start();
-require '../../public/php/functions.php'; // Ganti sesuai file koneksi ke database kamu
+require '../../public/php/functions.php'; // koneksi DB
+
+// Token device Fonnte kamu
+$token = "kuN8SnSFXNd3VRx4GMvZ"; // Ganti dengan token device kamu
+
+// Fungsi untuk kirim pesan via Fonnte
+function Kirimfonnte($token, $data)
+{
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://api.fonnte.com/send',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => array(
+            'target' => $data["target"],
+            'message' => $data["message"],
+        ),
+        CURLOPT_HTTPHEADER => array(
+            'Authorization: ' . $token
+        ),
+    ));
+
+    $response = curl_exec($curl);
+    curl_close($curl);
+
+    // Simpan log respon ke file
+
+}
 
 if (isset($_POST['no_hp'])) {
-    $no_hp = $_POST['no_hp'];
-    $otp = rand(100000, 999999); // kode 6 digit
+    $no_hp = preg_replace('/[^0-9]/', '', $_POST['no_hp']);
+    if (substr($no_hp, 0, 1) === '0') {
+        $no_hp = '62' . substr($no_hp, 1);
+    }
+
+    $_SESSION['no_hp_temp'] = $no_hp;
+
+    // Hapus OTP lama
+    mysqli_query($conn, "DELETE FROM otp_login WHERE no_hp = '$no_hp' AND is_verified = 0");
+
+    // Buat OTP baru
+    $otp = rand(100000, 999999);
 
     // Simpan ke database
     $query = "INSERT INTO otp_login (no_hp, kode_otp, waktu_kirim, is_verified)
@@ -12,28 +55,16 @@ if (isset($_POST['no_hp'])) {
     $result = mysqli_query($conn, $query);
 
     if ($result) {
-        // Kirim OTP ke nomor HP
-        $message = "Kode verifikasi Anda adalah: $otp";
+        // Siapkan data pesan
+        $data = [
+            "target" => $no_hp,
+            "message" => "Om Swastyastu. Terimakasih sudah memilih layanan kami. Berikut Kode verifikasi Anda: *$otp*\nBerlaku selama 5 menit. Klinik Pradnya Usadha berkomitmen untuk menghadirkan inovasi layanan terbaik. Didukung oleh Dokter, Perawat, dan Staf yang ramah melayani pasien. Kami yakin akan selalu menjadi pilihan Anda dan Keluarga. Terimakasih\n\n#We Care With Cencerity"
+        ];
 
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, 'https://kirim.pesan.id/api/send-message');
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query([
-            'phone' => $no_hp,
-            'message' => $message,
-            'token' => '25e41f23595d72ec7853222e69e8f43503ff22da', // ganti dengan token aslimu
-        ]));
-        $response = curl_exec($curl);
-        curl_close($curl);
+        // Kirim ke WhatsApp
+        Kirimfonnte($token, $data);
 
-        // Debug response
-        echo "<pre>";
-        print_r($response);
-        echo "</pre>";
-
-        // Arahkan ke form input kode OTP
-        $_SESSION['no_hp_temp'] = $no_hp; // simpan sementara
+        // Redirect
         header("Location: input_otp.php");
         exit;
     } else {
@@ -42,4 +73,3 @@ if (isset($_POST['no_hp'])) {
 } else {
     echo "Nomor HP tidak ditemukan.";
 }
-?>

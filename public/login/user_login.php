@@ -315,14 +315,32 @@
                     <h2 class="text-xl font-poppins font-bold mb-4 text-center">Login</h2>
 
                     <!--Form Login-->
-                    <form method="post" action="send_otp.php">
-                        <label for="nik" class="block text-xs mb-1 text-left font-medium">Masukkan No. HP</label>
-                        <input type="text" name="no_hp" required class="w-full p-2 text-xs border rounded mb-2">
+                    <form method="post" action="send_otp.php" onsubmit="return validatePhone()">
+                        <label class="block text-xs mb-1 text-left font-medium">Masukkan No. HP</label>
+                        <input type="text" name="no_hp" id="no_hp" required pattern="^(08|628)[0-9]{8,12}$"
+                            title="Masukkan nomor HP yang dimulai dengan 08 atau 628 dan memiliki 10-14 digit angka"
+                            class="w-full p-2 text-xs border rounded mb-2">
 
                         <button type="submit"
-                            class="w-full bg-[#297A2C] text-xs text-white px-4 py-2 mt-1 rounded hover:bg-green-900">Kirim
-                            Kode</button>
+                            class="w-full bg-[#297A2C] text-xs text-white px-4 py-2 mt-1 rounded hover:bg-green-900">
+                            Kirim Kode
+                        </button>
                     </form>
+
+                    <script>
+                        function validatePhone() {
+                            const phone = document.getElementById("no_hp").value;
+                            const pattern = /^(08|628)[0-9]{8,12}$/;
+
+                            if (!pattern.test(phone)) {
+                                alert("Masukkan nomor HP yang valid. Contoh: 081234567890 atau 6281234567890");
+                                return false;
+                            }
+
+                            return true;
+                        }
+                    </script>
+
 
                     <div id="loading"
                         class="fixed z-50 inset-0 bg-white bg-opacity-90 backdrop-blur-sm  flex flex-col justify-center items-center hidden">
@@ -352,43 +370,12 @@
                     </style>
 
 
-                    <script>
-                        function handleLoading(event) {
-                            event.preventDefault(); // Mencegah submit langsung
-
-                            const form = event.target;
-                            if (!form.checkValidity()) {
-                                form.reportValidity(); // Menampilkan pesan error bawaan browser
-                                return;
-                            }
-
-                            const nikInput = document.getElementById("nik").value;
-                            const passwordInput = document.getElementById("password").value;
-
-                            // Dummy Data NIK dan Password
-                            const validUser = {
-                                nik: "123",
-                                password: "user123"
-                            };
-
-                            if (nikInput === validUser.nik && passwordInput === validUser.password) {
-                                // Tampilkan loading dan sembunyikan form
-                                document.getElementById("loading").classList.remove("hidden");
-
-                                setTimeout(() => {
-                                    window.location.href = "user/buat_kunjungan.php"; // Redirect otomatis setelah 1 detik
-                                }, 1000);
-                            } else {
-                                alert("NIK dan Password tidak ditemukan!");
-                            }
-                        }
-                    </script>
                     <!--Form Login-->
 
 
                     <div class="ml-2 text-xs text-gray-600 mt-4">
-                        <li>Kode akan dikirim melalui Whatsapp</li>
-                        <li>Awali no dengan 62xxx</li>
+                        <li>Untuk melakukan pendaftaran login terlebih dahulu</li>
+                        <li>Kode verifikasi dikirim melalui Whatsapp</li>
                     </div>
                 </div>
             </div>
