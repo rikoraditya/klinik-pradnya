@@ -114,38 +114,28 @@
   
   <script>
     function showLoading(event) {
-        event.preventDefault(); // Mencegah pindah halaman langsung
-        let overlay = document.getElementById('loading-overlay');
-        
-        if (overlay) {
-            overlay.classList.remove('hidden'); // Tampilkan spinner
-        }
-
-        // Simulasikan loading dengan pushState
-        let targetUrl = event.target.href; // Simpan URL yang akan dikunjungi
-        history.pushState({ path: targetUrl }, '', targetUrl); // Simpan URL dalam state history
-        
-        // Tunggu sebentar, lalu pindah halaman
-        setTimeout(() => {
-            window.location.href = targetUrl; // Redirect ke halaman tujuan
-        }, 1000); // Delay 1 detik agar efek loading terlihat
+    event.preventDefault(); // Mencegah pindah halaman langsung
+    let overlay = document.getElementById('loading-overlay');
+    
+    if (overlay) {
+        overlay.classList.remove('hidden'); // Tampilkan spinner
     }
 
-    // Fungsi untuk menghilangkan loading spinner saat navigasi back
-    window.addEventListener('popstate', function() {
-        let overlay = document.getElementById('loading-overlay');
-        if (overlay) {
-            overlay.classList.add('hidden'); // Sembunyikan spinner saat back
-        }
-    });
+    let targetUrl = event.target.href; // Simpan URL yang akan dikunjungi
+    // Pastikan jika URL relative, tambahkan location.origin
+    if (!targetUrl.startsWith('http')) {
+        targetUrl = location.origin + '/' + targetUrl; // Menggunakan location.origin untuk absolute path
+    }
 
-    // Menambahkan event listener ke semua link dalam menu mobile dan desktop
-    document.addEventListener("DOMContentLoaded", function() {
-        let allLinks = document.querySelectorAll('a[href]'); // Ambil semua link dalam halaman
-        allLinks.forEach(link => {
-            link.addEventListener("click", showLoading);
-        });
-    });
+    history.pushState({ path: targetUrl }, '', targetUrl); // Simpan URL dalam state history
+    
+    // Tunggu sebentar, lalu pindah halaman
+    setTimeout(() => {
+        window.location.href = targetUrl; // Redirect ke halaman tujuan
+    }, 1000); // Delay 1 detik agar efek loading terlihat
+}
+
+
 </script>
     
        

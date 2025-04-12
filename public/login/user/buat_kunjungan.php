@@ -369,15 +369,16 @@
     </div>
   </div>
 
-  <!-- Overlay Loading Blur -->
+  <!-- Loading Overlay -->
   <div id="loadingOverlayy"
-    class="hidden fixed inset-0 backdrop-blur-sm bg-black bg-opacity-40 z-50 flex flex-col items-center justify-center">
-    <svg class="animate-spin h-8 w-8 z-50 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-      viewBox="0 0 24 24">
-      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-    </svg>
-    <p class="text-white text-sm mt-2">Mencari data pasien...</p>
+    class="hidden fixed inset-0 z-[9999] bg-black bg-opacity-50 backdrop-blur-md flex flex-col items-center justify-center">
+    <div class="flex flex-col items-center">
+      <svg class="animate-spin h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
+      <p class="text-white text-base mt-4">Mencari data pasien...</p>
+    </div>
   </div>
 
   <script>
@@ -391,19 +392,39 @@
       e.preventDefault(); // Stop pengiriman form sementara
 
       // Tampilkan overlay loading
-      document.getElementById("loadingOverlayy").classList.remove("hidden");
+      const loadingOverlay = document.getElementById("loadingOverlayy");
+      if (loadingOverlay) {
+        loadingOverlay.classList.remove("hidden");
+      }
 
       // Nonaktifkan tombol submit
       const submitBtn = document.getElementById("submitBtn");
-      submitBtn.disabled = true;
-      submitBtn.classList.add("opacity-50", "cursor-not-allowed");
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.classList.add("opacity-50", "cursor-not-allowed");
+      }
 
       // Tunggu 2 detik, lalu kirim form
       setTimeout(() => {
         e.target.submit(); // submit form manual
       }, 2000);
     });
+
+    // ✅ Tangani saat user kembali ke halaman (misalnya pakai tombol Back)
+    window.addEventListener("pageshow", function () {
+      const loadingOverlay = document.getElementById("loadingOverlayy");
+      if (loadingOverlay) {
+        loadingOverlay.classList.add("hidden");
+      }
+
+      const submitBtn = document.getElementById("submitBtn");
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("opacity-50", "cursor-not-allowed");
+      }
+    });
   </script>
+
 
   <script>
     document

@@ -35,24 +35,20 @@
                 overlay.classList.remove('hidden'); // Tampilkan spinner
             }
 
+            let targetUrl = event.target.href; // Simpan URL yang akan dikunjungi
+            // Pastikan jika URL relative, tambahkan location.origin
+            if (!targetUrl.startsWith('http')) {
+                targetUrl = location.origin + '/' + targetUrl; // Menggunakan location.origin untuk absolute path
+            }
+
+            history.pushState({ path: targetUrl }, '', targetUrl); // Simpan URL dalam state history
+
             // Tunggu sebentar, lalu pindah halaman
             setTimeout(() => {
-                window.location.href = event.target.href; // Redirect ke halaman tujuan
+                window.location.href = targetUrl; // Redirect ke halaman tujuan
             }, 1000); // Delay 1 detik agar efek loading terlihat
         }
-        // Tangani tombol back agar overlay tidak tetap muncul
-        window.addEventListener("pageshow", function () {
-            overlay.classList.add('hidden');
-        });
 
-
-        // Menambahkan event listener ke semua link dalam menu mobile dan desktop
-        document.addEventListener("DOMContentLoaded", function () {
-            let allLinks = document.querySelectorAll('a[href]'); // Ambil semua link dalam halaman
-            allLinks.forEach(link => {
-                link.addEventListener("click", showLoading);
-            });
-        });
     </script>
     <!--Script Loading-->
 
@@ -145,7 +141,7 @@
                         onclick="showLoading(event)" href="../hubungi.html">Hubungi Kami</a></li>
 
                 <li><a class="nav-item text-xs mx-2 text-white hover:text-gray-200 transition"
-                        onclick="showLoading(event)" href="user_login.html">Pendaftaran Online</a></li>
+                        onclick="showLoading(event)" href="user_login.php">Pendaftaran Online</a></li>
             </ul>
             <!--Login Amnin-->
             <div class="ml-auto hidden md:block">
@@ -238,7 +234,7 @@
                         </li>
                         <li class="mb-1 nav-item">
                             <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-gray-100 hover:shadow-md hover:text-emerald-900 rounded transition"
-                                onclick="showLoading(event)" href="user_login.html">Pendaftaran Online</a>
+                                onclick="showLoading(event)" href="user_login.php">Pendaftaran Online</a>
                         </li>
                     </ul>
                 </div>
@@ -327,16 +323,21 @@
                         </button>
                     </form>
 
+                    <!-- Loading Overlay -->
                     <div id="loadingOverlayy"
-                        class="hidden fixed inset-0 backdrop-blur-sm bg-black bg-opacity-40 z-50 flex flex-col items-center justify-center">
-                        <svg class="animate-spin h-8 w-8 z-50 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                            </circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                        </svg>
-                        <p class="text-white text-sm mt-2">Mengirim kode...</p>
+                        class="hidden fixed inset-0 z-[9999] bg-black bg-opacity-50 backdrop-blur-md flex flex-col items-center justify-center">
+                        <div class="flex flex-col items-center">
+                            <svg class="animate-spin h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+                                </path>
+                            </svg>
+                            <p class="text-white text-base mt-4 ">Mengirim kode...</p>
+                        </div>
                     </div>
+
 
                     <script>
                         function toggleModal() {
@@ -349,19 +350,40 @@
                             e.preventDefault(); // Stop pengiriman form sementara
 
                             // Tampilkan overlay loading
-                            document.getElementById("loadingOverlayy").classList.remove("hidden");
+                            const loadingOverlay = document.getElementById("loadingOverlayy");
+                            if (loadingOverlay) {
+                                loadingOverlay.classList.remove("hidden");
+                            }
 
                             // Nonaktifkan tombol submit
                             const submitBtn = document.getElementById("submitBtn");
-                            submitBtn.disabled = true;
-                            submitBtn.classList.add("opacity-50", "cursor-not-allowed");
+                            if (submitBtn) {
+                                submitBtn.disabled = true;
+                                submitBtn.classList.add("opacity-50", "cursor-not-allowed");
+                            }
 
                             // Tunggu 2 detik, lalu kirim form
                             setTimeout(() => {
                                 e.target.submit(); // submit form manual
                             }, 2000);
                         });
+
+                        // ✅ Tangani saat user kembali ke halaman (misalnya pakai tombol Back)
+                        window.addEventListener("pageshow", function () {
+                            const loadingOverlay = document.getElementById("loadingOverlayy");
+                            if (loadingOverlay) {
+                                loadingOverlay.classList.add("hidden");
+                            }
+
+                            const submitBtn = document.getElementById("submitBtn");
+                            if (submitBtn) {
+                                submitBtn.disabled = false;
+                                submitBtn.classList.remove("opacity-50", "cursor-not-allowed");
+                            }
+                        });
                     </script>
+
+
 
 
 

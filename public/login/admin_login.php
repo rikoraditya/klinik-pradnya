@@ -50,16 +50,27 @@ if (isset($_POST['login'])) {
   <link rel="stylesheet" href="../css/style.css" />
   <script>
     function showLoading(event) {
-      event.preventDefault();
-      document.getElementById("loadingOverlay").classList.remove("hidden");
+      event.preventDefault(); // Mencegah pindah halaman langsung
+      let overlay = document.getElementById('loading-overlay');
 
-      // Ambil URL dari data-href di button
-      let targetURL = event.target.getAttribute("data-href");
+      if (overlay) {
+        overlay.classList.remove('hidden'); // Tampilkan spinner
+      }
 
+      let targetUrl = event.target.href; // Simpan URL yang akan dikunjungi
+      // Pastikan jika URL relative, tambahkan location.origin
+      if (!targetUrl.startsWith('http')) {
+        targetUrl = location.origin + '/' + targetUrl; // Menggunakan location.origin untuk absolute path
+      }
+
+      history.pushState({ path: targetUrl }, '', targetUrl); // Simpan URL dalam state history
+
+      // Tunggu sebentar, lalu pindah halaman
       setTimeout(() => {
-        window.location.href = targetURL;
-      }, 1000);
+        window.location.href = targetUrl; // Redirect ke halaman tujuan
+      }, 1000); // Delay 1 detik agar efek loading terlihat
     }
+
   </script>
 </head>
 
@@ -81,21 +92,22 @@ if (isset($_POST['login'])) {
       </button>
       <p class="text-center text-xs text-gray-600 mt-4 font-poppins">
         Kembali ke halaman Website?
-        <a onclick="showLoading(event)" data-href="../index.html"
-          class="text-green-700 hover:text-emerald-800 font-bold text-xs cursor-pointer">klik Disini</a>
+        <a href="../index.html" class="text-green-700 hover:text-emerald-800 font-bold text-xs cursor-pointer">klik
+          Disini</a>
       </p>
     </form>
   </div>
   <!--Loading Akun-->
   <div id="loadingAdmin"
-    class="hidden fixed inset-0 backdrop-blur-sm bg-black bg-opacity-40 z-50 flex flex-col items-center justify-center">
-    <svg class="animate-spin h-8 w-8 z-50 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-      viewBox="0 0 24 24">
-      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-      </circle>
-      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-    </svg>
-    <p class="text-white text-sm mt-2">Loading...</p>
+    class="hidden fixed inset-0 z-[9999] bg-black bg-opacity-50 backdrop-blur-md flex flex-col items-center justify-center">
+    <div class="flex flex-col items-center">
+      <svg class="animate-spin h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+        </path>
+      </svg>
+      <p class="text-white text-base mt-4">Loading...</p>
+    </div>
   </div>
 
   <script>
