@@ -316,28 +316,126 @@ if (empty($_SESSION['csrf_token'])) {
 
                     <!-- Form Registrasi -->
 
-                    <div class="flex justify-center mb-4">
+                    <div class="flex justify-center mb-4" id="modalCekPasien">
 
                     </div>
                     <img src="../img/profil.png" alt="" class="w-20 pb-3 mx-auto">
                     <h2 class="text-xl font-poppins font-bold mb-4 text-center">Login</h2>
 
                     <!--Form Login-->
-                    <form method="post" action="verify_otp.php">
-                        <!-- Nomor HP disimpan di session, tidak perlu disertakan di form -->
+                    <h2 class="text-xl text-center justify-center font-bold text-gray-500 mb-4">Verifikasi Kode OTP</h2>
+                    <p class="text-gray-500 text-sm justify-center text-center mb-6">Masukkan 6 digit kode yang telah
+                        dikirim</p>
 
-                        <label class="block text-xs mb-1 text-left font-medium">Masukkan Kode OTP</label>
-                        <input type="text" name="otp" pattern="\d{6}" maxlength="6" required
-                            class="w-full p-2 text-xs border rounded mb-2" placeholder="Masukkan 6 digit kode OTP">
+                    <form id="formCekPasien" method="post" action="verify_otp.php" onsubmit="gabungkanOTP(event)">
+                        <div class="flex justify-center pb-2 text-sm gap-3">
+                            <input type="text" maxlength="1"
+                                class="otp-input w-11 h-11 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required>
+                            <input type="text" maxlength="1"
+                                class="otp-input w-11 h-11 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required>
+                            <input type="text" maxlength="1"
+                                class="otp-input w-11 h-11 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required>
+                            <input type="text" maxlength="1"
+                                class="otp-input w-11 h-11 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required>
+                            <input type="text" maxlength="1"
+                                class="otp-input w-11 h-11 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required>
+                            <input type="text" maxlength="1"
+                                class="otp-input w-11 h-11 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required>
+                        </div>
 
+
+                        <!-- Input tersembunyi untuk gabungan OTP -->
+                        <input type="hidden" name="otp" id="otpInput">
                         <!-- Token CSRF -->
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
 
-                        <button type="submit"
-                            class="w-full bg-[#297A2C] text-xs text-white px-4 py-2 mt-1 rounded hover:bg-green-900">
+                        <button id="submitBtn" type="submit" onclick="toggleModal()"
+                            class="w-full bg-[#297A2C] text-xs pt-2 text-white px-4 py-2 mt-1 rounded hover:bg-green-900">
                             Verifikasi
                         </button>
                     </form>
+
+
+
+                    <div id="loadingOverlayy"
+                        class="hidden fixed inset-0 backdrop-blur-sm bg-black bg-opacity-40 z-50 flex flex-col items-center justify-center">
+                        <svg class="animate-spin h-8 w-8 z-50 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                        </svg>
+                        <p class="text-white text-sm mt-2">Validasi kode...</p>
+                    </div>
+
+                    <script>
+                        function toggleModal() {
+                            const modal = document.getElementById("modalCekPasien");
+                            modal.classList.toggle("hidden");
+                            modal.classList.toggle("flex");
+                        }
+
+                        document.getElementById("formCekPasien").addEventListener("submit", function (e) {
+                            e.preventDefault(); // Stop pengiriman form sementara
+
+                            // Tampilkan overlay loading
+                            document.getElementById("loadingOverlayy").classList.remove("hidden");
+
+                            // Nonaktifkan tombol submit
+                            const submitBtn = document.getElementById("submitBtn");
+                            submitBtn.disabled = true;
+                            submitBtn.classList.add("opacity-50", "cursor-not-allowed");
+
+                            // Tunggu 2 detik, lalu kirim form
+                            setTimeout(() => {
+                                e.target.submit(); // submit form manual
+                            }, 2000);
+                        });
+                    </script>
+
+
+
+
+                    <script>
+                        // Gabungkan input OTP sebelum submit
+                        function gabungkanOTP(event) {
+                            const inputEls = document.querySelectorAll('.otp-input');
+                            let gabungan = '';
+                            inputEls.forEach(el => gabungan += el.value);
+
+                            // Isi ke input hidden
+                            document.getElementById('otpInput').value = gabungan;
+
+                            // Validasi jika tidak 6 digit
+                            if (gabungan.length !== 6) {
+                                event.preventDefault();
+                                alert("Kode OTP harus 6 digit.");
+                            }
+                        }
+
+                        // Script pindah input tetap dipakai
+                        const inputs = document.querySelectorAll('.otp-input');
+                        inputs.forEach((input, i) => {
+                            input.addEventListener('input', () => {
+                                if (input.value.length === 1 && i < inputs.length - 1) {
+                                    inputs[i + 1].focus();
+                                }
+                            });
+                            input.addEventListener('keydown', (e) => {
+                                if (e.key === 'Backspace' && !input.value && i > 0) {
+                                    inputs[i - 1].focus();
+                                }
+                            });
+                        });
+                    </script>
+
+
 
                     <div id="loading"
                         class="fixed z-50 inset-0 bg-white bg-opacity-90 backdrop-blur-sm  flex flex-col justify-center items-center hidden">

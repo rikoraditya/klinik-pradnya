@@ -58,7 +58,7 @@ if (isset($_POST['no_hp'])) {
         // Siapkan data pesan
         $data = [
             "target" => $no_hp,
-            "message" => "Om Swastyastu. Terimakasih sudah memilih layanan kami. Berikut Kode verifikasi Anda: *$otp*\nBerlaku selama 5 menit. Klinik Pradnya Usadha berkomitmen untuk menghadirkan inovasi layanan terbaik. Didukung oleh Dokter, Perawat, dan Staf yang ramah melayani pasien. Kami yakin akan selalu menjadi pilihan Anda dan Keluarga. Terimakasih\n\n#We Care With Cencerity"
+            "message" => "_*Om Swastyastu*_. Terimakasih sudah memilih layanan kami. Berikut kode verifikasi anda: *$otp*\nBerlaku selama 5 menit.\n\n*Klinik Pradnya Usadha* berkomitmen untuk menghadirkan inovasi layanan terbaik. Didukung oleh Dokter, Perawat, dan Staff yang ramah melayani pasien. Kami yakin akan selalu menjadi pilihan anda dan keluarga. Terimakasih\n\n*#We Care With Cencerity*\n*#Klinik Pradnya Usadha Klungkung*"
         ];
 
         // Kirim ke WhatsApp

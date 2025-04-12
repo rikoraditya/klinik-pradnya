@@ -1,44 +1,35 @@
 <?php
-
+session_start();
 use LDAP\Result;
 
-require '../../../../php/functions.php';
+require '../../php/functions.php';
 
-$id = $_GET["id"];
-$pasien = query("SELECT * FROM pasien WHERE id = $id")[0];
+if (isset($_POST['ubah'])) {
+    $username_baru = $_POST['username'];
+    $password_baru = $_POST['password'];
 
-echo "<!DOCTYPE html><html><head>
-<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
-</head><body>";
+    // Ambil username lama dari session
+    $login_user = $_SESSION['username'];
 
+    // Amankan password
+    // Jika kamu menggunakan password_hash, pastikan login pakai password_verify
+    // $password_baru = password_hash($password_baru, PASSWORD_DEFAULT);
 
-if (isset($_POST["submit"])) {
+    // Query update
+    $stmt = $conn->prepare("UPDATE admin SET username = ?, password = ? WHERE username = ?");
+    $stmt->bind_param("sss", $username_baru, $password_baru, $login_user);
 
-    if (update_pasien($_POST) > 0) {
-
-        echo "<script> 
-        Swal.fire({
-            icon: 'success',
-            title: 'Data Berhasil Diubah',
-            confirmButtonText: 'Kembali'
-        }).then(() => {
-            window.location.href = 'manage.php';
-        });
-    </script>";
+    if ($stmt->execute()) {
+        // Perbarui session
+        $_SESSION['username'] = $username_baru;
+        echo "<script>alert('Username dan Password berhasil diubah!'); window.location='dashboard.php';</script>";
     } else {
-        echo "<script> 
-        Swal.fire({
-            icon: 'error',
-            title: 'Data Gagal Diubah',
-            confirmButtonText: 'Kembali'
-        }).then(() => {
-            window.location.href = 'manage.php';
-        });
-    </script>";
+        echo "<script>alert('Gagal mengubah data.');</script>";
     }
-}
 
-echo "</body></html>";
+    $stmt->close();
+    $conn->close();
+}
 ?>
 
 
@@ -52,9 +43,10 @@ echo "</body></html>";
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../../../../css/style.css" />
+    <link rel="stylesheet" href="../../css/style.css" />
 </head>
 
 <body class="bg-gray-100">
@@ -75,7 +67,7 @@ echo "</body></html>";
                 document.getElementById("loadingOverlay").classList.remove("hidden");
 
                 setTimeout(() => {
-                    window.location.href = "admin.php";
+                    window.location.href = "admin.html";
                 }, 2000);
             }
         </script>
@@ -135,7 +127,7 @@ echo "</body></html>";
             <nav class="">
                 <div class="mb-2 mt-6">
                     <div class="mb-4">
-                        <a href="../../dashboard.php"
+                        <a href="dashboard.php"
                             class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
                             <i class="fas fa-chart-line"></i>
                             <span class="sidebar-text -ml-1">Dashboard</span>
@@ -151,9 +143,9 @@ echo "</body></html>";
                         <i class="fas fa-chevron-down sidebar-text" id="icon-pasien"></i>
                     </div>
                     <div id="pasienMenu" class="ml-10 font-poppins text-xs space-y-2 hidden submenu">
-                        <a href="../pasien/registrasi.php"
+                        <a href="crud/pasien/registrasi.php"
                             class="block cursor-pointer hover:text-gray-300">Registrasi</a>
-                        <a href="../pasien/manage.php" class="block cursor-pointer hover:text-gray-300">Manage
+                        <a href="crud/pasien/manage.php" class="block cursor-pointer hover:text-gray-300">Manage
                             Pasien</a>
                     </div>
                 </div>
@@ -167,9 +159,9 @@ echo "</body></html>";
                         <i class="fas fa-chevron-down sidebar-text" id="icon-dokter"></i>
                     </div>
                     <div id="dokterMenu" class="ml-10 font-poppins text-xs space-y-2 hidden submenu">
-                        <a href="../dokter/tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah
+                        <a href="crud/dokter/tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah
                             Dokter</a>
-                        <a href="../dokter/manage.php" class="block cursor-pointer hover:text-gray-300">Manage
+                        <a href="crud/dokter/manage.php" class="block cursor-pointer hover:text-gray-300">Manage
                             Dokter</a>
                     </div>
                 </div>
@@ -183,8 +175,8 @@ echo "</body></html>";
                         <i class="fas fa-chevron-down sidebar-text" id="icon-obat"></i>
                     </div>
                     <div id="obatMenu" class="ml-10 text-xs font-poppins space-y-2 hidden submenu">
-                        <a href="../obat/tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah Obat</a>
-                        <a href="../obat/manage.php" class="block cursor-pointer hover:text-gray-300">Manage Obat</a>
+                        <a href="crud/obat/tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah Obat</a>
+                        <a href="crud/obat/manage.php" class="block cursor-pointer hover:text-gray-300">Manage Obat</a>
                     </div>
                 </div>
                 <div class="mb-2">
@@ -197,9 +189,11 @@ echo "</body></html>";
                         <i class="fas fa-chevron-down sidebar-text" id="icon-rekamMedis"></i>
                     </div>
                     <div id="rekamMedisMenu" class="ml-10 text-xs font-poppins space-y-2 hidden submenu">
-                        <a href="../rekammedis/tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah Rekam
+                        <a href="crud/rekammedis/tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah
+                            Rekam
                             Medis</a>
-                        <a href="../rekammedis/manage.php" class="block cursor-pointer hover:text-gray-300">Manage Rekam
+                        <a href="crud/rekammedis/manage.php" class="block cursor-pointer hover:text-gray-300">Manage
+                            Rekam
                             Medis</a>
                     </div>
                 </div>
@@ -264,7 +258,7 @@ echo "</body></html>";
                 document.getElementById("loading").classList.remove("hidden");
 
                 setTimeout(() => {
-                    window.location.href = "../../../admin_login.php"; // Redirect otomatis setelah 1 detik
+                    window.location.href = "../admin_login.php"; // Redirect otomatis setelah 1 detik
                 }, 1000);
             }
         </script>
@@ -299,7 +293,7 @@ echo "</body></html>";
                             <p class="text-gray-800 font-semibold">Admin Panel</p>
                             <p class="text-sm text-gray-500">Klinik Pradnya Usadha</p>
                         </div>
-                        <a href="../../reset_pass_admin.php"
+                        <a href="reset_pass_admin.php"
                             class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
                             <i class="fas fa-lock text-gray-600 text-base pr-2"></i>
                             Akun
@@ -332,134 +326,34 @@ echo "</body></html>";
             </script>
             <!--Akhir header-->
 
-            <script>
-                function tambahForm() {
-                    let formAsli = document.getElementById("formRekamMedis");
-                    let formBaru = formAsli.cloneNode(true);
-                    formBaru.id = "";
-                    formBaru.querySelectorAll("input, select").forEach(input => {
-                        input.value = input.value;
-                    });
-                    document.getElementById("formContainer").appendChild(formBaru);
-                }
-            </script>
-
             <!-- Main Content -->
             <main class="flex-1 p-8 ml-64 transition-all duration-300 font-poppins" id="mainContent">
-                <h1 class="text-2xl font-bold">Data</h1>
-                <p class="text-gray-600">Update Data</p>
-                <div class="max-w-7xl bg-white p-6 rounded-lg shadow-md mt-4">
-                    <h4 class="text-lg font-semibold mb-4">Pasien</h4>
-                    <div id="formContainer text-xs">
+                <h1 class="text-xl font-bold font-poppins">Admin</h1>
+                <p class="text-gray-600">Klinik Pradnya Usadha</p>
 
+                <div class="max-w-full mt-4 mx-auto bg-white p-6 rounded-lg shadow-md text-sm">
 
+                    <form action="" method="POST" class="space-y-4">
+                        <div>
+                            <label class="block font-medium ">Username</label>
+                            <input type="text" name="username" required class="w-full text-sm p-2 border rounded-md"
+                                placeholder="Username Baru">
+                        </div>
 
-                        <form action="" method="POST" class="space-y-4 text-xs text-gray-600">
-                            <input type="hidden" name="id" value="<?= $pasien['id']; ?>">
-                            <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <label class="block font-medium">Password</label>
+                            <input type="password" name="password" required class="w-full p-2 border text-sm rounded-md"
+                                placeholder="Password Baru">
+                        </div>
 
-                                <div>
-                                    <label class="block  font-medium">No. Pendaftaran Pasien</label>
-                                    <input type="text" name="no_antrian" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['no_antrian'] ?? '' ?>" readonly>
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">Nama Pasien</label>
-                                    <input type="text" name="nama" id="nama" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['nama'] ?? '' ?>">
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">No. KTP</label>
-                                    <input type="text" name="nik" id="nik" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['nik'] ?? '' ?>">
-                                </div>
-
-                            </div>
-                            <div class="grid grid-cols-3 gap-4">
-
-                                <div>
-                                    <label class="block  font-medium">Jenis Kelamin</label>
-                                    <input type="text" name="jenis_kelamin" id="jenis_kelamin"
-                                        class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['jenis_kelamin'] ?? '' ?>">
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">No. HP</label>
-                                    <input type="text" name="no_hp" id="no_hp" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['no_hp'] ?? '' ?>">
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">Alamat</label>
-                                    <input type="text" name="alamat" id="alamat" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['alamat'] ?? '' ?>">
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-3 gap-4">
-                                <div>
-                                    <label class="block  font-medium">Tempat Lahir</label>
-                                    <input type="text" name="tempat_lahir" id="tempat_lahir"
-                                        class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['tempat_lahir'] ?? '' ?>">
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">Tanggal Lahir</label>
-                                    <input type="date" name="tanggal_lahir" id="tanggal_lahir"
-                                        class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['tanggal_lahir'] ?? '' ?>">
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">Tanggal Kunjungan</label>
-                                    <input type="date" name="tanggal_kunjungan" id="tanggal_kunjungan"
-                                        class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['tanggal_kunjungan'] ?>">
-                                </div>
-
-                            </div>
-                            <div class="grid grid-cols-3 gap-4">
-                                <div>
-                                    <label class="block font-medium">Poli Tujuan</label>
-                                    <select class="w-full p-2 border rounded-md" name="poli_tujuan" id="poli_tujuan">
-                                        <option value="Poli Umum" <?= ($pasien['poli_tujuan'] ?? '') === 'Poli Umum' ? 'selected' : '' ?>>Poli Umum</option>
-                                        <option value="Poli Gigi" <?= ($pasien['poli_tujuan'] ?? '') === 'Poli Gigi' ? 'selected' : '' ?>>Poli Gigi</option>
-                                    </select>
-                                </div>
-
-
-                                <div>
-                                    <label class="block  font-medium">Keluhan</label>
-                                    <input type="text" name="keluhan" id="keluhan" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['keluhan'] ?>">
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">Jenis Pasien</label>
-                                    <select class="w-full p-2 border rounded-md" name="jenis_pasien" id="jenis_pasien">
-                                        <option value="Umum" <?= ($pasien['jenis_pasien'] ?? '') === 'Umum' ? 'selected' : '' ?>>Umum</option>
-                                        <option value="BPJS" <?= ($pasien['jenis_pasien'] ?? '') === 'BPJS' ? 'selected' : '' ?>>BPJS</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-4 gap-4">
-                                <div>
-                                    <label class="block  font-medium">No. NIK/BPJS</label>
-                                    <input type="text" name="nik_bpjs" id="nik_bpjs"
-                                        class="w-full p-2 border rounded-md" value="<?= $pasien['nik_bpjs'] ?>">
-                                </div>
-
-                            </div>
-
-                            <button type="submit" name="submit"
-                                class="mt-4 bg-green-800 hover:bg-green-900 text-white py-2 px-3 rounded-md text-xs">Update</button>
-                            <a href="manage.php"
-                                class="bg-red-700 hover:bg-red-900 text-white py-2 px-3 rounded-md text-xs relative">
-                                Kembali
-                            </a>
-
-
-                    </div>
-
+                        <button type="submit" name="ubah"
+                            class="bg-blue-600 hover:bg-blue-800 text-white py-2 px-3 rounded-md text-xs">Simpan</button>
+                        <a href="dashboard.php"
+                            class="bg-red-700 hover:bg-red-900 text-white py-2 px-3 rounded-md text-xs relative">
+                            Kembali
+                        </a>
+                    </form>
                 </div>
-
             </main>
         </div>
 

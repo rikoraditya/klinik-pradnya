@@ -16,6 +16,7 @@ $pasien = query("SELECT * FROM pasien");
   <title>Admin Dashboard Antrian</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
@@ -248,9 +249,39 @@ $pasien = query("SELECT * FROM pasien");
     <!-- Content -->
     <div class="flex-1 flex flex-col">
       <!-- Header -->
-      <header class="bg-gray-100 p-7 shadow-md flex justify-between items-center sticky top-0">
+      <header class="bg-gray-100 p-4 shadow-md flex justify-between items-center sticky top-0">
+
+        <div class="relative cursor-pointer ml-auto">
+          <div class="flex items-center space-x-2">
+            <!-- Ikon Profil Modern dan Teks Admin -->
+            <i class="fas fa-user-circle text-gray-600 text-2xl"></i>
+            <span id="dropdownButton" class="text-sm font-medium text-gray-700">Admin</span>
+
+          </div>
+          <!-- Dropdown menu -->
+          <div id="dropdownMenu"
+            class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200">
+            <div class="p-4 border-b">
+              <p class="text-gray-800 font-semibold">Admin Panel</p>
+              <p class="text-sm text-gray-500">Klinik Pradnya Usadha</p>
+            </div>
+            <a href="reset_pass_admin.php" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
+              <i class="fas fa-lock text-gray-600 text-base pr-2"></i>
+              Akun
+            </a>
+          </div>
 
       </header>
+
+
+      <script>
+        document.getElementById('dropdownButton').addEventListener('click', function () {
+          document.getElementById('dropdownMenu').classList.toggle('hidden');
+        });
+      </script>
+
+
+
 
       <script>
         function toggleSidebar() {
@@ -329,9 +360,13 @@ $pasien = query("SELECT * FROM pasien");
                   <td class="border p-2 truncate w-20 md">
                     <?= $row["nama"]; ?>
                   </td>
-                  <td class="border p-2 truncate w-20 md"><?= $row["nik"]; ?></td>
+                  <td class="border p-2 truncate w-20 md">
+                    <?= strlen($row['nik']) > 10 ? substr($row['nik'], 0, 10) . '...' : $row["nik"]; ?>
+                  </td>
                   <td class="border p-2 w-8 md"><?= $row["jenis_kelamin"]; ?></td>
-                  <td class="border p-2 truncate w-20 md"><?= $row["no_hp"]; ?></td>
+                  <td class="border p-2 truncate w-20 md">
+                    <?= strlen($row['no_hp']) > 10 ? substr($row['no_hp'], 0, 10) . '...' : $row["no_hp"]; ?>
+                  </td>
                   <td class="border p-2 truncate  md">
                     <?= strlen($row['keluhan']) > 15 ? substr($row['keluhan'], 0, 15) . '...' : $row["keluhan"]; ?>
                   </td>

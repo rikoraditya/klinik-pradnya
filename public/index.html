@@ -167,30 +167,41 @@ document.addEventListener("click", function playAudio() {
 <!--akhir nav-->
 
 <!--Script Nav-->
-
 <script>
-    function showLoading(event) {
-        event.preventDefault(); // Mencegah pindah halaman langsung
-        let overlay = document.getElementById('loading-overlay');
-        
-        if (overlay) {
-            overlay.classList.remove('hidden'); // Tampilkan spinner
-        }
-  
-        // Tunggu sebentar, lalu pindah halaman
-        setTimeout(() => {
-            window.location.href = event.target.href; // Redirect ke halaman tujuan
-        }, 1000); // Delay 1 detik agar efek loading terlihat
-    }
-      // Menambahkan event listener ke semua link dalam menu mobile dan desktop
-      document.addEventListener("DOMContentLoaded", function() {
-          let allLinks = document.querySelectorAll('a[href]'); // Ambil semua link dalam halaman
-          allLinks.forEach(link => {
-              link.addEventListener("click", showLoading);
-          });
+  function showLoading(event) {
+      event.preventDefault(); // Mencegah pindah halaman langsung
+      let overlay = document.getElementById('loading-overlay');
+      
+      if (overlay) {
+          overlay.classList.remove('hidden'); // Tampilkan spinner
+      }
+
+      // Simulasikan loading dengan pushState
+      let targetUrl = event.target.href; // Simpan URL yang akan dikunjungi
+      history.pushState({ path: targetUrl }, '', targetUrl); // Simpan URL dalam state history
+      
+      // Tunggu sebentar, lalu pindah halaman
+      setTimeout(() => {
+          window.location.href = targetUrl; // Redirect ke halaman tujuan
+      }, 1000); // Delay 1 detik agar efek loading terlihat
+  }
+
+  // Fungsi untuk menghilangkan loading spinner saat navigasi back
+  window.addEventListener('popstate', function() {
+      let overlay = document.getElementById('loading-overlay');
+      if (overlay) {
+          overlay.classList.add('hidden'); // Sembunyikan spinner saat back
+      }
+  });
+
+  // Menambahkan event listener ke semua link dalam menu mobile dan desktop
+  document.addEventListener("DOMContentLoaded", function() {
+      let allLinks = document.querySelectorAll('a[href]'); // Ambil semua link dalam halaman
+      allLinks.forEach(link => {
+          link.addEventListener("click", showLoading);
       });
-    
-  </script>
+  });
+</script>
   
      
   <!--Script Nav-->
@@ -301,10 +312,10 @@ document.addEventListener("click", function playAudio() {
         <p class="font-poppins text-5xl font-extrabold text-[#6F5F5F] ml-14 md:ml-24 mt-14">We <span class="text-[#297A2C]">Care</span></p>
         <p class="font-poppins text-5xl font-extrabold text-[#6F5F5F] ml-14 md:ml-24 mt-6 ">With <span class=" text-[#297A2C]">Cencerity</span></p>
         <div class="mt-14">
-          <a href="login/user_login.php"  class="relative  font-extralight px-3 py-2 text-white font-poppins rounded-md ml-4 md:ml-14 shadow-lg transition-all transform overflow-hidden text-center" 
+          <a href="login/user_login.php"  class="relative text-sm  font-extralight px-3 py-2 text-white font-poppins rounded-md ml-4 md:ml-14 shadow-lg transition-all transform overflow-hidden text-center" 
         style="background: linear-gradient(45deg, #32CD32, #008000, #228B22);
                background-size: 200% 200%;
-               animation: gradient-move 3s infinite alternate ease-in-out;">DAFTAR ONLINE</a>
+               animation: gradient-move 3s infinite alternate ease-in-out;">Daftar Online</a>
 </div>
 
 

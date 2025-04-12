@@ -1,45 +1,25 @@
 <?php
-
-use LDAP\Result;
-
+session_start(); // Memulai session untuk mengambil data yang disimpan
 require '../../../../php/functions.php';
 
-$id = $_GET["id"];
-$pasien = query("SELECT * FROM pasien WHERE id = $id")[0];
 
-echo "<!DOCTYPE html><html><head>
-<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
-</head><body>";
+$rekam_medis = [];
+$pasien = [];
 
 
-if (isset($_POST["submit"])) {
-
-    if (update_pasien($_POST) > 0) {
-
-        echo "<script> 
-        Swal.fire({
-            icon: 'success',
-            title: 'Data Berhasil Diubah',
-            confirmButtonText: 'Kembali'
-        }).then(() => {
-            window.location.href = 'manage.php';
-        });
-    </script>";
-    } else {
-        echo "<script> 
-        Swal.fire({
-            icon: 'error',
-            title: 'Data Gagal Diubah',
-            confirmButtonText: 'Kembali'
-        }).then(() => {
-            window.location.href = 'manage.php';
-        });
-    </script>";
-    }
+// Cek apakah ada data pasien di session
+if (isset($_SESSION['pasien_lama'])) {
+    $pasien = $_SESSION['pasien_lama'];
+    $rekam_medis = $_SESSION['pasien_lama'];
+} else {
+    // Redirect jika data tidak ada di session
+    header("Location: registrasi.php");
+    exit();
 }
 
-echo "</body></html>";
+
 ?>
+
 
 
 <!DOCTYPE html>
@@ -347,31 +327,30 @@ echo "</body></html>";
             <!-- Main Content -->
             <main class="flex-1 p-8 ml-64 transition-all duration-300 font-poppins" id="mainContent">
                 <h1 class="text-2xl font-bold">Data</h1>
-                <p class="text-gray-600">Update Data</p>
+                <p class="text-gray-600">Pendaftaran Pasien Lama</p>
                 <div class="max-w-7xl bg-white p-6 rounded-lg shadow-md mt-4">
                     <h4 class="text-lg font-semibold mb-4">Pasien</h4>
                     <div id="formContainer text-xs">
 
 
 
-                        <form action="" method="POST" class="space-y-4 text-xs text-gray-600">
-                            <input type="hidden" name="id" value="<?= $pasien['id']; ?>">
+                        <form action="../../../../php/proses_admin.php" method="POST"
+                            class="space-y-4 text-xs text-gray-600">
                             <div class="grid grid-cols-3 gap-4">
-
                                 <div>
-                                    <label class="block  font-medium">No. Pendaftaran Pasien</label>
-                                    <input type="text" name="no_antrian" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['no_antrian'] ?? '' ?>" readonly>
+                                    <label class="block  font-medium">No. RM</label>
+                                    <input type="text" name="no_rm" class="w-full p-2 border rounded-md"
+                                        value="<?= $rekam_medis['no_rm'] ?? '' ?>" readonly>
                                 </div>
                                 <div>
                                     <label class="block  font-medium">Nama Pasien</label>
-                                    <input type="text" name="nama" id="nama" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['nama'] ?? '' ?>">
+                                    <input type="text" name="nama" class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['nama'] ?? '' ?>" readonly>
                                 </div>
                                 <div>
                                     <label class="block  font-medium">No. KTP</label>
-                                    <input type="text" name="nik" id="nik" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['nik'] ?? '' ?>">
+                                    <input type="text" name="nik" class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['nik'] ?? '' ?>" readonly>
                                 </div>
 
                             </div>
@@ -379,82 +358,83 @@ echo "</body></html>";
 
                                 <div>
                                     <label class="block  font-medium">Jenis Kelamin</label>
-                                    <input type="text" name="jenis_kelamin" id="jenis_kelamin"
-                                        class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['jenis_kelamin'] ?? '' ?>">
+                                    <input type="text" name="jenis_kelamin" class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['jenis_kelamin'] ?? '' ?>" readonly>
                                 </div>
                                 <div>
                                     <label class="block  font-medium">No. HP</label>
-                                    <input type="text" name="no_hp" id="no_hp" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['no_hp'] ?? '' ?>">
+                                    <input type="text" name="no_hp" class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['no_hp'] ?? '' ?>" readonly>
                                 </div>
                                 <div>
                                     <label class="block  font-medium">Alamat</label>
-                                    <input type="text" name="alamat" id="alamat" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['alamat'] ?? '' ?>">
+                                    <input type="text" name="alamat" class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['alamat'] ?? '' ?>" readonly>
                                 </div>
                             </div>
                             <div class="grid grid-cols-3 gap-4">
                                 <div>
                                     <label class="block  font-medium">Tempat Lahir</label>
-                                    <input type="text" name="tempat_lahir" id="tempat_lahir"
-                                        class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['tempat_lahir'] ?? '' ?>">
+                                    <input type="text" name="tempat_lahir" class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['tempat_lahir'] ?? '' ?>" readonly>
                                 </div>
                                 <div>
                                     <label class="block  font-medium">Tanggal Lahir</label>
-                                    <input type="date" name="tanggal_lahir" id="tanggal_lahir"
-                                        class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['tanggal_lahir'] ?? '' ?>">
+                                    <input type="date" name="tanggal_lahir" class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['tanggal_lahir'] ?? '' ?>" readonly>
                                 </div>
                                 <div>
                                     <label class="block  font-medium">Tanggal Kunjungan</label>
-                                    <input type="date" name="tanggal_kunjungan" id="tanggal_kunjungan"
-                                        class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['tanggal_kunjungan'] ?>">
+                                    <input type="date" name="tanggal_kunjungan" required
+                                        class="w-full p-2 border rounded-md">
                                 </div>
 
                             </div>
                             <div class="grid grid-cols-3 gap-4">
                                 <div>
-                                    <label class="block font-medium">Poli Tujuan</label>
-                                    <select class="w-full p-2 border rounded-md" name="poli_tujuan" id="poli_tujuan">
-                                        <option value="Poli Umum" <?= ($pasien['poli_tujuan'] ?? '') === 'Poli Umum' ? 'selected' : '' ?>>Poli Umum</option>
-                                        <option value="Poli Gigi" <?= ($pasien['poli_tujuan'] ?? '') === 'Poli Gigi' ? 'selected' : '' ?>>Poli Gigi</option>
+                                    <label class="block  font-medium">Poli Tujuan</label>
+                                    <select class="w-full p-2 border rounded-md" required name="poli_tujuan">
+                                        <option>-- Pilih Poli --</option>
+                                        <option value="Poli Umum">Poli Umum</option>
+                                        <option value="Poli Gigi">Poli Gigi</option>
+
                                     </select>
                                 </div>
+
+
+                                <div>
+                                    <label class="block  font-medium">Jenis Pasien</label>
+                                    <select name="jenis_pasien" class="w-full p-2 border rounded-md" required>
+                                        <option>...</option>
+                                        <option value="Umum">Umum</option>
+                                        <option value="BPJS">BPJS</option>
+
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block  font-medium">No. NIK/BPJS</label>
+                                    <input type="text" name="nik_bpjs" required class="w-full p-2 border rounded-md">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-4">
 
 
                                 <div>
                                     <label class="block  font-medium">Keluhan</label>
-                                    <input type="text" name="keluhan" id="keluhan" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['keluhan'] ?>">
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">Jenis Pasien</label>
-                                    <select class="w-full p-2 border rounded-md" name="jenis_pasien" id="jenis_pasien">
-                                        <option value="Umum" <?= ($pasien['jenis_pasien'] ?? '') === 'Umum' ? 'selected' : '' ?>>Umum</option>
-                                        <option value="BPJS" <?= ($pasien['jenis_pasien'] ?? '') === 'BPJS' ? 'selected' : '' ?>>BPJS</option>
-                                    </select>
+                                    <textarea type="text" name="keluhan" required
+                                        class="w-full p-2 border rounded-md"></textarea>
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-4 gap-4">
-                                <div>
-                                    <label class="block  font-medium">No. NIK/BPJS</label>
-                                    <input type="text" name="nik_bpjs" id="nik_bpjs"
-                                        class="w-full p-2 border rounded-md" value="<?= $pasien['nik_bpjs'] ?>">
-                                </div>
-
-                            </div>
-
-                            <button type="submit" name="submit"
-                                class="mt-4 bg-green-800 hover:bg-green-900 text-white py-2 px-3 rounded-md text-xs">Update</button>
-                            <a href="manage.php"
+                            <button type="submit"
+                                class="mt-4 bg-green-800 hover:bg-green-900 text-white py-2 px-3 rounded-md text-xs">Daftar</button>
+                            <a href="registrasi.php"
                                 class="bg-red-700 hover:bg-red-900 text-white py-2 px-3 rounded-md text-xs relative">
                                 Kembali
                             </a>
 
+                        </form>
 
                     </div>
 

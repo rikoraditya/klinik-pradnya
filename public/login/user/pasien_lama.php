@@ -1,55 +1,24 @@
 <?php
-session_start();
+session_start(); // Memulai session untuk mengambil data yang disimpan
 require '../../php/functions.php';
 
-// Fungsi normalisasi no HP
-function normalize_hp($no_hp)
-{
-  $no_hp = preg_replace('/[^0-9]/', '', $no_hp);
-  if (substr($no_hp, 0, 1) === '0') {
-    $no_hp = '62' . substr($no_hp, 1);
-  }
-  return $no_hp;
-}
 
-// Cek apakah user sudah login
-if (!isset($_SESSION['no_hp'])) {
-  echo "Anda belum login.";
-  exit;
-}
+$rekam_medis = [];
+$pasien = [];
 
-$no_hp = normalize_hp($_SESSION['no_hp']);
-$row = null;
-$notif = null;
-$today = date('Y-m-d');
 
-// Cek koneksi database
-if (!$conn) {
-  die("Koneksi database gagal: " . mysqli_connect_error());
-}
-
-$stmt = mysqli_prepare($conn, "SELECT * FROM pasien WHERE no_hp = ? AND tanggal_kunjungan = ? ORDER BY id DESC LIMIT 1");
-
-if ($stmt) {
-  mysqli_stmt_bind_param($stmt, 'ss', $no_hp, $today);
-  mysqli_stmt_execute($stmt);
-  $result = mysqli_stmt_get_result($stmt);
-
-  if ($result && mysqli_num_rows($result) > 0) {
-    $row = mysqli_fetch_assoc($result);
-  } else {
-    $notif = "Anda belum melakukan pendaftaran hari ini.";
-  }
-
-  mysqli_stmt_close($stmt);
+// Cek apakah ada data pasien di session
+if (isset($_SESSION['pasien_lama'])) {
+  $pasien = $_SESSION['pasien_lama'];
+  $rekam_medis = $_SESSION['pasien_lama'];
 } else {
-  $notif = "Gagal menyiapkan statement SQL.";
+  // Redirect jika data tidak ada di session
+  header("Location: registrasi.php");
+  exit();
 }
+
+
 ?>
-
-
-
-
 
 
 <!DOCTYPE html>
@@ -243,7 +212,6 @@ if ($stmt) {
       }
     </script>
     <!--Logout-->
-
     <style>
       #sidebar-overlay {
         position: fixed;
@@ -283,165 +251,185 @@ if ($stmt) {
     </script>
 
     <!-- Main Content -->
-    <main class="flex-1 p-4 transition-all md:ml-48 duration-300" id="mainContent">
-      <!--Antrian-->
+    <main class="flex-1 p-8 ml-64 transition-all duration-300 font-poppins" id="mainContent">
+
       <div class="bg-gray-100">
         <div class="max-w-6xl mx-auto pb-10">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- Informasi Pendaftaran -->
-            <div class="font-poppins hidden md:block" data-aos="fade-up" data-aos-duration="2000">
-              <h2 class="text-green-700 font-bold md:mt-7 text-sm">
+            <div class="font-poppins" data-aos="fade-up" data-aos-duration="2000">
+              <h2 class="text-green-700 font-bold mt-14 md:mt-7 text-sm">
                 PENDAFTARAN PASIEN RAWAT JALAN
               </h2>
               <h1 class="text-xl md:text-2xl font-bold">
-                Diharapkan Menuju Klinik Setelah <br />
-                Melakukan Pendaftaran
+                Lakukan Pendaftaran Untuk <br />
+                Keluarga Tercinta Anda
               </h1>
-              <img class="w-11/12" src="../../img/pas.png" alt="" />
+              <img src="../../img/pendaftaran.PNG" alt="" class="w-11/12 mt-3 -ml- hidden md:block" />
             </div>
             <!-- Form Pendaftaran -->
-            <div class="md:mt-3 mt-10 ">
+            <div class="bg-white p-6 md:h-max rounded-lg shadow-md md:mt-2 font-poppins">
+              <h2 class="text-md font-bold mb-4">Pendaftaran Pasien Lama</h2>
+              <form action="../../php/proses.php" method="POST" class="space-y-3 md:space-y-2 text-xs">
+                <div class="grid grid-cols-1 gap-4">
+                  <div>
+                    <label class="block text-gray-700">No. RM</label>
+                    <input type="text" name="no_rm" required
+                      class="w-full border border-gray-300 rounded-md p-2 text-gray-400"
+                      value="<?= $rekam_medis['no_rm'] ?? '' ?>" readonly />
+                  </div>
 
-
-
-              <?php if ($notif): ?>
-                <style>
-                  @keyframes fadeInUp {
-                    from {
-                      opacity: 0;
-                      transform: translateY(20px);
-                    }
-
-                    to {
-                      opacity: 1;
-                      transform: translateY(0);
-                    }
-                  }
-
-                  .animate-fade-in {
-                    animation: fadeInUp 0.6s ease-out forwards;
-                  }
-                </style>
-
-                <div class="relative z-10 max-w-2xl mx-auto mt-12 px-6 pb-4">
-                  <!-- Background kuning kedip -->
-                  <div class="absolute inset-0 bg-yellow-100/80 blur-xl opacity-80 rounded-3xl animate-pulse"></div>
-
-                  <!-- Notification Card -->
-                  <div
-                    class="relative backdrop-blur-md bg-yellow-50/90 border border-yellow-300 text-yellow-900 p-6 rounded-3xl shadow-2xl flex items-start space-x-4 animate-fade-in">
-
-                    <!-- Icon medical -->
-                    <div class="flex-shrink-0 mt-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-yellow-600" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M9 12h6m-3-3v6m0-10a9 9 0 100 18 9 9 0 000-18z" />
-                      </svg>
-                    </div>
-
-                    <!-- Isi konten notifikasi -->
-                    <div class="flex-1">
-                      <h3 class="font-bold text-xl mb-1">🔔 Klinik Pradnya Usadha</h3>
-                      <p class="text-base leading-relaxed"><?= htmlspecialchars($notif); ?></p>
-
-                      <!-- Tombol CTA -->
-                      <div class="mt-4">
-                        <a href="buat_kunjungan.php"
-                          class="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-xl font-semibold shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                          </svg>
-                          Daftar Sekarang
-                        </a>
-                      </div>
-                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-gray-700">Nama Pasien</label>
+                    <input type="text" name="nama" required
+                      class="w-full border border-gray-300 rounded-md p-2 text-gray-400"
+                      value="<?= $pasien['nama'] ?? '' ?>" readonly />
+                  </div>
+                  <div>
+                    <label class="block text-gray-700">No. KTP</label>
+                    <input type="text" name="nik" required pattern="\d{16}"
+                      class="w-full border border-gray-300 rounded-md p-2 text-gray-400"
+                      value="<?= $pasien['nik'] ?? '' ?>" readonly />
                   </div>
                 </div>
-              <?php endif; ?>
-
-
-
-
-
-              <?php if ($row): ?>
-                <style>
-                  @keyframes fadeInUp {
-                    from {
-                      opacity: 0;
-                      transform: translateY(20px);
-                    }
-
-                    to {
-                      opacity: 1;
-                      transform: translateY(0);
-                    }
-                  }
-
-                  .animate-fade-in {
-                    animation: fadeInUp 0.6s ease-out forwards;
-                  }
-                </style>
-
-                <div class="relative z-10 max-w-3xl mx-auto mt-8  md:mt-0 px-3 pb-6 font-poppins">
-                  <!-- Background lembut -->
-                  <div class="absolute inset-0 bg-green-100/40 blur-xl opacity-60 rounded-3xl animate-fade-in"></div>
-
-                  <!-- Data Card -->
-                  <div
-                    class="relative backdrop-blur-md bg-white/80 border border-blue-200 p-6 rounded-2xl shadow-2xl animate-fade-in space-y-5">
-                    <h2 class="text-xl font-bold text-green-900 flex items-center gap-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M5.121 17.804A9 9 0 1118.88 6.196 9 9 0 015.121 17.804z" />
-                      </svg>
-                      Pendaftaran Anda
-                    </h2>
-
-                    <!-- Grid Data -->
-                    <div class="space-y-4 text-sm text-gray-800">
-                      <?php
-                      $dataPasien = [
-                        'Nama Pasien' => $row["nama"],
-                        'No. KTP' => $row["nik"],
-                        'Jenis Kelamin' => $row["jenis_kelamin"],
-                        'No. HP' => $row["no_hp"],
-                        'Tanggal Lahir' => $row["tanggal_lahir"],
-                        'Alamat' => $row["alamat"],
-                        'Keluhan' => $row["keluhan"],
-                        'Tanggal Kunjungan' => $row["tanggal_kunjungan"],
-                        'Poli Tujuan' => $row["poli_tujuan"],
-                        'Jenis Pasien' => $row["jenis_pasien"],
-                        'NIK / No. BPJS' => $row["nik_bpjs"]
-                      ];
-
-                      foreach ($dataPasien as $label => $value): ?>
-                        <div class="grid grid-cols-3 gap-2 items-start border-b pb-2">
-                          <span class="text-green-800 font-semibold col-span-1"><?= $label; ?></span>
-                          <span class="col-span-2"><?= htmlspecialchars($value); ?></span>
-                        </div>
-                      <?php endforeach; ?>
-                    </div>
-
-                    <!-- Antrian -->
-                    <div class="mt-6 p-4 bg-green-700 text-white text-center rounded-2xl shadow-lg">
-                      <h3 class="text-sm font-semibold tracking-wide">Nomor Antrian Anda</h3>
-                      <p class="text-3xl font-bold mt-2"><?= $row["no_antrian"]; ?></p>
-                    </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block  font-medium">Jenis Kelamin</label>
+                    <input type="text" name="jenis_kelamin" class="w-full p-2 border rounded-md text-gray-400"
+                      value="<?= $pasien['jenis_kelamin'] ?? '' ?>" readonly>
+                  </div>
+                  <div>
+                    <label class="block text-gray-700">No. HP</label>
+                    <input type="text" name="no_hp" required pattern="\d{10,13}"
+                      class="w-full border border-gray-300 rounded-md p-2 text-gray-400"
+                      value="<?= $pasien['no_hp'] ?? '' ?>" readonly />
                   </div>
                 </div>
-              <?php endif; ?>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-gray-700">Tempat Lahir</label>
+                    <input type="text" name="tempat_lahir" required
+                      class="w-full border border-gray-300 rounded-md p-2 text-gray-400"
+                      value="<?= $pasien['tempat_lahir'] ?? '' ?>" readonly />
+                  </div>
+                  <div>
+                    <label class="block text-gray-700">Tanggal Lahir</label>
+                    <input type="date" name="tanggal_lahir" required
+                      class="w-full border border-gray-300 rounded-md p-2 text-gray-400"
+                      value="<?= $pasien['tanggal_lahir'] ?? '' ?>" readonly />
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-gray-700">Alamat</label>
+                    <input type="text" name="alamat" required
+                      class="w-full border border-gray-300 rounded-md p-2 text-gray-400"
+                      value="<?= $pasien['alamat'] ?? '' ?>" readonly />
+                  </div>
+                  <div>
+                    <label class="block text-gray-700">Tanggal Kunjungan</label>
+                    <input type="date" name="tanggal_kunjungan" required
+                      class="w-full border border-gray-300 rounded-md p-2" />
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-gray-700">Keluhan</label>
+                  <textarea name="keluhan" required class="w-full border border-gray-300 rounded-md p-2"></textarea>
+                </div>
+                <div>
+                  <label class="block text-gray-700">Poli Tujuan</label>
+                  <select name="poli_tujuan" required class="w-full border border-gray-300 rounded-md p-2">
+                    <option value="">...</option>
+                    <option value="Poli Umum">Poli Umum</option>
+                    <option value="Poli Gigi">Poli Gigi</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-gray-700">Jenis Pasien</label>
+                  <select name="jenis_pasien" required class="w-full border border-gray-300 rounded-md p-2">
+                    <option value="">...</option>
+                    <option value="Umum">Umum</option>
+                    <option value="BPJS">BPJS</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-gray-700">NIK / No. BPJS</label>
+                  <input type="text" name="nik_bpjs" required placeholder="Masukkan NIK / No. BPJS"
+                    class="w-full border border-gray-300 rounded-md p-2" />
+                  <div class="mt-1 text-xs ml-2 opacity-50">
+                    <li>Masukkan NIK Jika Pasien Umum</li>
+                    <li>Masukkan No. BPJS Jika Kepesertaan BPJS</li>
+                  </div>
+                </div>
+                <button type="submit" class="w-full hover:bg-green-900 bg-green-700 text-white p-2 rounded-md">
+                  Daftar
+                </button>
+              </form>
+
+
 
             </div>
           </div>
         </div>
-
-
-        <!--Antrian-->
+      </div>
     </main>
   </div>
+
+
+  <!-- Modal Cek Pasien -->
+  <div id="modalCekPasien"
+    class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden justify-center font-poppins items-center z-40">
+    <div class="bg-white p-6 rounded-lg w-96 shadow-lg relative">
+      <h2 class="text-xl font-semibold mb-4">Pasien Lama</h2>
+      <form id="formCekPasien" action="cek_pasien.php" method="post">
+        <label for="nik" class="block text-sm font-medium">Masukkan NIK</label>
+        <input type="text" name="nik_cari" class="w-full p-2 border text-xs border-gray-300 rounded mt-2 mb-4" required>
+        <div class="flex justify-end gap-2 text-sm">
+          <button type="button" onclick="toggleModal()" class="px-4 py-2 bg-gray-300 rounded">Batal</button>
+          <button id="submitBtn" type="submit" name="cek_pasien"
+            class="px-4 py-2 bg-green-700 hover:bg-green-900 text-white rounded">Cari</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Overlay Loading Blur -->
+  <div id="loadingOverlayy"
+    class="hidden fixed inset-0 backdrop-blur-sm bg-black bg-opacity-40 z-50 flex flex-col items-center justify-center">
+    <svg class="animate-spin h-8 w-8 z-50 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+      viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+    </svg>
+    <p class="text-white text-sm mt-2">Mencari data pasien...</p>
+  </div>
+
+  <script>
+    function toggleModal() {
+      const modal = document.getElementById("modalCekPasien");
+      modal.classList.toggle("hidden");
+      modal.classList.toggle("flex");
+    }
+
+    document.getElementById("formCekPasien").addEventListener("submit", function (e) {
+      e.preventDefault(); // Stop pengiriman form sementara
+
+      // Tampilkan overlay loading
+      document.getElementById("loadingOverlayy").classList.remove("hidden");
+
+      // Nonaktifkan tombol submit
+      const submitBtn = document.getElementById("submitBtn");
+      submitBtn.disabled = true;
+      submitBtn.classList.add("opacity-50", "cursor-not-allowed");
+
+      // Tunggu 2 detik, lalu kirim form
+      setTimeout(() => {
+        e.target.submit(); // submit form manual
+      }, 2000);
+    });
+  </script>
 
   <script>
     document

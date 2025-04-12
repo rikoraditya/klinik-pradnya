@@ -335,12 +335,75 @@
                   Daftar
                 </button>
               </form>
+
+              <div class="flex items-center space-x-2 mt-3 justify-center">
+                <p class="text-gray-700 font-poppins text-xs">Sudah pernah berobat?
+                  <a onclick="toggleModal()" class="text-gray-700 font-bold font-poppins cursor-pointer text-xs">
+                    Daftar sebagai Pasien Lama
+                  </a>
+                </p>
+              </div>
+
             </div>
           </div>
         </div>
       </div>
     </main>
   </div>
+
+
+  <!-- Modal Cek Pasien -->
+  <div id="modalCekPasien"
+    class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden justify-center font-poppins items-center z-40">
+    <div class="bg-white p-6 rounded-lg w-96 shadow-lg relative">
+      <h2 class="text-xl font-semibold mb-4">Pasien Lama</h2>
+      <form id="formCekPasien" action="cek_pasien.php" method="post">
+        <label for="nik" class="block text-sm font-medium">Masukkan NIK</label>
+        <input type="text" name="nik_cari" class="w-full p-2 border text-xs border-gray-300 rounded mt-2 mb-4" required>
+        <div class="flex justify-end gap-2 text-sm">
+          <button type="button" onclick="toggleModal()" class="px-4 py-2 bg-gray-300 rounded">Batal</button>
+          <button id="submitBtn" type="submit" name="cek_pasien"
+            class="px-4 py-2 bg-green-700 hover:bg-green-900 text-white rounded">Cari</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Overlay Loading Blur -->
+  <div id="loadingOverlayy"
+    class="hidden fixed inset-0 backdrop-blur-sm bg-black bg-opacity-40 z-50 flex flex-col items-center justify-center">
+    <svg class="animate-spin h-8 w-8 z-50 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+      viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+    </svg>
+    <p class="text-white text-sm mt-2">Mencari data pasien...</p>
+  </div>
+
+  <script>
+    function toggleModal() {
+      const modal = document.getElementById("modalCekPasien");
+      modal.classList.toggle("hidden");
+      modal.classList.toggle("flex");
+    }
+
+    document.getElementById("formCekPasien").addEventListener("submit", function (e) {
+      e.preventDefault(); // Stop pengiriman form sementara
+
+      // Tampilkan overlay loading
+      document.getElementById("loadingOverlayy").classList.remove("hidden");
+
+      // Nonaktifkan tombol submit
+      const submitBtn = document.getElementById("submitBtn");
+      submitBtn.disabled = true;
+      submitBtn.classList.add("opacity-50", "cursor-not-allowed");
+
+      // Tunggu 2 detik, lalu kirim form
+      setTimeout(() => {
+        e.target.submit(); // submit form manual
+      }, 2000);
+    });
+  </script>
 
   <script>
     document

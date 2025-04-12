@@ -238,9 +238,36 @@
     <div class="flex-1 flex flex-col">
       <!-- Header -->
       <!-- Header -->
-      <header class="bg-gray-100 p-7 shadow-md flex justify-between items-center sticky top-0">
+      <header class="bg-gray-100 p-4 shadow-md flex justify-between items-center sticky top-0">
+        <div class="relative cursor-pointer ml-auto">
+          <div class="flex items-center space-x-2">
+            <!-- Ikon Profil Modern dan Teks Admin -->
+            <i class="fas fa-user-circle text-gray-600 text-2xl"></i>
+            <span id="dropdownButton" class="text-sm font-medium text-gray-700">Admin</span>
+
+          </div>
+          <!-- Dropdown menu -->
+          <div id="dropdownMenu"
+            class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200">
+            <div class="p-4 border-b">
+              <p class="text-gray-800 font-semibold">Admin Panel</p>
+              <p class="text-sm text-gray-500">Klinik Pradnya Usadha</p>
+            </div>
+            <a href="../../reset_pass_admin.php" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
+              <i class="fas fa-lock text-gray-600 text-base pr-2"></i>
+              Akun
+            </a>
+          </div>
 
       </header>
+
+
+      <script>
+        document.getElementById('dropdownButton').addEventListener('click', function () {
+          document.getElementById('dropdownMenu').classList.toggle('hidden');
+        });
+      </script>
+
 
       <script>
         function toggleSidebar() {

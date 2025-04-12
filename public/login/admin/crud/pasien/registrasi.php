@@ -10,31 +10,22 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <!-- Import Font Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../../../css/style.css" />
 </head>
 
 <body class="bg-gray-100">
   <div class="flex h-screen">
     <!--Loading Overlay-->
-    <div id="loadingOverlay"
-      class="fixed z-50 inset-0 bg-white bg-opacity-80 backdrop-blur-md justify-center place-items-center ease-in-out flex hidden">
-      <div class="flex space-x-2">
-        <div class="w-3 h-3 bg-[#297A2C] rounded-full dot"></div>
-        <div class="w-3 h-3 bg-[#297A2C] rounded-full dot"></div>
-        <div class="w-3 h-3 bg-[#297A2C] rounded-full dot"></div>
-      </div>
-    </div>
 
-    <script>
-      function showLoading(event) {
-        event.preventDefault();
-        document.getElementById("loadingOverlay").classList.remove("hidden");
-
-        setTimeout(() => {
-          window.location.href = "admin.php";
-        }, 2000);
+    <style>
+      body,
+      .swal2-popup {
+        font-family: 'Poppins', sans-serif;
       }
-    </script>
+    </style>
+
 
     <style>
       @keyframes fadeIn {
@@ -238,9 +229,38 @@
     <div class="flex-1 flex flex-col">
       <!-- Header -->
       <!-- Header -->
-      <header class="bg-gray-100 p-7 shadow-md flex justify-between items-center sticky top-0">
+      <header class="bg-gray-100 p-4 shadow-md flex justify-between items-center sticky top-0">
+
+        <div class="relative cursor-pointer ml-auto">
+          <div class="flex items-center space-x-2">
+            <!-- Ikon Profil Modern dan Teks Admin -->
+            <i class="fas fa-user-circle text-gray-600 text-2xl"></i>
+            <span id="dropdownButton" class="text-sm font-medium text-gray-700">Admin</span>
+
+          </div>
+          <!-- Dropdown menu -->
+          <div id="dropdownMenu"
+            class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200">
+            <div class="p-4 border-b">
+              <p class="text-gray-800 font-semibold">Admin Panel</p>
+              <p class="text-sm text-gray-500">Klinik Pradnya Usadha</p>
+            </div>
+            <a href="../../reset_pass_admin.php" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
+              <i class="fas fa-lock text-gray-600 text-base pr-2"></i>
+              Akun
+            </a>
+          </div>
 
       </header>
+
+
+      <script>
+        document.getElementById('dropdownButton').addEventListener('click', function () {
+          document.getElementById('dropdownMenu').classList.toggle('hidden');
+        });
+      </script>
+
+
 
       <script>
         function toggleSidebar() {
@@ -365,6 +385,16 @@
                     Daftar
                   </button>
                 </form>
+
+                <!-- Tombol untuk buka modal -->
+                <div class="flex items-center space-x-2 mt-3 justify-center">
+                  <p class="text-gray-700 font-poppins text-xs">Sudah pernah berobat?
+                    <a onclick="toggleModal()" class="text-gray-700 font-bold font-poppins cursor-pointer text-xs">
+                      Daftar sebagai Pasien Lama
+                    </a>
+                  </p>
+                </div>
+
               </div>
             </div>
           </div>
@@ -372,6 +402,64 @@
         <!--Daftar-->
       </main>
     </div>
+
+    <!-- Modal -->
+    <!-- Modal Cek Pasien -->
+    <div id="modalCekPasien"
+      class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden justify-center font-poppins items-center z-40">
+      <div class="bg-white p-6 rounded-lg w-96 shadow-lg relative">
+        <h2 class="text-xl font-semibold mb-4">Cek Pasien Lama</h2>
+        <form id="formCekPasien" action="cek_pasien.php" method="post">
+          <label for="nik" class="block text-sm font-medium">Masukkan NIK</label>
+          <input type="text" name="nik_cari" class="w-full p-2 border text-xs border-gray-300 rounded mt-2 mb-4"
+            required>
+          <div class="flex justify-end gap-2 text-sm">
+            <button type="button" onclick="toggleModal()" class="px-4 py-2 bg-gray-300 rounded">Batal</button>
+            <button id="submitBtn" type="submit" name="cek_pasien"
+              class="px-4 py-2 bg-green-700 hover:bg-green-900 text-white rounded">Cari</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Overlay Loading Blur -->
+    <div id="loadingOverlayy"
+      class="hidden fixed inset-0 backdrop-blur-sm bg-black bg-opacity-40 z-50 flex flex-col items-center justify-center">
+      <svg class="animate-spin h-8 w-8 z-50 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+        viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
+      <p class="text-white text-sm mt-2">Mencari data pasien...</p>
+    </div>
+
+    <script>
+      function toggleModal() {
+        const modal = document.getElementById("modalCekPasien");
+        modal.classList.toggle("hidden");
+        modal.classList.toggle("flex");
+      }
+
+      document.getElementById("formCekPasien").addEventListener("submit", function (e) {
+        e.preventDefault(); // Stop pengiriman form sementara
+
+        // Tampilkan overlay loading
+        document.getElementById("loadingOverlayy").classList.remove("hidden");
+
+        // Nonaktifkan tombol submit
+        const submitBtn = document.getElementById("submitBtn");
+        submitBtn.disabled = true;
+        submitBtn.classList.add("opacity-50", "cursor-not-allowed");
+
+        // Tunggu 2 detik, lalu kirim form
+        setTimeout(() => {
+          e.target.submit(); // submit form manual
+        }, 2000);
+      });
+    </script>
+
+
+
 
     <!--Logout-->
 
