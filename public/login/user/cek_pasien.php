@@ -1,6 +1,15 @@
 <?php
-require '../../php/functions.php';
 session_start();
+use LDAP\Result;
+
+require '../../php/functions.php';
+
+
+if (!isset($_SESSION["login_user"])) {
+    header("location:../user_login.php");
+    exit;
+}
+
 
 echo "<!DOCTYPE html><html><head>
 <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>

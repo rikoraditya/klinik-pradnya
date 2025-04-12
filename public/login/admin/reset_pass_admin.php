@@ -4,6 +4,12 @@ use LDAP\Result;
 
 require '../../php/functions.php';
 
+
+if (!isset($_SESSION["login"])) {
+    header("location:../admin_login.php");
+    exit;
+}
+
 if (isset($_POST['ubah'])) {
     $username_baru = $_POST['username'];
     $password_baru = $_POST['password'];

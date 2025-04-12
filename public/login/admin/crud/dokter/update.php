@@ -1,8 +1,15 @@
 <?php
-
+session_start();
 use LDAP\Result;
 
 require '../../../../php/functions.php';
+
+
+if (!isset($_SESSION["login"])) {
+    header("location:../../../admin_login.php");
+    exit;
+}
+
 
 $id = $_GET["id"];
 $dokter = query("SELECT * FROM dokter WHERE id_nomor = $id")[0];

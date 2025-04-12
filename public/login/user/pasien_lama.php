@@ -1,6 +1,14 @@
 <?php
-session_start(); // Memulai session untuk mengambil data yang disimpan
+session_start();
+use LDAP\Result;
+
 require '../../php/functions.php';
+
+
+if (!isset($_SESSION["login_user"])) {
+  header("location:../user_login.php");
+  exit;
+}
 
 
 $rekam_medis = [];
@@ -138,7 +146,7 @@ if (isset($_SESSION['pasien_lama'])) {
           </a>
         </div>
       </nav>
-      <button onclick="openLogoutModal();" data-href="../user_login.php"
+      <button onclick="openLogoutModal();" data-href="logout_pasien.php"
         class="flex items-center space-x-2 p-2 w-full font-poppins text-sm text-left hover:bg-red-600 rounded mt-6">
         <i class="fas fa-sign-out-alt"></i>
         <span class="sidebar-text">Logout</span>
@@ -197,7 +205,7 @@ if (isset($_SESSION['pasien_lama'])) {
         document.getElementById("loading").classList.remove("hidden");
 
         setTimeout(() => {
-          window.location.href = "../user_login.php"; // Redirect otomatis setelah 1 detik
+          window.location.href = "logout_pasien.php"; // Redirect otomatis setelah 1 detik
         }, 1000);
       }
     </script>

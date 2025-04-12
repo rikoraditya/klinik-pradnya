@@ -1,40 +1,44 @@
 <?php
+ini_set('session.cookie_path', '/');
 session_start();
 
-use LDAP\Result;
+if (isset($_SESSION["login"])) {
+  header("location: admin/dashboard.php");
+  exit;
+}
+
+
 
 require '../php/functions.php';
 
+if (isset($_POST["login"])) {
+  $username = $_POST["username"];
+  $password = $_POST["password"];
 
+  // Query tanpa spasi yang salah
+  $result = mysqli_query($conn, "SELECT * FROM admin WHERE username = '$username'");
 
-if (isset($_POST['login'])) {
-  $username = $_POST['username'];
-  $password = $_POST['password'];
+  if (mysqli_num_rows($result) === 1) {
+    $row = mysqli_fetch_assoc($result);
 
-  // Hindari SQL Injection
-  $stmt = $conn->prepare("SELECT * FROM admin WHERE username = ?");
-  $stmt->bind_param("s", $username);
-  $stmt->execute();
-  $result = $stmt->get_result();
-
-  if ($result->num_rows === 1) {
-    $user = $result->fetch_assoc();
-
-    // Cek password (gunakan password_hash di produksi)
-    if ($password === $user['password']) {
-      $_SESSION['login'] = true;
-      $_SESSION['username'] = $user['username'];
-      echo "<script>
-              window.location.href = 'admin/dashboard.php';
-            </script>";
+    // Bandingkan password langsung (karena tidak pakai password_hash)
+    if ($password === $row["password"]) {
+      $_SESSION["login"] = true;
+      $_SESSION["username"] = $row["username"];
+      header("Location: admin/dashboard.php");
+      exit;
     } else {
-      echo "<script>alert('Password salah!');</script>";
+      $error = 'Password salah!';
+      echo "<script>alert('$error');</script>";
     }
   } else {
-    echo "<script>alert('Username tidak ditemukan!');</script>";
+    $error = 'Username tidak ditemukan!';
+    echo "<script>alert('$error');</script>";
   }
 }
 ?>
+
+
 
 
 <!DOCTYPE html>

@@ -1,10 +1,22 @@
 <?php
-
+session_start();
 use LDAP\Result;
 
 require '../../php/functions.php';
 
+
+if (!isset($_SESSION["login"])) {
+  header("location:../admin_login.php");
+  exit;
+}
+
 $pasien = query("SELECT * FROM pasien");
+
+
+//tombol cari
+if (isset($_POST["cari"])) {
+  $pasien = cari($_POST["keyword"]);
+}
 ?>
 
 <!DOCTYPE html>
@@ -170,7 +182,7 @@ $pasien = query("SELECT * FROM pasien");
           </div>
         </div>
       </nav>
-      <button onclick="openLogoutModal();" data-href="../admin_login.php"
+      <button onclick="openLogoutModal();" data-href="../logout.php"
         class="flex items-center space-x-2 p-2 w-full font-poppins text-sm text-left hover:bg-red-600 rounded mt-6">
         <i class="fas fa-sign-out-alt"></i>
         <span class="sidebar-text">Logout</span>
@@ -230,7 +242,7 @@ $pasien = query("SELECT * FROM pasien");
         document.getElementById("loading").classList.remove("hidden");
 
         setTimeout(() => {
-          window.location.href = "../admin_login.php"; // Redirect otomatis setelah 1 detik
+          window.location.href = "../logout.php"; // Redirect otomatis setelah 1 detik
         }, 1000);
       }
     </script>
@@ -331,7 +343,15 @@ $pasien = query("SELECT * FROM pasien");
         </div>
 
         <div class="bg-white shadow-md rounded-lg p-4">
-          <h2 class="text-lg font-semibold mb-2">Pasien</h2>
+
+          <form action="" method="post" class="pb-2">
+            <input type="text" name="keyword" size="30" placeholder="masukkan keywoard pencarian.." autocomplete="off"
+              autofocus
+              class="border-2 border-gray-600 rounded-md text-xs py-0.5 pl-1 placeholder:text-xs placeholder:pl-1">
+            <button type="submit" name="cari" class="bg-gray-500 text-xs rounded-md px-1 py-1 text-white">cari</button>
+          </form>
+
+
           <table class="w-full border-collapse border border-gray-300">
             <thead class="bg-gray-200">
               <tr class="text-xs">

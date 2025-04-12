@@ -1,5 +1,11 @@
 <?php
 session_start();
+
+if (isset($_SESSION["login_user"])) {
+    header("location: user/buat_kunjungan.php");
+    exit;
+}
+
 require '../../public/php/functions.php'; // koneksi DB
 
 // Fungsi untuk menormalkan nomor HP
@@ -73,16 +79,12 @@ if (mysqli_num_rows($result) > 0 && $data = mysqli_fetch_assoc($result)) {
         $_SESSION['no_hp_verified'] = $no_hp;
         $_SESSION['no_hp'] = $no_hp;
 
-        echo "<script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Verifikasi Berhasil!',
-                text: 'Silakan lanjutkan pendaftaran.',
-                confirmButtonText: 'Lanjut'
-            }).then(() => {
-                window.location.href = 'user/buat_kunjungan.php';
-            });
-        </script>";
+        $_SESSION["login_user"] = true;
+
+        header("Location: user/buat_kunjungan.php");
+        exit;
+
+
     } else {
         echo "<script>
             Swal.fire({

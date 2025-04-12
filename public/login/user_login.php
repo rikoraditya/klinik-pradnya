@@ -1,3 +1,14 @@
+<?php
+session_start();
+
+if (isset($_SESSION["login_user"])) {
+    header("location: user/buat_kunjungan.php");
+    exit;
+}
+
+require '../../public/php/functions.php'; // koneksi DB
+?>
+
 <!doctype html>
 <html>
 

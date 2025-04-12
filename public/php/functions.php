@@ -232,5 +232,14 @@ function update_rm($data)
     return mysqli_affected_rows($conn);
 }
 
-
+function cari($keyword)
+{
+    $query = "SELECT * FROM pasien 
+    WHERE 
+    nama LIKE '%$keyword%' OR
+    nik LIKE '%$keyword%' OR
+    no_hp LIKE '%$keyword%'
+    ";
+    return query($query);
+}
 ?>
