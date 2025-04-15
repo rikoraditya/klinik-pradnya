@@ -43,6 +43,26 @@ if (isset($_POST['no_hp'])) {
 
     $_SESSION['no_hp_temp'] = $no_hp;
 
+
+    // Setelah proses login dan pengecekan checkbox remember me
+    if (isset($_POST['remember'])) {
+        $_SESSION['remember'] = true;
+
+        // Membuat cookie
+        $id_user = $_SESSION['no_hp_temp'];  // Nomor HP sebagai ID
+        $key_user = hash('sha256', $id_user . 'kunc!rahas14@'); // Membuat hash key
+
+        // Set cookie jika remember me dicentang
+        setcookie('id_user', $id_user, time() + (86400 * 30), "/");  // Expired after 30 days
+        setcookie('key_user', $key_user, time() + (86400 * 30), "/");  // Expired after 30 days
+    } else {
+        // Jika checkbox tidak dicentang, pastikan cookie dihapus
+        setcookie('id_user', '', time() - 3600, "/");  // Hapus cookie jika tidak remember me
+        setcookie('key_user', '', time() - 3600, "/");  // Hapus cookie jika tidak remember me
+        unset($_SESSION['remember']);  // Pastikan session remember dihapus
+    }
+
+
     // Hapus OTP lama
     mysqli_query($conn, "DELETE FROM otp_login WHERE no_hp = '$no_hp' AND is_verified = 0");
 

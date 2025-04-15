@@ -242,4 +242,38 @@ function cari($keyword)
     ";
     return query($query);
 }
+
+function cari_dokter($keyword)
+{
+    $query = "SELECT * FROM dokter
+    WHERE 
+    nama LIKE '%$keyword%' OR
+    poliklinik LIKE '%$keyword%'
+    ";
+    return query($query);
+}
+
+function cari_obat($keyword)
+{
+    $query = "SELECT * FROM obat
+    WHERE 
+    nama_obat LIKE '%$keyword%' OR
+    jenis_obat LIKE '%$keyword%'
+    ";
+    return query($query);
+}
+
+function cari_rm($keyword)
+{
+    $query = "SELECT * FROM rekam_medis 
+    WHERE 
+    nama LIKE '%$keyword%' OR
+    nik LIKE '%$keyword%' OR
+    no_hp LIKE '%$keyword%' OR
+    no_rm LIKE '%$keyword%' OR
+    tanggal_lahir LIKE '%$keyword%' OR
+    tanggal_kunjungan LIKE '%$keyword%'
+    ";
+    return query($query);
+}
 ?>

@@ -7,6 +7,13 @@ if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
+if (isset($_POST['no_hp'])) {
+    $no_hp = preg_replace('/[^0-9]/', '', $_POST['no_hp']);
+    if (substr($no_hp, 0, 1) === '0') {
+        $no_hp = '62' . substr($no_hp, 1);
+    }
+}
+
 // HTML & SweetAlert di awal
 echo "<!DOCTYPE html><html><head>
 <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
@@ -33,7 +40,7 @@ if (
     $nama = htmlspecialchars($_POST['nama']);
     $nik = htmlspecialchars($_POST['nik']);
     $jenis_kelamin = htmlspecialchars($_POST['jenis_kelamin']);
-    $no_hp = htmlspecialchars($_POST['no_hp']);
+    $no_hp = htmlspecialchars($no_hp);
     $tempat_lahir = htmlspecialchars($_POST['tempat_lahir']);
     $tanggal_lahir = htmlspecialchars($_POST['tanggal_lahir']);
     $alamat = htmlspecialchars($_POST['alamat']);

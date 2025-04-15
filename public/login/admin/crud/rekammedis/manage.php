@@ -10,7 +10,20 @@ if (!isset($_SESSION["login"])) {
   exit;
 }
 
-$rekam_medis = query("SELECT * FROM rekam_medis");
+//pagination table
+$JumlahDataPerHalaman = 5;
+$JumlahData = count(query("SELECT * FROM rekam_medis"));
+$JumlahHalaman = ceil($JumlahData / $JumlahDataPerHalaman);
+$HalamanAktif = (isset($_GET["halaman"])) ? $_GET["halaman"] : 1;
+$AwalData = ($JumlahDataPerHalaman * $HalamanAktif) - $JumlahDataPerHalaman;
+
+
+$rekam_medis = query("SELECT * FROM rekam_medis ORDER BY tanggal_kunjungan DESC LIMIT $AwalData, $JumlahDataPerHalaman");
+
+//tombol cari
+if (isset($_POST["cari_rm"])) {
+  $rekam_medis = cari_rm($_POST["keyword"]);
+}
 ?>
 
 
@@ -174,7 +187,7 @@ $rekam_medis = query("SELECT * FROM rekam_medis");
           </div>
         </div>
       </nav>
-      <button onclick="openLogoutModal();" data-href="../admin_login.php"
+      <button onclick="openLogoutModal();" data-href="../logout.php"
         class="flex items-center space-x-2 p-2 w-full font-poppins text-sm text-left hover:bg-red-600 rounded mt-6">
         <i class="fas fa-sign-out-alt"></i>
         <span class="sidebar-text">Logout</span>
@@ -234,7 +247,7 @@ $rekam_medis = query("SELECT * FROM rekam_medis");
         document.getElementById("loading").classList.remove("hidden");
 
         setTimeout(() => {
-          window.location.href = "../../../admin_login.php"; // Redirect otomatis setelah 1 detik
+          window.location.href = "../../../logout.php"; // Redirect otomatis setelah 1 detik
         }, 1000);
       }
     </script>
@@ -307,69 +320,114 @@ $rekam_medis = query("SELECT * FROM rekam_medis");
         <p class="text-gray-600">Manage Rekam Medis</p>
 
         <div class="bg-white shadow-md mt-4 rounded-lg p-4">
-          <h2 class="text-lg font-semibold mb-2">Pasien</h2>
-          <table class="w-full border-collapse border border-gray-300">
-            <thead class="bg-gray-200">
-              <tr class="text-xs">
-                <th class="border p-2">No</th>
-                <th class="border p-2">No RM</th>
-                <th class="border p-2">Nama</th>
-                <th class="border p-2">Jenis Kelamin</th>
-                <th class="border p-2">Tanggal Lahir</th>
-                <th class="border p-2">Tanggal Kunjungan</th>
-                <th class="border p-2">No. HP</th>
-                <th class="border p-2">Obat</th>
-                <th class="border p-2">Dokter</th>
+          <div class="flex justify-between items-center pb-2">
+            <!-- Kolom kiri: Form pencarian -->
+            <form action="" method="post" class="flex items-center">
+              <input type="text" name="keyword" size="30" placeholder="masukkan keyword pencarian.." autocomplete="off"
+                id="keyword" autofocus
+                class="border-2 border-gray-600 rounded-md text-xs py-0.5 pl-1 placeholder:text-xs placeholder:pl-1">
+            </form>
 
-                <th class="border p-2">Action</th>
-              </tr>
-            </thead>
-            <tbody class="text-xs">
+            <!-- Kolom kanan: Tombol export -->
+            <button onclick="window.location.href='export_exel.php'"
+              class="bg-green-600 hover:bg-green-700 text-white text-xs py-2 px-2 rounded-md ml-2 flex items-center gap-1">
+              <!-- Ikon Excel SVG -->
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" class="w-4 h-4 fill-white">
+                <path
+                  d="M224,48V208a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32H208A16,16,0,0,1,224,48ZM92.9,128l18.5-25.4a8,8,0,0,0-12.8-9.6L80,117.4,68.4,93a8,8,0,1,0-14.8,6.4L65.1,128,53.6,149.6a8,8,0,0,0,14.8,6.4L80,138.6l18.6,25.4a8,8,0,0,0,12.8-9.6Z" />
+              </svg>
+              <span>Excel</span>
+            </button>
 
-              <?php $i = 1; ?>
-              <?php foreach ($rekam_medis as $row)
-              : ?>
 
-                <tr>
-                  <td class="border p-2 md"><?= $i; ?></td>
-                  <td class="border p-2 md"><?= $row["no_rm"]; ?></td>
-                  <td class="border p-2 truncate md"><?= $row["nama"]; ?></td>
-                  <td class="border p-2 md"><?= $row["jenis_kelamin"]; ?></td>
-                  <td class="border p-2 md"><?= $row["tanggal_lahir"]; ?></td>
-                  <td class="border p-2"><?= $row["tanggal_kunjungan"]; ?></td>
-                  <td class="border p-2 md"><?= $row["no_hp"]; ?></td>
-                  <td class="border p-2 md"><?= $row["obat"]; ?></td>
-                  <td class="border p-2 md">
-                    <?= strlen($row['dokter']) > 15 ? substr($row['dokter'], 0, 15) . '...' : $row["dokter"]; ?>
-                  </td>
+          </div>
+          <div id="container">
+            <table class="w-full border-collapse border border-gray-300">
+              <thead class="bg-gray-200">
+                <tr class="text-xs">
+                  <th class="border p-2">No</th>
+                  <th class="border p-2">No RM</th>
+                  <th class="border p-2">Nama</th>
+                  <th class="border p-2">Jenis Kelamin</th>
+                  <th class="border p-2">Tanggal Lahir</th>
+                  <th class="border p-2">Tanggal Kunjungan</th>
+                  <th class="border p-2">No. HP</th>
+                  <th class="border p-2">Obat</th>
+                  <th class="border p-2">Dokter</th>
 
-                  <td class="border p-2 space-x-1">
-                    <button onclick="lihatPasien('<?= $row['id']; ?>')"
-                      class="bg-gray-500 text-white px-2 py-1 rounded text-xs">
-                      View
-                    </button>
-                    <a href="update.php?id=<?= $row['id']; ?>"
-                      class="bg-blue-500 text-white px-2 py-1 rounded text-xs inline-block">
-                      Update
-                    </a>
-
-                    <a href="delete.php?id=<?= $row['id']; ?>" onclick="return confirm('Yakin ingin hapus?')"
-                      class="bg-red-700 text-white px-2 py-1 rounded text-xs inline-block">
-                      Delete
-                    </a>
-                  </td>
+                  <th class="border p-2">Action</th>
                 </tr>
+              </thead>
+              <tbody class="text-xs">
 
-                <?php $i++; ?>
-              <?php endforeach; ?>
+                <?php $i = 1; ?>
+                <?php foreach ($rekam_medis as $row)
+                : ?>
 
-            </tbody>
-          </table>
+                  <tr>
+                    <td class="border p-2 md"><?= $i; ?></td>
+                    <td class="border p-2 md"><?= $row["no_rm"]; ?></td>
+                    <td class="border p-2 truncate md"><?= $row["nama"]; ?></td>
+                    <td class="border p-2 md"><?= $row["jenis_kelamin"]; ?></td>
+                    <td class="border p-2 md"><?= $row["tanggal_lahir"]; ?></td>
+                    <td class="border p-2"><?= $row["tanggal_kunjungan"]; ?></td>
+                    <td class="border p-2 md"><?= $row["no_hp"]; ?></td>
+                    <td class="border p-2 md"><?= $row["obat"]; ?></td>
+                    <td class="border p-2 md">
+                      <?= strlen($row['dokter']) > 15 ? substr($row['dokter'], 0, 15) . '...' : $row["dokter"]; ?>
+                    </td>
+
+                    <td class="border p-2 space-x-1">
+                      <button onclick="lihatPasien('<?= $row['id']; ?>')"
+                        class="bg-gray-500 text-white px-2 py-1 rounded text-xs">
+                        View
+                      </button>
+                      <a href="update.php?id=<?= $row['id']; ?>"
+                        class="bg-blue-500 text-white px-2 py-1 rounded text-xs inline-block">
+                        Update
+                      </a>
+
+                      <a href="delete.php?id=<?= $row['id']; ?>" onclick="return confirm('Yakin ingin hapus?')"
+                        class="bg-red-700 text-white px-2 py-1 rounded text-xs inline-block">
+                        Delete
+                      </a>
+                    </td>
+                  </tr>
+
+                  <?php $i++; ?>
+                <?php endforeach; ?>
+
+              </tbody>
+            </table>
+          </div>
+
+
+          <div class="pagination text-xs font-poppins mt-2 ml-1 text-gray-500">
+            <?php if ($HalamanAktif > 1): ?>
+              <a href="?halaman=<?= $HalamanAktif - 1; ?>" class="text-base ">&laquo;</a>
+            <?php endif; ?>
+
+            <?php for ($i = 1; $i <= $JumlahHalaman; $i++): ?>
+              <?php if ($i == $HalamanAktif): ?>
+                <a href="?halaman=<?= $i; ?>" class="font-bold text-green-950">
+                  <?= $i; ?></a>
+
+              <?php else: ?>
+                <a href="?halaman=<?= $i; ?>"><?= $i; ?></a>
+              <?php endif; ?>
+            <?php endfor; ?>
+
+            <?php if ($HalamanAktif < $JumlahHalaman): ?>
+              <a href="?halaman=<?= $HalamanAktif + 1; ?>" class="text-base ">&raquo;</a>
+            <?php endif; ?>
+          </div>
+
         </div>
       </main>
     </div>
 
     <!--Logout-->
+    <script src="script.js"></script>
 
     <script>
       function toggleSidebar() {

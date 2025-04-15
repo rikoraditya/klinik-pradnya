@@ -10,7 +10,22 @@ if (!isset($_SESSION["login"])) {
   exit;
 }
 
-$dokter = query("SELECT * FROM dokter");
+
+//pagination table
+$JumlahDataPerHalaman = 5;
+$JumlahData = count(query("SELECT * FROM dokter"));
+$JumlahHalaman = ceil($JumlahData / $JumlahDataPerHalaman);
+$HalamanAktif = (isset($_GET["halaman"])) ? $_GET["halaman"] : 1;
+$AwalData = ($JumlahDataPerHalaman * $HalamanAktif) - $JumlahDataPerHalaman;
+
+
+$dokter = query("SELECT * FROM dokter LIMIT $AwalData, $JumlahDataPerHalaman");
+
+
+//tombol cari
+if (isset($_POST["cari_dokter"])) {
+  $dokter = cari_dokter($_POST["keyword"]);
+}
 ?>
 
 
@@ -174,7 +189,7 @@ $dokter = query("SELECT * FROM dokter");
           </div>
         </div>
       </nav>
-      <button onclick="openLogoutModal();" data-href="../admin_login.php"
+      <button onclick="openLogoutModal();" data-href="../logout.php"
         class="flex items-center space-x-2 p-2 w-full font-poppins text-sm text-left hover:bg-red-600 rounded mt-6">
         <i class="fas fa-sign-out-alt"></i>
         <span class="sidebar-text">Logout</span>
@@ -234,7 +249,7 @@ $dokter = query("SELECT * FROM dokter");
         document.getElementById("loading").classList.remove("hidden");
 
         setTimeout(() => {
-          window.location.href = "../../../admin_login.php"; // Redirect otomatis setelah 1 detik
+          window.location.href = "../../../logout.php"; // Redirect otomatis setelah 1 detik
         }, 1000);
       }
     </script>
@@ -307,52 +322,86 @@ $dokter = query("SELECT * FROM dokter");
         <p class="text-gray-600">Manage Dokter</p>
 
         <div class="bg-white mt-4 shadow-md rounded-lg p-4">
-          <h2 class="text-lg font-semibold mb-2">Dokter</h2>
-          <table class="w-full border-collapse border border-gray-300">
-            <thead class="bg-gray-200">
-              <tr class="text-xs">
-                <th class="border p-2">No</th>
-                <th class="border p-2">ID Dokter</th>
-                <th class="border p-2">Nama Dokter</th>
-                <th class="border p-2">Poliklinik</th>
-                <th class="border p-2 w-56">Action</th>
-              </tr>
-            </thead>
-            <tbody class="text-xs">
+          <form action="" method="post" class="pb-2">
+            <input type="text" name="keyword" size="30" placeholder="masukkan keyword pencarian.." autocomplete="off"
+              id="keyword" autofocus
+              class="border-2 border-gray-600 rounded-md text-xs py-0.5 pl-1 placeholder:text-xs placeholder:pl-1">
 
-              <?php $i = 1; ?>
-              <?php foreach ($dokter as $row)
-              : ?>
+          </form>
 
-                <tr>
-                  <td class="border p-2 md w-10"><?= $i; ?></td>
-                  <td class="border p-2 w-44 md"><?= $row["id_dokter"]; ?></td>
-                  <td class="border p-2 truncate w-80 md">
-                    <?= $row["nama"]; ?>
-                  </td>
-                  <td class="border p-2 truncate w-80 md"><?= $row["poliklinik"]; ?></td>
-                  <td class="border p-2 space-x-1">
-
-                    <a href="update.php?id=<?= $row['id_nomor']; ?>"
-                      class="bg-blue-500 text-white px-2 py-1 rounded text-xs inline-block">
-                      Update
-                    </a>
-
-                    <a href="delete.php?id=<?= $row['id_nomor']; ?>" onclick="return confirm('Yakin ingin hapus?')"
-                      class="bg-red-700 text-white px-2 py-1 rounded text-xs inline-block">
-                      Delete
-                    </a>
-                  </td>
+          <div id="container">
+            <table class="w-full border-collapse border border-gray-300">
+              <thead class="bg-gray-200">
+                <tr class="text-xs">
+                  <th class="border p-2">No</th>
+                  <th class="border p-2">ID Dokter</th>
+                  <th class="border p-2">Nama Dokter</th>
+                  <th class="border p-2">Poliklinik</th>
+                  <th class="border p-2 w-56">Action</th>
                 </tr>
+              </thead>
+              <tbody class="text-xs">
 
-                <?php $i++; ?>
-              <?php endforeach; ?>
+                <?php $i = 1; ?>
+                <?php foreach ($dokter as $row)
+                : ?>
 
-            </tbody>
-          </table>
+                  <tr>
+                    <td class="border p-2 md w-10"><?= $i; ?></td>
+                    <td class="border p-2 w-44 md"><?= $row["id_dokter"]; ?></td>
+                    <td class="border p-2 truncate w-80 md">
+                      <?= $row["nama"]; ?>
+                    </td>
+                    <td class="border p-2 truncate w-80 md"><?= $row["poliklinik"]; ?></td>
+                    <td class="border p-2 space-x-1">
+
+                      <a href="update.php?id=<?= $row['id_nomor']; ?>"
+                        class="bg-blue-500 text-white px-2 py-1 rounded text-xs inline-block">
+                        Update
+                      </a>
+
+                      <a href="delete.php?id=<?= $row['id_nomor']; ?>" onclick="return confirm('Yakin ingin hapus?')"
+                        class="bg-red-700 text-white px-2 py-1 rounded text-xs inline-block">
+                        Delete
+                      </a>
+                    </td>
+                  </tr>
+
+                  <?php $i++; ?>
+                <?php endforeach; ?>
+
+              </tbody>
+            </table>
+
+          </div>
+
+          <div class="pagination text-xs font-poppins mt-2 ml-1 text-gray-500">
+            <?php if ($HalamanAktif > 1): ?>
+              <a href="?halaman=<?= $HalamanAktif - 1; ?>" class="text-base ">&laquo;</a>
+            <?php endif; ?>
+
+            <?php for ($i = 1; $i <= $JumlahHalaman; $i++): ?>
+              <?php if ($i == $HalamanAktif): ?>
+                <a href="?halaman=<?= $i; ?>" class="font-bold text-green-950">
+                  <?= $i; ?></a>
+
+              <?php else: ?>
+                <a href="?halaman=<?= $i; ?>"><?= $i; ?></a>
+              <?php endif; ?>
+            <?php endfor; ?>
+
+            <?php if ($HalamanAktif < $JumlahHalaman): ?>
+              <a href="?halaman=<?= $HalamanAktif + 1; ?>" class="text-base ">&raquo;</a>
+            <?php endif; ?>
+          </div>
         </div>
+
+
+
       </main>
     </div>
+
+    <script src="script.js"></script>
 
     <!--Logout-->
 

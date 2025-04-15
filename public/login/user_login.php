@@ -1,9 +1,33 @@
 <?php
 session_start();
 
+// Tambahkan header untuk mencegah cache agar browser selalu meminta data yang terbaru
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 if (isset($_SESSION["login_user"])) {
     header("location: user/buat_kunjungan.php");
     exit;
+}
+
+// Auto-login dari cookie
+if (isset($_COOKIE['id_user']) && isset($_COOKIE['key_user'])) {
+    $id_user = $_COOKIE['id_user'];
+    $key_user = $_COOKIE['key_user'];
+
+    // Salt harus sama seperti saat membuat hash
+    $secret = 'kunc!rahas14@';
+    $expected_key = hash('sha256', $id_user . $secret);
+
+    // Cek apakah cocok
+    if ($key_user === $expected_key) {
+        $_SESSION['login_user'] = true;
+        $_SESSION['no_hp'] = $id_user;
+
+        header("Location: user/buat_kunjungan.php");
+        exit;
+    }
 }
 
 require '../../public/php/functions.php'; // koneksi DB
@@ -327,6 +351,11 @@ require '../../public/php/functions.php'; // koneksi DB
                         <input type="text" name="no_hp" id="no_hp" required pattern="^(08|628)[0-9]{8,12}$"
                             title="Masukkan nomor HP yang dimulai dengan 08 atau 628 dan memiliki 10-14 digit angka"
                             class="w-full p-2 text-xs border rounded mb-2">
+                        <div class="text-xs font-poppins py-1 text-gray-600">
+                            <input type="checkbox" name="remember" id="remember">
+                            <label for="remember">Remember me</label>
+                        </div>
+
 
                         <button type="submit" id="submitBtn" onclick="toggleModal()"
                             class="w-full bg-[#297A2C] text-xs text-white px-4 py-2 mt-1 rounded hover:bg-green-900">
@@ -445,7 +474,7 @@ require '../../public/php/functions.php'; // koneksi DB
                     <!--Form Login-->
 
 
-                    <div class="ml-2 text-xs text-gray-600 mt-4">
+                    <div class="ml-2 text-xs text-gray-400 mt-4">
                         <li>Untuk melakukan pendaftaran login terlebih dahulu</li>
                         <li>Kode verifikasi dikirim melalui Whatsapp</li>
                     </div>

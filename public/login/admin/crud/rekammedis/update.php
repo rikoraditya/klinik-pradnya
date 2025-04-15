@@ -213,7 +213,7 @@ echo "</body></html>";
                     </div>
                 </div>
             </nav>
-            <button onclick="openLogoutModal();" data-href="../admin_login.php"
+            <button onclick="openLogoutModal();" data-href="../logout.php"
                 class="flex items-center space-x-2 p-2 w-full font-poppins text-sm text-left hover:bg-red-600 rounded mt-6">
                 <i class="fas fa-sign-out-alt"></i>
                 <span class="sidebar-text">Logout</span>
@@ -273,7 +273,7 @@ echo "</body></html>";
                 document.getElementById("loading").classList.remove("hidden");
 
                 setTimeout(() => {
-                    window.location.href = "../../../admin_login.php"; // Redirect otomatis setelah 1 detik
+                    window.location.href = "../../../logout.php"; // Redirect otomatis setelah 1 detik
                 }, 1000);
             }
         </script>

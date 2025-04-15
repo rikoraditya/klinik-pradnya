@@ -81,6 +81,21 @@ if (mysqli_num_rows($result) > 0 && $data = mysqli_fetch_assoc($result)) {
 
         $_SESSION["login_user"] = true;
 
+        if (isset($_SESSION['remember']) && $_SESSION['remember'] === true) {
+            // Gunakan nomor HP sebagai ID
+            $id_user = $no_hp;
+
+            // Salt (kunci rahasia yang hanya kamu tahu)
+            $secret = 'kunc!rahas14@';
+
+            // Buat hash SHA-256
+            $key_user = hash('sha256', $id_user . $secret);
+
+            // Set cookie
+            setcookie('id_user', $id_user, time() + (86400 * 30), "/"); // berlaku 30 hari
+            setcookie('key_user', $key_user, time() + (86400 * 30), "/");
+        }
+
         header("Location: user/buat_kunjungan.php");
         exit;
 

@@ -259,7 +259,7 @@ if (isset($_SESSION['pasien_lama'])) {
     </script>
 
     <!-- Main Content -->
-    <main class="flex-1 p-8 ml-64 transition-all duration-300 font-poppins" id="mainContent">
+    <main class="flex-1 p-8 md:ml-64 transition-all duration-300 font-poppins" id="mainContent">
 
       <div class="bg-gray-100">
         <div class="max-w-6xl mx-auto pb-10">
