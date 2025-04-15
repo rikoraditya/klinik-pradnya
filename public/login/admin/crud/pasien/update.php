@@ -429,13 +429,6 @@ echo "</body></html>";
                                         <option value="Poli Gigi" <?= ($pasien['poli_tujuan'] ?? '') === 'Poli Gigi' ? 'selected' : '' ?>>Poli Gigi</option>
                                     </select>
                                 </div>
-
-
-                                <div>
-                                    <label class="block  font-medium">Keluhan</label>
-                                    <input type="text" name="keluhan" id="keluhan" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['keluhan'] ?>">
-                                </div>
                                 <div>
                                     <label class="block  font-medium">Jenis Pasien</label>
                                     <select class="w-full p-2 border rounded-md" name="jenis_pasien" id="jenis_pasien">
@@ -443,13 +436,22 @@ echo "</body></html>";
                                         <option value="BPJS" <?= ($pasien['jenis_pasien'] ?? '') === 'BPJS' ? 'selected' : '' ?>>BPJS</option>
                                     </select>
                                 </div>
-                            </div>
-
-                            <div class="grid grid-cols-4 gap-4">
                                 <div>
                                     <label class="block  font-medium">No. NIK/BPJS</label>
                                     <input type="text" name="nik_bpjs" id="nik_bpjs"
                                         class="w-full p-2 border rounded-md" value="<?= $pasien['nik_bpjs'] ?>">
+                                </div>
+
+
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-4">
+
+                                <div>
+                                    <label class="block  font-medium">Keluhan</label>
+                                    <textarea type="text" name="keluhan" id="keluhan"
+                                        class="w-full p-2 border rounded-md"
+                                        value="<?= $pasien['keluhan'] ?>"><?= $pasien['keluhan'] ?></textarea>
                                 </div>
 
                             </div>

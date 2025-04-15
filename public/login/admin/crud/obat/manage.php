@@ -39,6 +39,7 @@ if (isset($_POST["cari_obat"])) {
   <title>Admin Dashboard Antrian</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
@@ -364,8 +365,8 @@ if (isset($_POST["cari_obat"])) {
                         Update
                       </a>
 
-                      <a href="delete.php?id=<?= $row['id']; ?>" onclick="return confirm('Yakin ingin hapus?')"
-                        class="bg-red-700 text-white px-2 py-1 rounded text-xs inline-block">
+                      <a href="delete.php?id=<?= $row['id']; ?>"
+                        class="delete-link bg-red-700 text-white px-2 py-1 rounded text-xs inline-block">
                         Delete
                       </a>
                     </td>
@@ -405,6 +406,43 @@ if (isset($_POST["cari_obat"])) {
     </div>
 
     <!--Logout-->
+
+    <script>
+      //delete alert
+      // Fungsi untuk pasang event Swal ke tombol delete
+      function bindDeleteButtons() {
+        var deleteLinks = container.querySelectorAll('.delete-link');
+
+        deleteLinks.forEach(function (link) {
+          // Hapus event listener lama sebelum menambahkan yang baru
+          var newLink = link.cloneNode(true);
+          link.parentNode.replaceChild(newLink, link);
+
+          newLink.addEventListener('click', function (e) {
+            e.preventDefault(); // Cegah langsung hapus
+
+            Swal.fire({
+              title: 'Yakin ingin hapus?',
+              text: 'Data yang dihapus tidak dapat dikembalikan!',
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'Hapus',
+              cancelButtonText: 'Batal'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = newLink.href;
+              }
+            });
+          });
+        });
+      }
+
+      // Jalankan sekali saat halaman awal
+      bindDeleteButtons();
+
+
+    </script>
+
 
 
     <script>

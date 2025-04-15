@@ -14,6 +14,7 @@ xhr.onreadystatechange = function() {
     }
 }
 
+
 //eksekusi ajax
 xhr.open('GET', 'ajax/pasien.php?keyword=' + keyword.value, true);
 xhr.send();
