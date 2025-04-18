@@ -65,23 +65,25 @@ $rekam_medis = query($query);
                 <td class="border p-2 md"><?= $row["no_hp"]; ?></td>
                 <td class="border p-2 md"><?= $row["obat"]; ?></td>
                 <td class="border p-2 md">
-                    <?= strlen($row['dokter']) > 15 ? substr($row['dokter'], 0, 15) . '...' : $row["dokter"]; ?>
+                    <?= strlen($row['dokter']) > 18 ? substr($row['dokter'], 0, 18) . '...' : $row["dokter"]; ?>
                 </td>
 
-                <td class="border p-2 space-x-1">
-                    <button onclick="lihatPasien('<?= $row['id']; ?>')"
-                        class="bg-gray-500 text-white px-2 py-1 rounded text-xs">
-                        View
-                    </button>
-                    <a href="update.php?id=<?= $row['id']; ?>"
-                        class="bg-blue-500 text-white px-2 py-1 rounded text-xs inline-block">
-                        Update
-                    </a>
+                <td class="border p-2">
+                    <div class="flex justify-end space-x-1">
+                        <button onclick="lihatPasien('<?= $row['id']; ?>')"
+                            class="bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs">
+                            View
+                        </button>
+                        <a href="update.php?id=<?= $row['id']; ?>"
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs inline-block">
+                            Update
+                        </a>
 
-                    <a href="delete.php?id=<?= $row['id']; ?>" onclick="return confirm('Yakin ingin hapus?')"
-                        class="bg-red-700 text-white px-2 py-1 rounded text-xs inline-block">
-                        Delete
-                    </a>
+                        <a href="delete.php?id=<?= $row['id']; ?>"
+                            class="delete-link bg-red-700 hover:bg-red-900 text-white px-2 py-1 rounded text-xs inline-block">
+                            Delete
+                        </a>
+                    </div>
                 </td>
             </tr>
 

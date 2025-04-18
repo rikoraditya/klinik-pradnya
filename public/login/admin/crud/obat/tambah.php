@@ -340,7 +340,8 @@ if (!isset($_SESSION["login"])) {
 
             <!-- Tombol -->
             <div class="mt-4 flex space-x-2">
-              <button type="submit" name="submit" class="bg-green-600 text-xs text-white px-4 py-2 rounded-lg">
+              <button type="submit" name="submit"
+                class="bg-green-600 hover:bg-green-800 text-xs text-white px-4 py-2 rounded-lg">
                 Tambah
               </button>
 

@@ -68,7 +68,7 @@ $pasien = query($query);
                 <td class="border p-2 space-x-1 w-56">
 
                     <a href="rm.php?id=<?= $row['id']; ?>"
-                        class="bg-green-700 text-white px-2 py-1 rounded text-xs flex items-center gap-2">
+                        class="bg-green-700 hover:bg-green-800 text-white px-2 py-1 rounded text-xs flex items-center gap-2">
                         <i class="fas fa-book"></i>Tambah Rekam Medis</a>
 
                 </td>

@@ -37,7 +37,7 @@ $dokter = query($query);
             <th class="border p-2">ID Dokter</th>
             <th class="border p-2">Nama Dokter</th>
             <th class="border p-2">Poliklinik</th>
-            <th class="border p-2 w-56">Action</th>
+            <th class="border p-2">Action</th>
         </tr>
     </thead>
     <tbody class="text-xs">
@@ -48,23 +48,25 @@ $dokter = query($query);
 
             <tr>
                 <td class="border p-2 md w-10"><?= $i; ?></td>
-                <td class="border p-2 w-44 md"><?= $row["id_dokter"]; ?></td>
-                <td class="border p-2 truncate w-80 md">
+                <td class="border p-2 w-60 md"><?= $row["id_dokter"]; ?></td>
+                <td class="border p-2 truncate w-96 md">
                     <?= $row["nama"]; ?>
                 </td>
-                <td class="border p-2 truncate w-80 md"><?= $row["poliklinik"]; ?></td>
-                <td class="border p-2 space-x-1">
+                <td class="border p-2 truncate w-96 md"><?= $row["poliklinik"]; ?></td>
+                <td class="border p-2">
+                    <div class="flex justify-end space-x-1">
+                        <a href="update.php?id=<?= $row['id_nomor']; ?>"
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs inline-block">
+                            Update
+                        </a>
 
-                    <a href="update.php?id=<?= $row['id_nomor']; ?>"
-                        class="bg-blue-500 text-white px-2 py-1 rounded text-xs inline-block">
-                        Update
-                    </a>
-
-                    <a href="delete.php?id=<?= $row['id_nomor']; ?>" onclick="return confirm('Yakin ingin hapus?')"
-                        class="bg-red-700 text-white px-2 py-1 rounded text-xs inline-block">
-                        Delete
-                    </a>
+                        <a href="delete.php?id=<?= $row['id_nomor']; ?>" id="delete-link"
+                            class="delete-link bg-red-700 hover:bg-red-900 text-white px-2 py-1 rounded text-xs inline-block">
+                            Delete
+                        </a>
+                    </div>
                 </td>
+
             </tr>
 
             <?php $i++; ?>

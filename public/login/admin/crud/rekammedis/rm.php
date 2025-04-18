@@ -423,23 +423,15 @@ if (isset($_GET['id'])) {
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block  font-medium">Dokter</label>
-
-                                    <select name="dokter" class="w-full p-2 border rounded-md" required>
-                                        <option value="">-- Pilih Dokter --</option>
-                                        <?php foreach ($dokter as $o): ?>
-                                            <option value="<?= $o['nama']; ?>"><?= $o['nama']; ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-4 gap-4">
-                                <div>
                                     <label class="block  font-medium">No. NIK/BPJS</label>
                                     <input type="text" name="nik_bpjs" class="w-full p-2 border rounded-md"
                                         value="<?= $pasien['nik_bpjs'] ?>" readonly>
                                 </div>
+
+                            </div>
+
+                            <div class="grid grid-cols-4 gap-4">
+
                                 <div>
                                     <label class="block  font-medium">Denyut Nadi</label>
                                     <input type="text" name="denyut_nadi" required class="w-full p-2 border rounded-md">
@@ -448,6 +440,16 @@ if (isset($_GET['id'])) {
                                     <label class="block  font-medium">Laju Pernapasan</label>
                                     <input type="text" name="laju_pernapasan" required
                                         class="w-full p-2 border rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block  font-medium">Dokter</label>
+
+                                    <select name="dokter" class="w-full p-2 border rounded-md" required>
+                                        <option value="">-- Pilih Dokter --</option>
+                                        <?php foreach ($dokter as $o): ?>
+                                            <option value="<?= $o['nama']; ?>"><?= $o['nama']; ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
                                 </div>
                                 <div>
                                     <label class="block  font-medium">Obat</label>

@@ -409,36 +409,37 @@ if (isset($_POST["cari"])) {
                       <?= $row["nama"]; ?>
                     </td>
                     <td class="border p-2 truncate w-20 md">
-                      <?= strlen($row['nik']) > 10 ? substr($row['nik'], 0, 10) . '...' : $row["nik"]; ?>
+                      <?= strlen($row['nik']) > 13 ? substr($row['nik'], 0, 13) . '...' : $row["nik"]; ?>
                     </td>
                     <td class="border p-2 w-8 md"><?= $row["jenis_kelamin"]; ?></td>
-                    <td class="border p-2 truncate w-20 md">
-                      <?= strlen($row['no_hp']) > 10 ? substr($row['no_hp'], 0, 10) . '...' : $row["no_hp"]; ?>
-                    </td>
+                    <td class="border p-2 w-8 md"><?= $row["no_hp"]; ?></td>
                     <td class="border p-2 truncate  md">
                       <?= strlen($row['keluhan']) > 15 ? substr($row['keluhan'], 0, 15) . '...' : $row["keluhan"]; ?>
                     </td>
                     <td class="border p-2 truncate w-20 md"><?= $row["poli_tujuan"]; ?></td>
                     <td class="border p-2 md w-28"><?= $row["tanggal_kunjungan"]; ?></td>
                     <td class="border p-2 w-20 md"><?= $row["status_antrian"]; ?></td>
-                    <td class="border p-2 space-x-1">
-
-                      <button onclick="lihatPasien('<?= $row['id']; ?>')"
-                        class="bg-gray-500 text-white px-2 py-1 rounded text-xs">
-                        View
-                      </button>
-
-                      <form action="../../php/functions.php" method="POST" style="display: inline;">
-                        <input type="hidden" name="id" value="<?= $row['id']; ?>">
-                        <button type="submit" name="panggil" class="bg-blue-500 text-white px-2 py-1 rounded text-xs">
-                          Panggil
+                    <td class="border p-2 w-fit">
+                      <div class="flex justify-end space-x-1">
+                        <button onclick="lihatPasien('<?= $row['id']; ?>')"
+                          class="bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs">
+                          View
                         </button>
-                      </form>
-                      <form action="../../php/functions.php" method="POST" style="display: inline;">
-                        <input type="hidden" name="id" value="<?= $row['id']; ?>">
-                        <button type="submit" name="selesai" class="bg-green-500 text-white px-2 py-1 rounded text-xs">
-                          Selesai
-                        </button>
+
+                        <form action="../../php/functions.php" method="POST" style="display: inline;">
+                          <input type="hidden" name="id" value="<?= $row['id']; ?>">
+                          <button type="submit" name="panggil"
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs">
+                            Panggil
+                          </button>
+                        </form>
+                        <form action="../../php/functions.php" method="POST" style="display: inline;">
+                          <input type="hidden" name="id" value="<?= $row['id']; ?>">
+                          <button type="submit" name="selesai"
+                            class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs">
+                            Selesai
+                          </button>
+                      </div>
                       </form>
                     </td>
                   </tr>
@@ -448,9 +449,6 @@ if (isset($_POST["cari"])) {
 
               </tbody>
             </table>
-
-
-
           </div>
 
           <div class="pagination text-xs font-poppins mt-2 ml-1 text-gray-500">
