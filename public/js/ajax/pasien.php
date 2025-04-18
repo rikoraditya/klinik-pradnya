@@ -11,6 +11,7 @@ $offset = ($page - 1) * $limit;
 
 $query = "SELECT * FROM pasien 
     WHERE 
+    no_antrian LIKE '%$keyword%' OR
     nama LIKE '%$keyword%' OR
     nik LIKE '%$keyword%' OR
     no_hp LIKE '%$keyword%' 
@@ -19,6 +20,7 @@ $query = "SELECT * FROM pasien
 
 $total_query = "SELECT COUNT(*) as total FROM pasien 
     WHERE 
+    no_antrian LIKE '%$keyword%' OR
     nama LIKE '%$keyword%' OR
     nik LIKE '%$keyword%' OR
     no_hp LIKE '%$keyword%'";

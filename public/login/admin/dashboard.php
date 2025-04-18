@@ -366,7 +366,7 @@ if (isset($_POST["cari"])) {
 
             <!-- Kolom kanan: Tombol export -->
             <button onclick="window.location.href='export_exel.php'"
-              class="bg-green-600 hover:bg-green-700 text-white text-xs py-2 px-2 rounded-md ml-2 flex items-center gap-1">
+              class="bg-green-600 hover:bg-green-700 text-white text-xs py-1.5 px-1.5 rounded-md ml-2 flex items-center gap-1">
               <!-- Ikon Excel SVG -->
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" class="w-4 h-4 fill-white">
                 <path

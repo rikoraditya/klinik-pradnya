@@ -10,7 +10,24 @@ if (!isset($_SESSION["login"])) {
   exit;
 }
 
-$pasien = query("SELECT * FROM pasien");
+//pagination table
+$JumlahDataPerHalaman = 5;
+$JumlahData = count(query("SELECT * FROM pasien"));
+$JumlahHalaman = ceil($JumlahData / $JumlahDataPerHalaman);
+$HalamanAktif = (isset($_GET["halaman"])) ? $_GET["halaman"] : 1;
+$AwalData = ($JumlahDataPerHalaman * $HalamanAktif) - $JumlahDataPerHalaman;
+
+
+
+
+$pasien = query("SELECT * FROM pasien ORDER BY tanggal_kunjungan DESC LIMIT $AwalData, $JumlahDataPerHalaman");
+
+
+
+//tombol cari
+if (isset($_POST["cari"])) {
+  $pasien = cari($_POST["keyword"]);
+}
 
 
 ?>
@@ -28,6 +45,7 @@ $pasien = query("SELECT * FROM pasien");
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link rel="stylesheet" href="../../../../css/style.css" />
 </head>
 
@@ -309,58 +327,87 @@ $pasien = query("SELECT * FROM pasien");
         <p class="text-gray-600">Tambah Rekam Medis</p>
 
         <div class="bg-white shadow-md mt-4 rounded-lg p-4">
-          <h2 class="text-lg font-semibold mb-2">Pasien</h2>
-          <table class="w-full border-collapse border border-gray-300">
-            <thead class="bg-gray-200">
-              <tr class="text-xs">
-                <th class="border p-2">No</th>
-                <th class="border p-2">No Antrian</th>
-                <th class="border p-2">Nama</th>
-                <th class="border p-2">NIK</th>
-                <th class="border p-2">Jenis Kelamin</th>
-                <th class="border p-2">Tanggal Lahir</th>
-                <th class="border p-2">Tanggal Kunjungan</th>
-                <th class="border p-2">No HP</th>
-                <th class="border p-2">Status Antrian</th>
-                <th class="border p-2">Action</th>
-              </tr>
-            </thead>
-            <tbody class="text-xs">
-
-
-              <?php $i = 1; ?>
-              <?php foreach ($pasien as $row)
-              : ?>
-
-                <tr>
-                  <td class="border p-2 md"><?= $i; ?></td>
-                  <td class="border p-2 md"><?= $row["no_antrian"]; ?></td>
-                  <td class="border p-2 truncate md"><?= $row["nama"]; ?></td>
-                  <td class="border p-2 truncate md"><?= $row["nik"]; ?></td>
-                  <td class="border p-2 md"><?= $row["jenis_kelamin"]; ?></td>
-                  <td class="border p-2 md"><?= $row["tanggal_lahir"]; ?></td>
-                  <td class="border p-2 md"><?= $row["tanggal_kunjungan"]; ?></td>
-                  <td class="border p-2 md"><?= $row["no_hp"]; ?></td>
-                  <td class="border p-2 md"><?= $row["status_antrian"]; ?></td>
-                  <td class="border p-2 space-x-1 w-56">
-
-                    <a href="rm.php?id=<?= $row['id']; ?>"
-                      class="bg-green-700 text-white px-2 py-1 rounded text-xs flex items-center gap-2">
-                      <i class="fas fa-book"></i>Tambah Rekam Medis</a>
-
-                  </td>
+          <form action="" method="post" class="flex items-center pb-3">
+            <input type="text" name="keyword" size="30" placeholder="masukkan keyword pencarian.." autocomplete="off"
+              id="keyword" autofocus
+              class="border-2 border-gray-600 rounded-md text-xs py-0.5 pl-1 placeholder:text-xs placeholder:pl-1">
+          </form>
+          <div id="container">
+            <table class="w-full border-collapse border border-gray-300">
+              <thead class="bg-gray-200">
+                <tr class="text-xs">
+                  <th class="border p-2">No</th>
+                  <th class="border p-2">No Antrian</th>
+                  <th class="border p-2">Nama</th>
+                  <th class="border p-2">NIK</th>
+                  <th class="border p-2">Jenis Kelamin</th>
+                  <th class="border p-2">Tanggal Lahir</th>
+                  <th class="border p-2">Tanggal Kunjungan</th>
+                  <th class="border p-2">No HP</th>
+                  <th class="border p-2">Status Antrian</th>
+                  <th class="border p-2">Action</th>
                 </tr>
+              </thead>
+              <tbody class="text-xs">
 
-                <?php $i++; ?>
-              <?php endforeach; ?>
 
-            </tbody>
-          </table>
+                <?php $i = 1; ?>
+                <?php foreach ($pasien as $row)
+                : ?>
+
+                  <tr>
+                    <td class="border p-2 md"><?= $i; ?></td>
+                    <td class="border p-2 md"><?= $row["no_antrian"]; ?></td>
+                    <td class="border p-2 truncate md"><?= $row["nama"]; ?></td>
+                    <td class="border p-2 truncate md"><?= $row["nik"]; ?></td>
+                    <td class="border p-2 md"><?= $row["jenis_kelamin"]; ?></td>
+                    <td class="border p-2 md"><?= $row["tanggal_lahir"]; ?></td>
+                    <td class="border p-2 md"><?= $row["tanggal_kunjungan"]; ?></td>
+                    <td class="border p-2 md"><?= $row["no_hp"]; ?></td>
+                    <td class="border p-2 md"><?= $row["status_antrian"]; ?></td>
+                    <td class="border p-2 space-x-1 w-56">
+
+                      <a href="rm.php?id=<?= $row['id']; ?>"
+                        class="bg-green-700 text-white px-2 py-1 rounded text-xs flex items-center gap-2">
+                        <i class="fas fa-book"></i>Tambah Rekam Medis</a>
+
+                    </td>
+                  </tr>
+
+                  <?php $i++; ?>
+                <?php endforeach; ?>
+
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pagination text-xs font-poppins mt-2 ml-1 text-gray-500">
+            <?php if ($HalamanAktif > 1): ?>
+              <a href="?halaman=<?= $HalamanAktif - 1; ?>" class="text-base ">&laquo;</a>
+            <?php endif; ?>
+
+            <?php for ($i = 1; $i <= $JumlahHalaman; $i++): ?>
+              <?php if ($i == $HalamanAktif): ?>
+                <a href="?halaman=<?= $i; ?>" class="font-bold text-green-950">
+                  <?= $i; ?></a>
+
+              <?php else: ?>
+                <a href="?halaman=<?= $i; ?>"><?= $i; ?></a>
+              <?php endif; ?>
+            <?php endfor; ?>
+
+            <?php if ($HalamanAktif < $JumlahHalaman): ?>
+              <a href="?halaman=<?= $HalamanAktif + 1; ?>" class="text-base ">&raquo;</a>
+            <?php endif; ?>
+          </div>
+
         </div>
       </main>
     </div>
 
     <!--Logout-->
+
+    <script src="ajax/tambah.js"></script>
 
     <script>
       function toggleSidebar() {

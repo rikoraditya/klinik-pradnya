@@ -1,6 +1,5 @@
 //ambil elemen
 var keyword = document.getElementById('keyword');
-var tombolCari = document.getElementById('tombol-cari');
 var container = document.getElementById('container');
 
 //tambah event ketika keyword di ketik
@@ -15,7 +14,7 @@ xhr.onreadystatechange = function() {
 }
 
 //eksekusi ajax
-xhr.open('GET', 'ajax/rm.php?keyword=' + keyword.value, true);
+xhr.open('GET', 'ajax/tambah.php?keyword=' + keyword.value, true);
 xhr.send();
 
 });
