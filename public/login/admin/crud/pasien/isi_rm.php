@@ -119,7 +119,7 @@ if (isset($_SESSION['pasien_lama'])) {
             </button>
 
             <!-- Dashboard -->
-            <h1 class="text-2xl font-bold sidebar-text mt-6">Admin</h1>
+            <h1 class="text-2xl font-bold font-poppins sidebar-text mt-6">Admin</h1>
             <nav class="">
                 <div class="mb-2 mt-6">
                     <div class="mb-4">
@@ -131,65 +131,166 @@ if (isset($_SESSION['pasien_lama'])) {
                     </div>
 
                     <div class="flex items-center justify-between text-sm font-poppins cursor-pointer p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded"
-                        onclick="toggleMenu('pasienMenu')">
+                        onclick="toggleMenuPasien('pasienMenu', 'iconPasien')">
                         <div class="flex items-center gap-2">
                             <i class="fas fa-user"></i>
                             <span class="sidebar-text font-poppins">Pasien</span>
                         </div>
-                        <i class="fas fa-chevron-down sidebar-text" id="icon-pasien"></i>
+                        <i class="fas fa-chevron-down sidebar-text transition-transform duration-300"
+                            id="iconPasien"></i>
                     </div>
-                    <div id="pasienMenu" class="ml-10 font-poppins text-xs space-y-2 hidden submenu">
+
+                    <div id="pasienMenu"
+                        class="ml-10 font-poppins text-xs space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
+                        style="max-height: 0; visibility: visible;">
                         <a href="../pasien/registrasi.php"
                             class="block cursor-pointer hover:text-gray-300">Registrasi</a>
                         <a href="../pasien/manage.php" class="block cursor-pointer hover:text-gray-300">Manage
                             Pasien</a>
                     </div>
+
+
+
+                    <script>
+                        function toggleMenuPasien(pasienMenu, iconPasien) {
+                            const menu = document.getElementById(pasienMenu);
+                            const icon = document.getElementById(iconPasien);
+
+                            if (menu.style.maxHeight && menu.style.maxHeight !== "0px") {
+                                menu.style.maxHeight = "0px";
+                                icon.classList.remove('rotate-180');
+                            } else {
+                                // Reset height dulu biar scrollHeight bisa dibaca
+                                menu.style.maxHeight = "0px";
+                                // Pakai timeout kecil biar animasi kebaca
+                                setTimeout(() => {
+                                    menu.style.maxHeight = menu.scrollHeight + "px";
+                                }, 10);
+                                icon.classList.add('rotate-180');
+                            }
+                        }
+
+
+                    </script>
+
                 </div>
                 <div class="mb-2">
                     <div class="flex items-center justify-between text-sm font-poppins cursor-pointer p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded"
-                        onclick="toggleMenu('dokterMenu')">
+                        onclick="toggleMenuDokter('dokterMenu', 'iconDokter')">
                         <div class="flex items-center gap-2">
                             <i class="fas fa-user-md"></i>
                             <span class="sidebar-text">Dokter</span>
                         </div>
-                        <i class="fas fa-chevron-down sidebar-text" id="icon-dokter"></i>
+                        <i class="fas fa-chevron-down sidebar-text transition-transform duration-300"
+                            id="iconDokter"></i>
                     </div>
-                    <div id="dokterMenu" class="ml-10 font-poppins text-xs space-y-2 hidden submenu">
+                    <div id="dokterMenu"
+                        class="ml-10 font-poppins text-xs space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
+                        style="max-height: 0; visibility: visible;">
                         <a href="../dokter/tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah
                             Dokter</a>
                         <a href="../dokter/manage.php" class="block cursor-pointer hover:text-gray-300">Manage
                             Dokter</a>
                     </div>
+
+                    <script>
+                        function toggleMenuDokter(dokterMenu, iconDokter) {
+                            const menu = document.getElementById(dokterMenu);
+                            const icon = document.getElementById(iconDokter);
+
+                            if (menu.style.maxHeight && menu.style.maxHeight !== "0px") {
+                                menu.style.maxHeight = "0px";
+                                icon.classList.remove('rotate-180');
+                            } else {
+                                // Reset height dulu biar scrollHeight bisa dibaca
+                                menu.style.maxHeight = "0px";
+                                // Pakai timeout kecil biar animasi kebaca
+                                setTimeout(() => {
+                                    menu.style.maxHeight = menu.scrollHeight + "px";
+                                }, 10);
+                                icon.classList.add('rotate-180');
+                            }
+                        }
+
+
+                    </script>
+
                 </div>
                 <div class="mb-2">
                     <div class="flex items-center justify-between text-sm font-poppins cursor-pointer p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded"
-                        onclick="toggleMenu('obatMenu')">
+                        onclick="toggleMenuObat('obatMenu', 'iconObat')">
                         <div class="flex items-center gap-1">
                             <i class="fas fa-pills"></i>
                             <span class="sidebar-text">Obat</span>
                         </div>
-                        <i class="fas fa-chevron-down sidebar-text" id="icon-obat"></i>
+                        <i class="fas fa-chevron-down sidebar-text transition-transform duration-300" id="iconObat"></i>
                     </div>
-                    <div id="obatMenu" class="ml-10 text-xs font-poppins space-y-2 hidden submenu">
+                    <div id="obatMenu"
+                        class="ml-10 text-xs font-poppins space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
+                        style="max-height: 0; visibility: visible;">
                         <a href="../obat/tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah Obat</a>
                         <a href="../obat/manage.php" class="block cursor-pointer hover:text-gray-300">Manage Obat</a>
                     </div>
+
+                    <script>
+                        function toggleMenuObat(obatMenu, iconObat) {
+                            const menu = document.getElementById(obatMenu);
+                            const icon = document.getElementById(iconObat);
+
+                            if (menu.style.maxHeight && menu.style.maxHeight !== "0px") {
+                                menu.style.maxHeight = "0px";
+                                icon.classList.remove('rotate-180');
+                            } else {
+                                // Reset height dulu biar scrollHeight bisa dibaca
+                                menu.style.maxHeight = "0px";
+                                // Pakai timeout kecil biar animasi kebaca
+                                setTimeout(() => {
+                                    menu.style.maxHeight = menu.scrollHeight + "px";
+                                }, 10);
+                                icon.classList.add('rotate-180');
+                            }
+                        }
+                    </script>
+
                 </div>
                 <div class="mb-2">
                     <div class="flex items-center justify-between text-sm font-poppins cursor-pointer p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded"
-                        onclick="toggleMenu('rekamMedisMenu')">
+                        onclick="toggleMenuRM('rmMenu', 'iconRm')">
                         <div class="flex items-center gap-2">
                             <i class="fas fa-clipboard-list"></i>
                             <span class="sidebar-text">Rekam Medis</span>
                         </div>
-                        <i class="fas fa-chevron-down sidebar-text" id="icon-rekamMedis"></i>
+                        <i class="fas fa-chevron-down sidebar-text" id="iconRm"></i>
                     </div>
-                    <div id="rekamMedisMenu" class="ml-10 text-xs font-poppins space-y-2 hidden submenu">
+                    <div id="rmMenu"
+                        class="ml-10 text-xs font-poppins space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
+                        style="max-height: 0; visibility: visible;">
                         <a href="../rekammedis/tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah Rekam
                             Medis</a>
                         <a href="../rekammedis/manage.php" class="block cursor-pointer hover:text-gray-300">Manage Rekam
                             Medis</a>
                     </div>
+
+                    <script>
+                        function toggleMenuRM(rmMenu, iconRm) {
+                            const menu = document.getElementById(rmMenu);
+                            const icon = document.getElementById(iconRm);
+
+                            if (menu.style.maxHeight && menu.style.maxHeight !== "0px") {
+                                menu.style.maxHeight = "0px";
+                                icon.classList.remove('rotate-180');
+                            } else {
+                                // Reset height dulu biar scrollHeight bisa dibaca
+                                menu.style.maxHeight = "0px";
+                                // Pakai timeout kecil biar animasi kebaca
+                                setTimeout(() => {
+                                    menu.style.maxHeight = menu.scrollHeight + "px";
+                                }, 10);
+                                icon.classList.add('rotate-180');
+                            }
+                        }
+                    </script>
+
                 </div>
             </nav>
             <button onclick="openLogoutModal();" data-href="../logout.php"
