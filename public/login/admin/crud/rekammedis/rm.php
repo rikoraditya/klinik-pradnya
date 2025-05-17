@@ -553,20 +553,44 @@ if (isset($_GET['id'])) {
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block  font-medium">Obat</label>
-
-                                    <select name="obat" class="w-full p-2 border rounded-md" required>
-                                        <option value="">-- Pilih Obat --</option>
-                                        <?php foreach ($obat as $o): ?>
-                                            <option value="<?= $o['nama_obat']; ?>"><?= $o['nama_obat']; ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
+                                    <label class="block font-medium">Diagnosa</label>
+                                    <textarea name="diagnosa" placeholder="Masukkan Diagnosa Pasien" required
+                                        class="w-full p-2 border rounded-md"></textarea>
                                 </div>
                             </div>
+                            <!-- Multi Obat -->
                             <div>
-                                <label class="block  font-medium">Diagnosa</label>
-                                <textarea name="diagnosa" placeholder="Masukkan Diagnosa Pasien" required
-                                    class="w-full p-2 border rounded-md"></textarea>
+                                <label class="block font-medium mb-2">Obat & Dosis/Jumlah</label>
+                                <div id="obat-container">
+                                    <div class="grid grid-cols-4 gap-2 mb-2 obat-row">
+                                        <div>
+                                            <select name="kode_obat[]" class="w-full p-2 border rounded-md" required>
+                                                <option value="">-- Pilih Obat --</option>
+                                                <?php foreach ($obat as $o): ?>
+                                                    <option value="<?= $o['kode_obat']; ?>"><?= $o['nama_obat']; ?>
+                                                        (<?= $o['kode_obat']; ?>)</option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <input type="text" name="dosis[]" class="w-full p-2 border rounded-md"
+                                                placeholder="Dosis" required>
+                                        </div>
+                                        <div>
+                                            <input type="number" name="jumlah[]" class="w-full p-2 border rounded-md"
+                                                placeholder="Jumlah" min="1" required>
+                                        </div>
+                                        <div>
+                                            <button type="button"
+                                                class="remove-obat bg-red-500 text-white px-2 py-1 rounded">Hapus</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" id="tambah-obat"
+                                    class="mt-2 bg-green-700 hover:bg-green-900 text-white py-1 px-2 rounded text-xs">Tambah
+                                    Obat</button>
+                                <small class="block text-xs text-gray-500 mt-1">Klik "Tambah Obat" untuk menambah baris
+                                    obat.</small>
                             </div>
                             <button type="submit"
                                 class="mt-4 bg-green-800 hover:bg-green-900 text-white py-2 px-3 rounded-md text-xs">Tambah</button>
@@ -582,6 +606,41 @@ if (isset($_GET['id'])) {
 
             </main>
         </div>
+
+        <!-- Script untuk menambah dan menghapus baris obat -->
+        <script>
+            document.getElementById('tambah-obat').addEventListener('click', function () {
+                let container = document.getElementById('obat-container');
+                let row = document.createElement('div');
+                row.className = 'grid grid-cols-4 gap-2 mb-2 obat-row';
+                row.innerHTML = `
+                    <div>
+                        <select name="kode_obat[]" class="w-full p-2 border rounded-md" required>
+                            <option value="">-- Pilih Obat --</option>
+                            <?php foreach ($obat as $o): ?>
+                                <option value="<?= $o['kode_obat']; ?>"><?= $o['nama_obat']; ?> (<?= $o['kode_obat']; ?>)</option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div>
+                        <input type="text" name="dosis[]" class="w-full p-2 border rounded-md" placeholder="Dosis" required>
+                    </div>
+                    <div>
+                        <input type="number" name="jumlah[]" class="w-full p-2 border rounded-md" placeholder="Jumlah" min="1" required>
+                    </div>
+                    <div>
+                        <button type="button" class="remove-obat bg-red-500 text-white px-2 py-1 rounded">Hapus</button>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+
+            document.addEventListener('click', function (e) {
+                if (e.target && e.target.classList.contains('remove-obat')) {
+                    e.target.closest('.obat-row').remove();
+                }
+            });
+        </script>
 
         <!--Logout-->
 

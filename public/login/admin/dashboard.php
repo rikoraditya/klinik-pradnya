@@ -396,15 +396,11 @@ if (isset($_POST["cari"])) {
 
       </header>
 
-
       <script>
         document.getElementById('dropdownButton').addEventListener('click', function () {
           document.getElementById('dropdownMenu').classList.toggle('hidden');
         });
       </script>
-
-
-
 
       <script>
         function toggleSidebar() {
@@ -569,9 +565,6 @@ if (isset($_POST["cari"])) {
               <a href="?halaman=<?= $HalamanAktif + 1; ?>" class="text-base ">&raquo;</a>
             <?php endif; ?>
           </div>
-
-
-
         </div>
       </main>
     </div>
@@ -610,10 +603,6 @@ if (isset($_POST["cari"])) {
       }
     </script>
 
-
-
-
-    <!-- Modal -->
     <!-- Modal -->
     <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
       <div class="bg-white rounded-xl shadow-2xl w-full max-w-xl p-6 sm:p-7">
@@ -648,9 +637,6 @@ if (isset($_POST["cari"])) {
         </div>
       </div>
     </div>
-
-
-
 
     <script>
       function lihatPasien(id) {
@@ -689,11 +675,6 @@ if (isset($_POST["cari"])) {
       }
 
     </script>
-
-
-
-
-
 
 </body>
 

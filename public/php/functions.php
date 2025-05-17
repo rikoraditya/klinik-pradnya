@@ -6,12 +6,17 @@ function query($query)
 {
     global $conn;
     $result = mysqli_query($conn, $query);
+    if (!$result) {
+        // Jika query gagal, hentikan eksekusi dan tampilkan error
+        die("Query Error: " . mysqli_error($conn) . "<br>Query: " . $query);
+    }
     $rows = [];
     while ($row = mysqli_fetch_assoc($result)) {
         $rows[] = $row;
     }
     return $rows;
 }
+
 
 $obat = mysqli_query($conn, "SELECT * FROM obat");
 

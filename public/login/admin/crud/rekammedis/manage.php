@@ -18,7 +18,22 @@ $HalamanAktif = (isset($_GET["halaman"])) ? $_GET["halaman"] : 1;
 $AwalData = ($JumlahDataPerHalaman * $HalamanAktif) - $JumlahDataPerHalaman;
 
 
-$rekam_medis = query("SELECT * FROM rekam_medis ORDER BY tanggal_kunjungan DESC LIMIT $AwalData, $JumlahDataPerHalaman");
+$rekam_medis = query("SELECT 
+    rekam_medis.*, 
+    pasien.nama AS nama_pasien,
+    pasien.jenis_kelamin AS jenis_kelamin_pasien,
+    pasien.tanggal_lahir AS tanggal_lahir, 
+    pasien.no_hp AS no_hp, 
+    pasien.nik AS nik_pasien,
+ kunjungan.tanggal_kunjungan
+FROM rekam_medis
+JOIN pasien ON rekam_medis.nik = pasien.nik
+JOIN kunjungan ON rekam_medis.no_rm = kunjungan.no_rm
+ORDER BY kunjungan.tanggal_kunjungan DESC
+LIMIT $AwalData, $JumlahDataPerHalaman");
+
+
+
 
 //tombol cari
 if (isset($_POST["cari_rm"])) {
@@ -449,6 +464,7 @@ if (isset($_POST["cari_rm"])) {
                 <tr class="text-xs">
                   <th class="border p-2">No</th>
                   <th class="border p-2">No RM</th>
+                  <th class="border p-2">NIK</th>
                   <th class="border p-2">Nama</th>
                   <th class="border p-2">Jenis Kelamin</th>
                   <th class="border p-2">Tanggal Lahir</th>
@@ -469,8 +485,9 @@ if (isset($_POST["cari_rm"])) {
                   <tr>
                     <td class="border p-2 md"><?= $i; ?></td>
                     <td class="border p-2 md"><?= $row["no_rm"]; ?></td>
-                    <td class="border p-2 truncate md"><?= $row["nama"]; ?></td>
-                    <td class="border p-2 md"><?= $row["jenis_kelamin"]; ?></td>
+                    <td class="border p-2 truncate md"><?= $row["nik"]; ?></td>
+                    <td class="border p-2 md"><?= $row["nama_pasien"]; ?></td>
+                    <td class="border p-2 md"><?= $row["jenis_kelamin_pasien"]; ?></td>
                     <td class="border p-2 md"><?= $row["tanggal_lahir"]; ?></td>
                     <td class="border p-2"><?= $row["tanggal_kunjungan"]; ?></td>
                     <td class="border p-2 md"><?= $row["no_hp"]; ?></td>
