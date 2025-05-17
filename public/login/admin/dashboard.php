@@ -10,23 +10,32 @@ if (!isset($_SESSION["login"])) {
   exit;
 }
 
-//pagination table
+// Pagination setup for kunjungan table
 $JumlahDataPerHalaman = 5;
-$JumlahData = count(query("SELECT * FROM pasien"));
+$JumlahData = count(query("SELECT * FROM kunjungan"));
 $JumlahHalaman = ceil($JumlahData / $JumlahDataPerHalaman);
 $HalamanAktif = (isset($_GET["halaman"])) ? $_GET["halaman"] : 1;
 $AwalData = ($JumlahDataPerHalaman * $HalamanAktif) - $JumlahDataPerHalaman;
 
+// Fetch kunjungan data for table
+$kunjungan = query("SELECT * FROM kunjungan ORDER BY tanggal_kunjungan DESC LIMIT $AwalData, $JumlahDataPerHalaman");
 
-
-
-$pasien = query("SELECT * FROM pasien ORDER BY tanggal_kunjungan DESC LIMIT $AwalData, $JumlahDataPerHalaman");
-
-
-
-//tombol cari
+// Search functionality
 if (isset($_POST["cari"])) {
-  $pasien = cari($_POST["keyword"]);
+  $keyword = $_POST["keyword"];
+  $kunjungan = query("SELECT * FROM kunjungan WHERE 
+    no_rm LIKE '%$keyword%' OR
+    tanggal_kunjungan LIKE '%$keyword%' OR
+    keluhan LIKE '%$keyword%' OR
+    poli_tujuan LIKE '%$keyword%' OR
+    jenis_pasien LIKE '%$keyword%' OR
+    dokter LIKE '%$keyword%' OR
+    nik_bpjs LIKE '%$keyword%' OR
+    denyut_nadi LIKE '%$keyword%' OR
+    laju_pernapasan LIKE '%$keyword%' OR
+    diagnosa LIKE '%$keyword%'
+    ORDER BY tanggal_kunjungan DESC
+  ");
 }
 ?>
 

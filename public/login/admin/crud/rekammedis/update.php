@@ -11,10 +11,56 @@ if (!isset($_SESSION["login"])) {
 }
 
 $id = $_GET["id"];
-$rekam_medis = query("SELECT * FROM rekam_medis WHERE id = $id")[0];
+// Ambil data rekam_medis, pasien, kunjungan, dokter, dan obat sesuai struktur tabel terbaru
+$rekam_medis = query("
+    SELECT 
+        rm.id,
+        rm.no_rm,
+        rm.nik,
+        p.nama AS nama_pasien,
+        p.jenis_kelamin,
+        p.no_hp,
+        p.tempat_lahir,
+        p.tanggal_lahir,
+        p.alamat,
+        k.id AS id_kunjungan,
+        k.tanggal_kunjungan,
+        k.keluhan,
+        k.poli_tujuan,
+        k.jenis_pasien,
+        k.dokter AS id_dokter,
+        d.nama AS nama_dokter,
+        d.poliklinik,
+        d.profile_picture,
+        k.nik_bpjs,
+        k.denyut_nadi,
+        k.laju_pernapasan,
+        k.diagnosa
+    FROM rekam_medis rm
+    LEFT JOIN pasien p ON rm.nik = p.nik
+    LEFT JOIN kunjungan k ON rm.no_rm = k.no_rm
+    LEFT JOIN dokter d ON k.dokter = d.id_dokter
+    WHERE rm.id = $id
+    ORDER BY k.tanggal_kunjungan DESC
+    LIMIT 1
+")[0];
 
+// Ambil daftar obat (untuk dropdown)
 $obat = query("SELECT * FROM obat");
+
+// Ambil daftar dokter (untuk dropdown)
 $dokter = query("SELECT * FROM dokter");
+
+// Ambil daftar obat yang diberikan pada kunjungan ini (jika ada)
+$obat_kunjungan = [];
+if (!empty($rekam_medis['id_kunjungan'])) {
+    $obat_kunjungan = query("
+        SELECT ko.*, o.nama_obat, o.jenis_obat, o.dosis AS dosis_obat, o.keterangan
+        FROM kunjungan_obat ko
+        LEFT JOIN obat o ON ko.kode_obat = o.kode_obat
+        WHERE ko.id_kunjungan = {$rekam_medis['id_kunjungan']}
+    ");
+}
 
 echo "<!DOCTYPE html><html><head>
 <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
@@ -35,15 +81,17 @@ if (isset($_POST["submit"])) {
         });
     </script>";
     } else {
+        $errorMessage = $conn->error ? addslashes($conn->error) : "Terjadi kesalahan saat mengupdate data ";
         echo "<script> 
-        Swal.fire({
-            icon: 'error',
-            title: 'Data Gagal Diubah',
-            confirmButtonText: 'Kembali'
-        }).then(() => {
-            window.location.href = 'manage.php';
-        });
-    </script>";
+Swal.fire({
+    icon: 'error',
+    title: 'Data Gagal Diubah',
+    text: '" . $errorMessage . "',
+    confirmButtonText: 'Kembali'
+}).then(() => {
+    window.location.href = 'manage.php';
+});
+</script>";
     }
 }
 
@@ -473,7 +521,7 @@ echo "</body></html>";
                                 <div>
                                     <label class="block  font-medium">Nama Pasien</label>
                                     <input type="text" name="nama" class="w-full p-2 border rounded-md"
-                                        value="<?= $rekam_medis['nama'] ?? '' ?>" readonly>
+                                        value="<?= $rekam_medis['nama_pasien'] ?? '' ?>" readonly>
                                 </div>
                                 <div>
                                     <label class="block  font-medium">No. KTP</label>
@@ -571,9 +619,9 @@ echo "</body></html>";
                                     <label class="block  font-medium">Dokter</label>
 
                                     <select name="dokter" class="w-full p-2 border rounded-md" required>
-                                        <?php foreach ($dokter as $o): ?>
-                                            <option value="<?= $o['nama'] ?>" <?= ($rekam_medis['dokter'] ?? '') === $o['nama'] ? 'selected' : '' ?>>
-                                                <?= $o['nama'] ?>
+                                        <?php foreach ($dokter as $d): ?>
+                                            <option value="<?= $d['id_dokter'] ?>" <?= ($rekam_medis['id_dokter'] ?? '') == $d['id_dokter'] ? 'selected' : '' ?>>
+                                                <?= $d['nama'] ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -582,7 +630,7 @@ echo "</body></html>";
                                     <label class="block font-medium">Obat</label>
                                     <select name="obat" class="w-full p-2 border rounded-md" required>
                                         <?php foreach ($obat as $o): ?>
-                                            <option value="<?= $o['nama_obat'] ?>" <?= ($rekam_medis['obat'] ?? '') === $o['nama_obat'] ? 'selected' : '' ?>>
+                                            <option value="<?= $o['kode_obat'] ?>" <?= isset($obat_kunjungan[0]) && ($obat_kunjungan[0]['kode_obat'] ?? '') == $o['kode_obat'] ? 'selected' : '' ?>>
                                                 <?= $o['nama_obat'] ?>
                                             </option>
                                         <?php endforeach; ?>

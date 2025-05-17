@@ -25,19 +25,65 @@ $rekam_medis = query("SELECT
     pasien.tanggal_lahir AS tanggal_lahir, 
     pasien.no_hp AS no_hp, 
     pasien.nik AS nik_pasien,
- kunjungan.tanggal_kunjungan
+    kunjungan.id AS id_kunjungan,
+    kunjungan.tanggal_kunjungan,
+    kunjungan.dokter
 FROM rekam_medis
 JOIN pasien ON rekam_medis.nik = pasien.nik
 JOIN kunjungan ON rekam_medis.no_rm = kunjungan.no_rm
 ORDER BY kunjungan.tanggal_kunjungan DESC
 LIMIT $AwalData, $JumlahDataPerHalaman");
 
+// Ambil semua id_kunjungan yang tampil di halaman ini
+$id_kunjungan_list = array_column($rekam_medis, 'id_kunjungan');
+$obat_per_kunjungan = [];
 
+if (!empty($id_kunjungan_list)) {
+  $id_kunjungan_in = implode(',', array_map('intval', $id_kunjungan_list));
 
+  // Ambil data obat untuk semua kunjungan yang tampil (sekali query)
+  $obat_rows = query("
+    SELECT ko.id_kunjungan, o.nama_obat, ko.dosis, ko.jumlah
+    FROM kunjungan_obat ko
+    JOIN obat o ON ko.kode_obat = o.kode_obat
+    WHERE ko.id_kunjungan IN ($id_kunjungan_in)
+    ORDER BY ko.id_kunjungan, o.nama_obat
+  ");
+
+  foreach ($obat_rows as $obat_row) {
+    $idk = $obat_row['id_kunjungan'];
+    if (!isset($obat_per_kunjungan[$idk]))
+      $obat_per_kunjungan[$idk] = [];
+    $obat_per_kunjungan[$idk][] = $obat_row;
+  }
+}
 
 //tombol cari
 if (isset($_POST["cari_rm"])) {
   $rekam_medis = cari_rm($_POST["keyword"]);
+
+  // Jika pencarian, ambil ulang id_kunjungan dan data obat
+  $id_kunjungan_list = array_column($rekam_medis, 'id_kunjungan');
+  $obat_per_kunjungan = [];
+
+  if (!empty($id_kunjungan_list)) {
+    $id_kunjungan_in = implode(',', array_map('intval', $id_kunjungan_list));
+
+    $obat_rows = query("
+      SELECT ko.id_kunjungan, o.nama_obat, ko.dosis, ko.jumlah
+      FROM kunjungan_obat ko
+      JOIN obat o ON ko.kode_obat = o.kode_obat
+      WHERE ko.id_kunjungan IN ($id_kunjungan_in)
+      ORDER BY ko.id_kunjungan, o.nama_obat
+    ");
+
+    foreach ($obat_rows as $obat_row) {
+      $idk = $obat_row['id_kunjungan'];
+      if (!isset($obat_per_kunjungan[$idk]))
+        $obat_per_kunjungan[$idk] = [];
+      $obat_per_kunjungan[$idk][] = $obat_row;
+    }
+  }
 }
 ?>
 
@@ -491,9 +537,20 @@ if (isset($_POST["cari_rm"])) {
                     <td class="border p-2 md"><?= $row["tanggal_lahir"]; ?></td>
                     <td class="border p-2"><?= $row["tanggal_kunjungan"]; ?></td>
                     <td class="border p-2 md"><?= $row["no_hp"]; ?></td>
-                    <td class="border p-2 md"><?= $row["obat"]; ?></td>
                     <td class="border p-2 md">
-                      <?= strlen($row['dokter']) > 18 ? substr($row['dokter'], 0, 18) . '...' : $row["dokter"]; ?>
+                      <?php
+                      $idk = $row['id_kunjungan'];
+                      if (isset($obat_per_kunjungan[$idk]) && count($obat_per_kunjungan[$idk]) > 0) {
+                        foreach ($obat_per_kunjungan[$idk] as $obat) {
+                          echo htmlspecialchars($obat['nama_obat']) . " (" . htmlspecialchars($obat['dosis']) . ", " . htmlspecialchars($obat['jumlah']) . ")<br>";
+                        }
+                      } else {
+                        echo "-";
+                      }
+                      ?>
+                    </td>
+                    <td class="border p-2 md">
+                      <?= isset($row['dokter']) && strlen($row['dokter']) > 18 ? substr($row['dokter'], 0, 18) . '...' : (isset($row['dokter']) ? $row["dokter"] : "-"); ?>
                     </td>
 
                     <td class="border p-2">
@@ -651,6 +708,15 @@ if (isset($_POST["cari_rm"])) {
         fetch('view_pasien.php?id=' + id)
           .then(response => response.json())
           .then(data => {
+            console.log(data)
+            let obatHtml = "-";
+            if (data.obat_list && data.obat_list.length > 0) {
+              obatHtml = "";
+              data.obat_list.forEach(function (obat) {
+                obatHtml += `${obat.nama_obat} (${obat.dosis}, ${obat.jumlah})<br>`;
+              });
+            }
+
             const modal = document.getElementById('modalContent');
             modal.innerHTML = `
          <div><span class="font-semibold font-poppins">No. RM:</span><br>${data.no_rm}</div>
@@ -669,7 +735,7 @@ if (isset($_POST["cari_rm"])) {
         <div><span class="font-semibold font-poppins">Denyut Nadi:</span><br>${data.denyut_nadi}</div>
           <div><span class="font-semibold font-poppins">Laju Pernapasan:</span><br>${data.laju_pernapasan}</div>
         <div><span class="font-semibold font-poppins">Diagnosa:</span><br>${data.diagnosa}</div>
-          <div><span class="font-semibold font-poppins">Obat:</span><br>${data.obat}</div>
+          <div><span class="font-semibold font-poppins">Obat:</span><br>${obatHtml}</div>
             <div><span class="font-semibold font-poppins">Dokter:</span><br>${data.dokter}</div>
     
       `;

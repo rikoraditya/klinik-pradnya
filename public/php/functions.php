@@ -185,18 +185,9 @@ function update_obat($data)
 
 function update_rm($data)
 {
-
     global $conn;
 
     $id = $data["id"];
-    $no_rm = $data['no_rm'];
-    $nama = $data['nama'];
-    $nik = $data['nik'];
-    $jenis_kelamin = $data['jenis_kelamin'];
-    $no_hp = $data['no_hp'];
-    $tempat_lahir = $data['tempat_lahir'];
-    $tanggal_lahir = $data['tanggal_lahir'];
-    $alamat = $data['alamat'];
     $tanggal_kunjungan = $data['tanggal_kunjungan'];
     $keluhan = $data['keluhan'];
     $poli_tujuan = $data['poli_tujuan'];
@@ -205,33 +196,19 @@ function update_rm($data)
     $nik_bpjs = $data['nik_bpjs'];
     $denyut_nadi = $data['denyut_nadi'];
     $laju_pernapasan = $data['laju_pernapasan'];
-    $obat = $data['obat'];
     $diagnosa = $data['diagnosa'];
 
-    $query = "UPDATE rekam_medis SET
-    
-    
-    nama = '$nama',
-    nik = '$nik',
-    jenis_kelamin = '$jenis_kelamin',
-    no_hp = '$no_hp',
-    tempat_lahir = '$tempat_lahir',
-    tanggal_lahir = '$tanggal_lahir',
-    alamat = '$alamat',
-    tanggal_kunjungan = '$tanggal_kunjungan',
-    keluhan = '$keluhan',
-    poli_tujuan = '$poli_tujuan',
-    jenis_pasien= '$jenis_pasien',
-    dokter = '$dokter',
-    nik_bpjs = '$nik_bpjs',
-    denyut_nadi = '$denyut_nadi',
-    laju_pernapasan = '$laju_pernapasan',
-    obat = '$obat',
-    diagnosa = '$diagnosa'
-
-    WHERE id = $id
-    ";
-
+    $query = "UPDATE kunjungan SET
+        tanggal_kunjungan = '$tanggal_kunjungan',
+        keluhan = '$keluhan',
+        poli_tujuan = '$poli_tujuan',
+        jenis_pasien = '$jenis_pasien',
+        dokter = '$dokter',
+        nik_bpjs = '$nik_bpjs',
+        denyut_nadi = '$denyut_nadi',
+        laju_pernapasan = '$laju_pernapasan',
+        diagnosa = '$diagnosa'
+    WHERE id = $id";
 
     mysqli_query($conn, $query);
     return mysqli_affected_rows($conn);

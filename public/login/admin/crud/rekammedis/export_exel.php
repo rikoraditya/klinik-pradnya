@@ -1,33 +1,62 @@
 <?php
-// Memasukkan autoload Composer
-require '../../../../../vendor/autoload.php'; // Sesuaikan path jika perlu
+require '../../../../../vendor/autoload.php';
+require '../../../../php/functions.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
-use PhpOffice\PhpSpreadsheet\Style\Alignment; // Impor Alignment
-use PhpOffice\PhpSpreadsheet\Style\Font; // Impor Font
-use PhpOffice\PhpSpreadsheet\Style\Fill; // Impor Fill
-use PhpOffice\PhpSpreadsheet\Style\Border; // Impor Border
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Font;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
-// Ambil data dari database
-require '../../../../php/functions.php';
+// Ambil data gabungan dari tabel-tabel terkait
+$query = "
+SELECT 
+    rekam_medis.no_rm,
+    pasien.nama,
+    pasien.nik,
+    pasien.jenis_kelamin,
+    pasien.no_hp,
+    pasien.tempat_lahir,
+    pasien.tanggal_lahir,
+    pasien.alamat,
+    kunjungan.tanggal_kunjungan,
+    kunjungan.keluhan,
+    kunjungan.poli_tujuan,
+    kunjungan.jenis_pasien,
+    kunjungan.dokter,
+    kunjungan.nik_bpjs,
+    kunjungan.denyut_nadi,
+    kunjungan.laju_pernapasan,
+    GROUP_CONCAT(CONCAT(obat.nama_obat, ' (', kunjungan_obat.jumlah, ' x ', kunjungan_obat.dosis, ')') SEPARATOR ', ') AS obat,
+    kunjungan.diagnosa
+FROM rekam_medis
+JOIN pasien ON rekam_medis.nik = pasien.nik
+JOIN kunjungan ON rekam_medis.no_rm = kunjungan.no_rm
+LEFT JOIN kunjungan_obat ON kunjungan.id = kunjungan_obat.id_kunjungan
+LEFT JOIN obat ON kunjungan_obat.kode_obat = obat.kode_obat
+LEFT JOIN dokter ON kunjungan.dokter = dokter.id_dokter
+GROUP BY kunjungan.id
+ORDER BY kunjungan.tanggal_kunjungan DESC
+";
 
-$query = "SELECT * FROM rekam_medis";
 $result = mysqli_query($conn, $query);
+
+// Error handling for SQL query
+if (!$result) {
+    die("SQL Error: " . mysqli_error($conn) . "\nQuery: " . $query);
+}
 
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 
-// Menambahkan teks di bagian atas tabel
-$sheet->mergeCells('A1:S1'); // Sesuaikan dengan kolom yang tersisa setelah menghapus ID
+$sheet->mergeCells('A1:S1');
 $sheet->setCellValue('A1', 'Rekapitulasi Rekam Medis Pasien');
-
-// Styling untuk teks "Rekapitulasi Rekam Medis Pasien"
 $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
 $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-// Header kolom (tanpa ID)
+// Header kolom
 $headers = [
     'A2' => 'No',
     'B2' => 'No RM',
@@ -50,18 +79,16 @@ $headers = [
     'S2' => 'Diagnosa'
 ];
 
-// Menambahkan header kolom ke dalam worksheet
 foreach ($headers as $cell => $text) {
     $sheet->setCellValue($cell, $text);
 }
 
-// Styling untuk header
 $sheet->getStyle('A2:S2')->getFont()->setBold(true);
 $sheet->getStyle('A2:S2')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('4F81BD');
 $sheet->getStyle('A2:S2')->getFont()->getColor()->setARGB('FFFFFF');
 $sheet->getStyle('A2:S2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-// Isi data (tanpa kolom ID)
+// Isi data
 $rowNumber = 3;
 while ($row = mysqli_fetch_assoc($result)) {
     $sheet->setCellValue('A' . $rowNumber, $rowNumber - 2);
@@ -86,19 +113,14 @@ while ($row = mysqli_fetch_assoc($result)) {
     $rowNumber++;
 }
 
-// Styling untuk data
+// Styling isi data
 $sheet->getStyle('A3:S' . $rowNumber)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+$sheet->getStyle('A3:S' . ($rowNumber - 1))->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
 
-// Menambahkan border ke semua sel data
-$sheet->getStyle('A3:S' . ($rowNumber - 1))
-    ->getBorders()
-    ->getAllBorders()
-    ->setBorderStyle(Border::BORDER_THIN);
-
-// Output file Excel
+// Output
 $writer = new Xlsx($spreadsheet);
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-header('Content-Disposition: attachment;filename="rekam_medis.xlsx"');
+header('Content-Disposition: attachment;filename="rekap_rekam_medis.xlsx"');
 header('Cache-Control: max-age=0');
 $writer->save('php://output');
 exit();

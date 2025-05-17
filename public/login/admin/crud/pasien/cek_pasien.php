@@ -18,7 +18,20 @@ echo "<!DOCTYPE html><html><head>
 if (isset($_POST['nik_cari'])) {
     $cari = $_POST['nik_cari'];
 
-    $query = $conn->prepare("SELECT * FROM rekam_medis WHERE nik = ?");
+    $query = $conn->prepare("
+    SELECT 
+        rekam_medis.*, 
+        pasien.nama, 
+        pasien.jenis_kelamin, 
+        pasien.no_hp, 
+        pasien.tempat_lahir, 
+        pasien.tanggal_lahir, 
+        pasien.alamat 
+    FROM rekam_medis 
+    JOIN pasien ON rekam_medis.nik = pasien.nik 
+    WHERE rekam_medis.nik = ?
+");
+
     $query->bind_param("s", $cari);
     $query->execute();
     $result = $query->get_result();

@@ -10,13 +10,7 @@ echo "<!DOCTYPE html><html><head>
 
 if (
     isset(
-    $_POST['nama'],
     $_POST['nik'],
-    $_POST['jenis_kelamin'],
-    $_POST['no_hp'],
-    $_POST['tempat_lahir'],
-    $_POST['tanggal_lahir'],
-    $_POST['alamat'],
     $_POST['tanggal_kunjungan'],
     $_POST['keluhan'],
     $_POST['poli_tujuan'],
@@ -31,13 +25,7 @@ if (
     $_POST['jumlah']
 )
 ) {
-    $nama = htmlspecialchars($_POST['nama']);
     $nik = htmlspecialchars($_POST['nik']);
-    $jenis_kelamin = htmlspecialchars($_POST['jenis_kelamin']);
-    $no_hp = htmlspecialchars($_POST['no_hp']);
-    $tempat_lahir = htmlspecialchars($_POST['tempat_lahir']);
-    $tanggal_lahir = htmlspecialchars($_POST['tanggal_lahir']);
-    $alamat = htmlspecialchars($_POST['alamat']);
     $tanggal_kunjungan = htmlspecialchars($_POST['tanggal_kunjungan']);
     $keluhan = htmlspecialchars($_POST['keluhan']);
     $poli_tujuan = htmlspecialchars($_POST['poli_tujuan']);
@@ -53,7 +41,7 @@ if (
     $dosis_obat = $_POST['dosis'];    // array
     $jumlah_obat = $_POST['jumlah'];  // array
 
-    // Cek apakah pasien sudah punya no_rm
+    // 1. Cek apakah pasien sudah punya no_rm
     $rm_query = "SELECT no_rm FROM rekam_medis WHERE nik = ?";
     $stmt_rm = $conn->prepare($rm_query);
     $stmt_rm->bind_param("s", $nik);
