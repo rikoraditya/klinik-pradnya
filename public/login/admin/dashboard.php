@@ -556,8 +556,8 @@ if (isset($_POST["cari"])) {
                         </button>
                         <form action="../../php/functions.php" method="POST" style="display: inline;">
                           <input type="hidden" name="id" value="<?= $row['id']; ?>">
-                          <button type="submit" name="panggil"
-                            class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs">
+                          <button type="button" class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs"
+                            onclick="panggilPasien('<?= $row['id'] ?>', '<?= $row['no_antrian'] ?>', '<?= $row['poli_tujuan'] ?>')">
                             Panggil
                           </button>
                         </form>
@@ -607,7 +607,31 @@ if (isset($_POST["cari"])) {
     <!--Script JS-->
     <script src="../../js/script.js"></script>
 
-    <!--Logout-->
+    <!--suara panggil-->
+
+    <script>
+      function panggilPasien(id, noAntrian, poli) {
+        // Format suara: A 0 0 1
+        const noAntrianTerpisah = noAntrian.replace(/-/g, '').split('').join(' ');
+        const pesan = `Nomor antrian. ${noAntrianTerpisah}. Silakan menuju ke ${poli}.terimakasih`;
+
+        // AJAX update status antrian
+        fetch('../../php/panggil.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `id=${id}`
+        }).then(() => {
+          // Suara
+          const ucap = new SpeechSynthesisUtterance(pesan);
+          ucap.lang = 'id-ID';
+          ucap.rate = 0.9; // Lebih lambat
+          window.speechSynthesis.speak(ucap);
+        });
+      }
+    </script>
+
+
+
 
     <script>
       function toggleSidebar() {

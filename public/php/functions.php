@@ -174,6 +174,45 @@ function updateRM($data)
     return $stmt->affected_rows;
 }
 
+//panggil status antrian
+// Status = DIPERIKSA
+if (isset($_POST['panggil'])) {
+    $id = intval($_POST['id']);
+    $stmt = $conn->prepare("UPDATE antrian SET status_antrian = 'dipanggil' WHERE id = ?");
+    $stmt->bind_param("i", $id);
+
+    if ($stmt->execute()) {
+        echo "<script>
+            alert('Pasien dipanggil. Status: DIPERIKSA');
+            window.location.href = '../login/admin/dashboard.php';
+        </script>";
+    } else {
+        echo "<script>alert('Gagal memanggil pasien!'); window.history.back();</script>";
+    }
+
+    $stmt->close();
+    exit;
+}
+
+// Status = SELESAI
+if (isset($_POST['selesai'])) {
+    $id = intval($_POST['id']);
+    $stmt = $conn->prepare("UPDATE antrian SET status_antrian = 'selesai' WHERE id = ?");
+    $stmt->bind_param("i", $id);
+
+    if ($stmt->execute()) {
+        echo "<script>
+            alert('Status pasien diperbarui: SELESAI');
+            window.location.href = '../login/admin/dashboard.php';
+        </script>";
+    } else {
+        echo "<script>alert('Gagal menyelesaikan antrian!'); window.history.back();</script>";
+    }
+
+    $stmt->close();
+    exit;
+}
+
 
 
 

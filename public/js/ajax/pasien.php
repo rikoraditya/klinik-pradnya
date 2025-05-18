@@ -10,6 +10,7 @@ $limit = 5; // jumlah data per halaman
 $offset = ($page - 1) * $limit;
 
 
+
 // Query utama untuk mengambil data antrian + pasien + kunjungan
 $query = "SELECT 
             antrian.id,
