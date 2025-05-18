@@ -1,7 +1,7 @@
 <?php
+// Koneksi Database
+$conn = mysqli_connect("localhost", "root", "", "klinik_pradnya");
 
-//Konkesi ke Database
-$conn = mysqli_connect("localhost", "root", "", "klinik");
 function query($query)
 {
     global $conn;
@@ -13,79 +13,79 @@ function query($query)
     return $rows;
 }
 
-$obat = mysqli_query($conn, "SELECT * FROM obat");
+// =============================
+// FUNGSI ANTRIAN
+// =============================
+function generateNoAntrian($tanggal)
+{
+    global $conn;
+    $query = "SELECT COUNT(*) AS jumlah FROM antrian WHERE tanggal_antrian = '$tanggal'";
+    $result = mysqli_query($conn, $query);
+    $data = mysqli_fetch_assoc($result);
+    $jumlah = $data['jumlah'] + 1;
+    return str_pad($jumlah, 3, '0', STR_PAD_LEFT);
+}
 
-// Ambil jumlah pasien untuk setiap poli
-$query_poli_umum = "SELECT COUNT(*) AS total FROM pasien WHERE poli_tujuan = 'Poli Umum'";
-$query_poli_gigi = "SELECT COUNT(*) AS total FROM pasien WHERE poli_tujuan = 'Poli Gigi'";
-
-// Eksekusi query
-$result_poli_umum = mysqli_query($conn, $query_poli_umum);
-$result_poli_gigi = mysqli_query($conn, $query_poli_gigi);
-
-// Ambil hasil jumlah pasien
-$poli_umum = mysqli_fetch_assoc($result_poli_umum)['total'];
-$poli_gigi = mysqli_fetch_assoc($result_poli_gigi)['total'];
-
-// Jika tombol "Panggil" ditekan
-if (isset($_POST['panggil'])) {
-    $id = $_POST['id'];
-    $query = "UPDATE pasien SET status_antrian = 'Dipanggil' WHERE id = $id";
+function tambahAntrian($pasien_id)
+{
+    global $conn;
+    $tanggal = date('Y-m-d');
+    $no_antrian = generateNoAntrian($tanggal);
+    $query = "INSERT INTO antrian (pasien_id, no_antrian, tanggal_antrian, status_antrian) VALUES ('$pasien_id', '$no_antrian', '$tanggal', 'menunggu')";
     mysqli_query($conn, $query);
-    header("Location: ../login/admin/dashboard.php"); // Refresh halaman
-    exit();
+    return mysqli_affected_rows($conn);
 }
 
-// Jika tombol "Selesai" ditekan
-if (isset($_POST['selesai'])) {
-    $id = $_POST['id'];
-    $query = "UPDATE pasien SET status_antrian = 'Selesai' WHERE id = $id";
+function panggilAntrian($id)
+{
+    global $conn;
+    $query = "UPDATE antrian SET status_antrian = 'diperiksa' WHERE id = $id";
     mysqli_query($conn, $query);
-    header("Location: ../login/admin/dashboard.php"); // Refresh halaman
-    exit();
-}
-
-// Ambil data pasien dari database
-$result = mysqli_query($conn, "SELECT * FROM pasien ORDER BY no_antrian ASC");
-$pasien = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-
-function data_pasien($id)
-{
-    global $conn;
-    mysqli_query($conn, "DELETE FROM pasien WHERE id = $id");
     return mysqli_affected_rows($conn);
 }
 
-function data_dokter($id)
+function selesaiAntrian($id)
 {
     global $conn;
-    mysqli_query($conn, "DELETE FROM dokter WHERE id_nomor = $id");
+    $query = "UPDATE antrian SET status_antrian = 'selesai' WHERE id = $id";
+    mysqli_query($conn, $query);
     return mysqli_affected_rows($conn);
 }
 
-function data_obat($id)
+function getAntrianHariIni()
 {
     global $conn;
-    mysqli_query($conn, "DELETE FROM obat WHERE id = $id");
+    $tanggal = date('Y-m-d');
+    $query = "
+        SELECT a.*, p.nama, p.nik, p.no_hp
+        FROM antrian a
+        JOIN pasien p ON a.pasien_id = p.id
+        WHERE a.tanggal_antrian = '$tanggal'
+        ORDER BY a.no_antrian ASC
+    ";
+    $result = mysqli_query($conn, $query);
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+// =============================
+// FUNGSI UMUM
+// =============================
+function hapusData($tabel, $id_field, $id)
+{
+    global $conn;
+    $query = "DELETE FROM $tabel WHERE $id_field = '$id'";
+    mysqli_query($conn, $query);
     return mysqli_affected_rows($conn);
 }
 
-
-function data_rm($id)
+// =============================
+// PASIEN
+// =============================
+function updatePasien($data)
 {
     global $conn;
-    mysqli_query($conn, "DELETE FROM rekam_medis WHERE id = $id");
-    return mysqli_affected_rows($conn);
-}
 
-function update_pasien($data)
-{
-
-    global $conn;
-
-    $id = $data["id"];
-
+    $id = $data['id'];
     $nama = $data['nama'];
     $nik = $data['nik'];
     $jenis_kelamin = $data['jenis_kelamin'];
@@ -93,187 +93,128 @@ function update_pasien($data)
     $tempat_lahir = $data['tempat_lahir'];
     $tanggal_lahir = $data['tanggal_lahir'];
     $alamat = $data['alamat'];
-    $tanggal_kunjungan = $data['tanggal_kunjungan'];
-    $keluhan = $data['keluhan'];
-    $poli_tujuan = $data['poli_tujuan'];
-    $jenis_pasien = $data['jenis_pasien'];
-    $nik_bpjs = $data['nik_bpjs'];
 
-    $query = "UPDATE pasien SET
-    
-    nama = '$nama',
-    nik = '$nik',
-    jenis_kelamin = '$jenis_kelamin',
-    no_hp = '$no_hp',
-    tempat_lahir = '$tempat_lahir',
-    tanggal_lahir = '$tanggal_lahir',
-    alamat = '$alamat',
-    tanggal_kunjungan = '$tanggal_kunjungan',
-    keluhan = '$keluhan',
-    poli_tujuan = '$poli_tujuan',
-    jenis_pasien= '$jenis_pasien',
-    nik_bpjs = '$nik_bpjs'
 
-    WHERE id = $id
-    ";
-
+    // Query update pasien
+    $query = "UPDATE pasien SET 
+        nama = '$nama', 
+        nik = '$nik', 
+        jenis_kelamin = '$jenis_kelamin', 
+        no_hp = '$no_hp', 
+        tempat_lahir = '$tempat_lahir', 
+        tanggal_lahir = '$tanggal_lahir', 
+        alamat = '$alamat'
+        WHERE id = $id";
 
     mysqli_query($conn, $query);
     return mysqli_affected_rows($conn);
 }
 
 
-function update_dokter($data)
+
+// =============================
+// DOKTER
+// =============================
+function updateDokter($data)
 {
-
     global $conn;
-
-    $id = $data["id_nomor"];
-    $id_dokter = $data['id_dokter'];
+    $id = $data['id'];
     $nama = $data['nama'];
     $poliklinik = $data['poliklinik'];
     $profile_picture = $data['profile_picture'];
 
-
-    $query = "UPDATE dokter SET
-    
-    nama = '$nama',
-    poliklinik = '$poliklinik',
-    profile_picture = '$profile_picture'
-  
-
-    WHERE id_nomor = $id
-    ";
-
+    $query = "UPDATE dokter SET 
+        nama = '$nama', poliklinik = '$poliklinik', profile_picture = '$profile_picture'
+        WHERE id = $id";
 
     mysqli_query($conn, $query);
     return mysqli_affected_rows($conn);
 }
 
-function update_obat($data)
+// =============================
+// OBAT
+// =============================
+function updateObat($data)
 {
-
     global $conn;
-
-    $id = $data["id"];
-    $kode_obat = $data['kode_obat'];
+    $id = $data['id'];
     $nama_obat = $data['nama_obat'];
     $jenis_obat = $data['jenis_obat'];
     $dosis = $data['dosis'];
     $keterangan = $data['keterangan'];
 
-
-    $query = "UPDATE obat SET
-    
-    nama_obat = '$nama_obat',
-    jenis_obat = '$jenis_obat',
-    dosis = '$dosis',
-    keterangan = '$keterangan'
-  
-    WHERE id = $id
-    ";
-
+    $query = "UPDATE obat SET 
+        nama_obat = '$nama_obat', jenis_obat = '$jenis_obat', 
+        dosis = '$dosis', keterangan = '$keterangan'
+        WHERE id = $id";
 
     mysqli_query($conn, $query);
     return mysqli_affected_rows($conn);
 }
 
-function update_rm($data)
+// =============================
+// REKAM MEDIS (hanya update RM & NIK)
+// =============================
+
+function updateRM($data)
 {
-
     global $conn;
-
-    $id = $data["id"];
-    $no_rm = $data['no_rm'];
-    $nama = $data['nama'];
-    $nik = $data['nik'];
-    $jenis_kelamin = $data['jenis_kelamin'];
-    $no_hp = $data['no_hp'];
-    $tempat_lahir = $data['tempat_lahir'];
-    $tanggal_lahir = $data['tanggal_lahir'];
-    $alamat = $data['alamat'];
-    $tanggal_kunjungan = $data['tanggal_kunjungan'];
-    $keluhan = $data['keluhan'];
-    $poli_tujuan = $data['poli_tujuan'];
-    $jenis_pasien = $data['jenis_pasien'];
-    $dokter = $data['dokter'];
-    $nik_bpjs = $data['nik_bpjs'];
-    $denyut_nadi = $data['denyut_nadi'];
+    $id = intval($data['id']);
     $laju_pernapasan = $data['laju_pernapasan'];
-    $obat = $data['obat'];
+    $denyut_nadi = $data['denyut_nadi'];
     $diagnosa = $data['diagnosa'];
 
-    $query = "UPDATE rekam_medis SET
-    
-    
-    nama = '$nama',
-    nik = '$nik',
-    jenis_kelamin = '$jenis_kelamin',
-    no_hp = '$no_hp',
-    tempat_lahir = '$tempat_lahir',
-    tanggal_lahir = '$tanggal_lahir',
-    alamat = '$alamat',
-    tanggal_kunjungan = '$tanggal_kunjungan',
-    keluhan = '$keluhan',
-    poli_tujuan = '$poli_tujuan',
-    jenis_pasien= '$jenis_pasien',
-    dokter = '$dokter',
-    nik_bpjs = '$nik_bpjs',
-    denyut_nadi = '$denyut_nadi',
-    laju_pernapasan = '$laju_pernapasan',
-    obat = '$obat',
-    diagnosa = '$diagnosa'
+    $stmt = $conn->prepare("UPDATE kunjungan SET laju_pernapasan = ?, denyut_nadi = ?, diagnosa = ? WHERE id = ?");
+    if (!$stmt) {
+        die("Prepare failed: " . $conn->error);
+    }
 
-    WHERE id = $id
-    ";
+    $stmt->bind_param("sssi", $laju_pernapasan, $denyut_nadi, $diagnosa, $id);
+    $stmt->execute();
+    return $stmt->affected_rows;
+}
 
 
+
+
+
+// =============================
+// CARI
+// =============================
+function cari($tabel, $kolom, $keyword)
+{
+    $query = "SELECT * FROM $tabel WHERE $kolom LIKE '%$keyword%'";
+    return query($query);
+}
+
+function deleteDokter($id)
+{
+    global $conn;
+    $query = "DELETE FROM dokter WHERE id = $id";
     mysqli_query($conn, $query);
     return mysqli_affected_rows($conn);
 }
 
-function cari($keyword)
+function deleteObat($id)
 {
-    $query = "SELECT * FROM pasien 
-    WHERE 
-    nama LIKE '%$keyword%' OR
-    nik LIKE '%$keyword%' OR
-    no_hp LIKE '%$keyword%'
-    ";
-    return query($query);
+    global $conn;
+    $query = "DELETE FROM obat WHERE id = $id";
+    mysqli_query($conn, $query);
+    return mysqli_affected_rows($conn);
 }
 
-function cari_dokter($keyword)
+function deletePasien($id)
 {
-    $query = "SELECT * FROM dokter
-    WHERE 
-    nama LIKE '%$keyword%' OR
-    poliklinik LIKE '%$keyword%'
-    ";
-    return query($query);
+    global $conn;
+    $query = "DELETE FROM pasien WHERE id = $id";
+    mysqli_query($conn, $query);
+    return mysqli_affected_rows($conn);
 }
 
-function cari_obat($keyword)
+function deleteRM($id)
 {
-    $query = "SELECT * FROM obat
-    WHERE 
-    nama_obat LIKE '%$keyword%' OR
-    jenis_obat LIKE '%$keyword%'
-    ";
-    return query($query);
+    global $conn;
+    $query = "DELETE FROM kunjungan WHERE id = $id";
+    mysqli_query($conn, $query);
+    return mysqli_affected_rows($conn);
 }
-
-function cari_rm($keyword)
-{
-    $query = "SELECT * FROM rekam_medis 
-    WHERE 
-    nama LIKE '%$keyword%' OR
-    nik LIKE '%$keyword%' OR
-    no_hp LIKE '%$keyword%' OR
-    no_rm LIKE '%$keyword%' OR
-    tanggal_lahir LIKE '%$keyword%' OR
-    tanggal_kunjungan LIKE '%$keyword%'
-    ";
-    return query($query);
-}
-?>

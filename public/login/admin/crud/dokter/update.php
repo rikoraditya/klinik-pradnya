@@ -12,7 +12,7 @@ if (!isset($_SESSION["login"])) {
 
 
 $id = $_GET["id"];
-$dokter = query("SELECT * FROM dokter WHERE id_nomor = $id")[0];
+$dokter = query("SELECT * FROM dokter WHERE id = $id")[0];
 
 echo "<!DOCTYPE html><html><head>
 <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
@@ -21,7 +21,7 @@ echo "<!DOCTYPE html><html><head>
 
 if (isset($_POST["submit"])) {
 
-    if (update_dokter($_POST) > 0) {
+    if (updateDokter($_POST) > 0) {
 
         echo "<script> 
         Swal.fire({
@@ -461,7 +461,7 @@ echo "</body></html>";
                     <div id="formContainer text-xs">
 
                         <form action="" method="POST" class="space-y-4 text-xs text-gray-600">
-                            <input type="hidden" name="id_nomor" value="<?= $dokter['id_nomor']; ?>">
+                            <input type="hidden" name="id" value="<?= $dokter['id']; ?>">
                             <div class="grid grid-cols-2 gap-4 font-poppins text-xs">
 
                                 <!-- Nama Lengkap -->

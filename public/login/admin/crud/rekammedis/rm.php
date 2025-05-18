@@ -16,16 +16,43 @@ $dokter = query("SELECT * FROM dokter");
 
 
 $pasien = null;
+
 if (isset($_GET['id'])) {
-    $id = mysqli_real_escape_string($conn, $_GET['id']);
-    $query = mysqli_query($conn, "SELECT * FROM pasien WHERE id = '$id'");
+    $id_antrian = mysqli_real_escape_string($conn, $_GET['id']);
+
+    $query = mysqli_query($conn, "SELECT 
+        antrian.id AS antrian_id,
+        antrian.no_antrian,
+        antrian.tanggal_antrian,
+        antrian.poli_tujuan,
+        antrian.status_antrian,
+        
+        pasien.id AS pasien_id,
+        pasien.nama,
+        pasien.nik,
+        pasien.jenis_kelamin,
+        pasien.no_hp,
+        pasien.tempat_lahir,
+        pasien.tanggal_lahir,
+        pasien.alamat,
+        pasien.nik_bpjs
+
+    FROM antrian
+    JOIN pasien ON antrian.pasien_id = pasien.id
+    WHERE antrian.id = '$id_antrian'
+    LIMIT 1");
 
     if ($query && mysqli_num_rows($query) > 0) {
         $pasien = mysqli_fetch_assoc($query);
     } else {
-        echo "<script>alert('Data tidak ditemukan!');</script>";
+        echo "<script>
+            alert('Data antrian tidak ditemukan!');
+            window.location.href='manage.php';
+        </script>";
+        exit;
     }
 }
+
 
 ?>
 
@@ -494,11 +521,11 @@ if (isset($_GET['id'])) {
                                 <div>
                                     <label class="block  font-medium">Tanggal Kunjungan</label>
                                     <input type="date" name="tanggal_kunjungan" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['tanggal_kunjungan'] ?>" readonly>
+                                        value="<?= $pasien['tanggal_antrian'] ?>" readonly>
                                 </div>
 
                             </div>
-                            <div class="grid grid-cols-4 gap-4">
+                            <div class="grid grid-cols-3 gap-4">
                                 <div>
                                     <label class="block  font-medium">Poli Tujuan</label>
                                     <select class="w-full p-2 border rounded-md" name="poli_tujuan">
@@ -509,20 +536,16 @@ if (isset($_GET['id'])) {
                                     </select>
                                 </div>
 
+
                                 <div>
-                                    <label class="block  font-medium">Keluhan</label>
-                                    <input type="text" name="keluhan" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['keluhan'] ?>" readonly>
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">Jenis Pasien</label>
+                                    <label class="block font-medium">Jenis Pasien</label>
                                     <select name="jenis_pasien" class="w-full p-2 border rounded-md" required>
-
-                                        <option value="<?= $pasien['jenis_pasien']; ?>"><?= $pasien['jenis_pasien']; ?>
-                                        </option>
-
+                                        <option value="">--- Pilih Jenis Pasien ---</option>
+                                        <option value="Umum">Umum</option>
+                                        <option value="BPJS">BPJS</option>
                                     </select>
                                 </div>
+
                                 <div>
                                     <label class="block  font-medium">No. NIK/BPJS</label>
                                     <input type="text" name="nik_bpjs" class="w-full p-2 border rounded-md"
@@ -531,7 +554,7 @@ if (isset($_GET['id'])) {
 
                             </div>
 
-                            <div class="grid grid-cols-4 gap-4">
+                            <div class="grid grid-cols-3 gap-4">
 
                                 <div>
                                     <label class="block  font-medium">Denyut Nadi</label>
@@ -552,22 +575,34 @@ if (isset($_GET['id'])) {
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
-                                <div>
-                                    <label class="block  font-medium">Obat</label>
 
-                                    <select name="obat" class="w-full p-2 border rounded-md" required>
-                                        <option value="">-- Pilih Obat --</option>
-                                        <?php foreach ($obat as $o): ?>
-                                            <option value="<?= $o['nama_obat']; ?>"><?= $o['nama_obat']; ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
+                            </div>
+
+                            <!-- Wrapper Obat -->
+                            <div class="grid grid-cols-1 gap-4">
+                                <div>
+                                    <label class="block font-medium">Obat</label>
+                                    <div id="obat-wrapper"></div>
+                                    <button type="button" id="tambah-obat"
+                                        class="mt-2 bg-green-500 text-white px-4 py-2 rounded">+ Tambah Obat</button>
                                 </div>
                             </div>
-                            <div>
-                                <label class="block  font-medium">Diagnosa</label>
-                                <textarea name="diagnosa" placeholder="Masukkan Diagnosa Pasien" required
-                                    class="w-full p-2 border rounded-md"></textarea>
+
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block  font-medium">Keluhan</label>
+                                    <textarea name="keluhan" placeholder="Masukkan Keluhan Pasien" required
+                                        class="w-full p-2 border rounded-md"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block  font-medium">Diagnosa</label>
+                                    <textarea name="diagnosa" placeholder="Masukkan Diagnosa Pasien" required
+                                        class="w-full p-2 border rounded-md"></textarea>
+                                </div>
                             </div>
+
+
                             <button type="submit"
                                 class="mt-4 bg-green-800 hover:bg-green-900 text-white py-2 px-3 rounded-md text-xs">Tambah</button>
                             <a href="tambah.php"
@@ -612,6 +647,37 @@ if (isset($_GET['id'])) {
                     return;
                 menu.classList.toggle("hidden");
             }
+        </script>
+        <!--Scrip tambah Obat-->
+        <script>
+            document.getElementById('tambah-obat').addEventListener('click', function () {
+                const wrapper = document.getElementById('obat-wrapper');
+                const div = document.createElement('div');
+                div.className = 'mb-2 p-2 border rounded-md flex gap-2 items-center';
+
+                div.innerHTML = `
+<select name="obat[]" class="p-2 border rounded-md" required>
+    <?php foreach ($obat as $o): ?>
+        <option value="<?= $o['kode_obat'] ?>"><?= $o['nama_obat'] ?></option>
+    <?php endforeach; ?>
+</select>
+
+
+        <input type="number" name="jumlah[]" class="p-2 border rounded-md w-24" placeholder="Jumlah" required>
+        <input type="text" name="dosis[]" class="p-2 border rounded-md w-32" placeholder="Dosis" required>
+
+        <button type="button" class="remove-obat bg-red-500 text-white px-2 rounded">Hapus</button>
+    `;
+
+                wrapper.appendChild(div);
+            });
+
+            // Hapus baris obat
+            document.addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-obat')) {
+                    e.target.parentElement.remove();
+                }
+            });
         </script>
 </body>
 

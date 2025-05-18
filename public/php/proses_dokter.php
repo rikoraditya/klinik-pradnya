@@ -1,6 +1,6 @@
 <?php
 // Konfigurasi database
-$conn = mysqli_connect("localhost", "root", "", "klinik");
+$conn = mysqli_connect("localhost", "root", "", "klinik_pradnya");
 
 // Cek koneksi
 if (!$conn) {
@@ -16,11 +16,14 @@ if (isset($_POST["submit"])) {
     $row = mysqli_fetch_assoc($result);
 
     // Generate ID dokter baru
-    if ($row) {
-        $last_id = intval(substr($row["id_dokter"], 3)) + 1;
-        $new_id = "DR-" . str_pad($last_id, 3, "0", STR_PAD_LEFT);
+    if ($row && isset($row["id_dokter"])) {
+        // Ambil hanya angka dari DOK-001 → 001
+        $last_id_number = intval(substr($row["id_dokter"], 4));
+        $new_id_number = $last_id_number + 1;
+        $new_id = "DOK-" . str_pad($new_id_number, 3, "0", STR_PAD_LEFT);
     } else {
-        $new_id = "DR-001";
+        // Jika belum ada data
+        $new_id = "DOK-001";
     }
 
     // Ambil data dari form

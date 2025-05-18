@@ -1,6 +1,6 @@
 <?php
 // Koneksi ke database
-$conn = mysqli_connect("localhost", "root", "", "klinik");
+$conn = mysqli_connect("localhost", "root", "", "klinik_pradnya");
 
 // Cek koneksi
 if (!$conn) {
@@ -29,9 +29,9 @@ if (isset($_POST["submit"])) {
     // Generate kode obat baru dengan format OBT-XXX
     if ($row && preg_match('/\d+/', $row["kode_obat"], $matches)) {
         $last_id = intval($matches[0]) + 1;
-        $new_id = "OBT-" . str_pad($last_id, 3, "0", STR_PAD_LEFT);
+        $new_id = "OB" . str_pad($last_id, 3, "0", STR_PAD_LEFT);
     } else {
-        $new_id = "OBT-001"; // Jika tidak ada data sebelumnya
+        $new_id = "OB001"; // Jika tidak ada data sebelumnya
     }
 
     // Ambil data dari form dan pastikan tidak kosong

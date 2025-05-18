@@ -12,15 +12,59 @@ if (!isset($_SESSION["login"])) {
 
 //pagination table
 $JumlahDataPerHalaman = 5;
-$JumlahData = count(query("SELECT * FROM pasien"));
+$JumlahData = count(query("SELECT * FROM antrian"));
 $JumlahHalaman = ceil($JumlahData / $JumlahDataPerHalaman);
 $HalamanAktif = (isset($_GET["halaman"])) ? $_GET["halaman"] : 1;
 $AwalData = ($JumlahDataPerHalaman * $HalamanAktif) - $JumlahDataPerHalaman;
 
+$antrian = query("
+  SELECT 
+    a.id AS antrian_id,
+    a.no_antrian,
+    a.tanggal_antrian,
+    a.status_antrian,
+
+    p.id AS pasien_id,
+    p.nama,
+    p.nik,
+    p.jenis_kelamin,
+    p.no_hp,
+    p.tempat_lahir,
+    p.tanggal_lahir,
+    p.alamat,
+    p.nik_bpjs,
+
+    k.id AS kunjungan_id,
+    k.tanggal_kunjungan
+  FROM (
+    SELECT *
+    FROM antrian
+    WHERE (pasien_id, tanggal_antrian) IN (
+      SELECT pasien_id, MAX(tanggal_antrian)
+      FROM antrian
+      GROUP BY pasien_id
+    )
+  ) a
+  LEFT JOIN pasien p ON a.pasien_id = p.id
+  LEFT JOIN (
+    SELECT k1.*
+    FROM kunjungan k1
+    INNER JOIN (
+      SELECT no_rm, MAX(tanggal_kunjungan) AS max_tanggal
+      FROM kunjungan
+      GROUP BY no_rm
+    ) k2 ON k1.no_rm = k2.no_rm AND k1.tanggal_kunjungan = k2.max_tanggal
+  ) k ON k.no_rm = (SELECT no_rm FROM rekam_medis WHERE rekam_medis.nik = p.nik LIMIT 1)
+  ORDER BY a.tanggal_antrian DESC
+  LIMIT $AwalData, $JumlahDataPerHalaman
+");
 
 
 
-$pasien = query("SELECT * FROM pasien ORDER BY tanggal_kunjungan DESC LIMIT $AwalData, $JumlahDataPerHalaman");
+
+
+
+
 
 
 
@@ -438,7 +482,6 @@ if (isset($_POST["cari"])) {
               <thead class="bg-gray-200">
                 <tr class="text-xs">
                   <th class="border p-2">No</th>
-                  <th class="border p-2">No Antrian</th>
                   <th class="border p-2">Nama</th>
                   <th class="border p-2">NIK</th>
                   <th class="border p-2">Jenis Kelamin</th>
@@ -453,22 +496,21 @@ if (isset($_POST["cari"])) {
 
 
                 <?php $i = 1; ?>
-                <?php foreach ($pasien as $row)
+                <?php foreach ($antrian as $row)
                 : ?>
 
                   <tr>
                     <td class="border p-2 md"><?= $i; ?></td>
-                    <td class="border p-2 md"><?= $row["no_antrian"]; ?></td>
                     <td class="border p-2 truncate md"><?= $row["nama"]; ?></td>
                     <td class="border p-2 truncate md"><?= $row["nik"]; ?></td>
                     <td class="border p-2 md"><?= $row["jenis_kelamin"]; ?></td>
                     <td class="border p-2 md"><?= $row["tanggal_lahir"]; ?></td>
-                    <td class="border p-2 md"><?= $row["tanggal_kunjungan"]; ?></td>
+                    <td class="border p-2 md"><?= $row["tanggal_antrian"]; ?></td>
                     <td class="border p-2 md"><?= $row["no_hp"]; ?></td>
                     <td class="border p-2 md"><?= $row["status_antrian"]; ?></td>
                     <td class="border p-2 space-x-1 w-56">
 
-                      <a href="rm.php?id=<?= $row['id']; ?>"
+                      <a href="rm.php?id=<?= $row['antrian_id']; ?>"
                         class="bg-green-700 hover:bg-green-800 text-white px-2 py-1 rounded text-xs flex items-center gap-2">
                         <i class="fas fa-book"></i>Tambah Rekam Medis</a>
 

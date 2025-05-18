@@ -1,34 +1,71 @@
 <?php
 session_start();
-use LDAP\Result;
-
 require '../../php/functions.php';
-
 
 if (!isset($_SESSION["login"])) {
   header("location:../admin_login.php");
   exit;
 }
 
-//pagination table
+$poli_umum = query("SELECT COUNT(*) AS total FROM antrian WHERE poli_tujuan = 'Poli Umum'")[0]['total'];
+$poli_gigi = query("SELECT COUNT(*) AS total FROM antrian WHERE poli_tujuan = 'Poli Gigi'")[0]['total'];
+
+
+// Pagination untuk tabel antrian
 $JumlahDataPerHalaman = 5;
-$JumlahData = count(query("SELECT * FROM pasien"));
+$JumlahData = count(query("SELECT * FROM antrian"));
 $JumlahHalaman = ceil($JumlahData / $JumlahDataPerHalaman);
 $HalamanAktif = (isset($_GET["halaman"])) ? $_GET["halaman"] : 1;
 $AwalData = ($JumlahDataPerHalaman * $HalamanAktif) - $JumlahDataPerHalaman;
 
+// Ambil data antrian lengkap, join dengan pasien & kunjungan
+$antrian = query("
+SELECT 
+  antrian.id,
+  antrian.no_antrian,
+  pasien.nama,
+  pasien.jenis_kelamin,
+  pasien.no_hp,
+  pasien.nik,
+  antrian.poli_tujuan,
+  antrian.tanggal_antrian,
+  antrian.status_antrian
+FROM antrian
+INNER JOIN pasien ON antrian.pasien_id = pasien.id
+ORDER BY antrian.tanggal_antrian DESC
+LIMIT $AwalData, $JumlahDataPerHalaman;
 
+");
 
-
-$pasien = query("SELECT * FROM pasien ORDER BY tanggal_kunjungan DESC LIMIT $AwalData, $JumlahDataPerHalaman");
-
-
-
-//tombol cari
+// Tombol cari
 if (isset($_POST["cari"])) {
-  $pasien = cari($_POST["keyword"]);
+  $keyword = $_POST["keyword"];
+  $antrian = query("
+    SELECT 
+      antrian.id,
+      antrian.no_antrian,
+      pasien.nama,
+      pasien.jenis_kelamin,
+      pasien.no_hp,
+      pasien.nik,
+      kunjungan.keluhan,
+      kunjungan.poli_tujuan,
+      antrian.tanggal_antrian,
+      antrian.status_antrian
+    FROM antrian
+    INNER JOIN pasien ON antrian.pasien_id = pasien.id
+    INNER JOIN kunjungan ON kunjungan.id = pasien.id
+    WHERE pasien.nama LIKE '%$keyword%'
+       OR pasien.nik LIKE '%$keyword%'
+       OR kunjungan.poli_tujuan LIKE '%$keyword%'
+       OR antrian.no_antrian LIKE '%$keyword%'
+    ORDER BY antrian.tanggal_antrian DESC
+    LIMIT $AwalData, $JumlahDataPerHalaman
+  ");
 }
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="id">
@@ -488,43 +525,35 @@ if (isset($_POST["cari"])) {
                   <th class="border p-2">NIK</th>
                   <th class="border p-2">Jenis Kelamin</th>
                   <th class="border p-2">No HP</th>
-                  <th class="border p-2">Keluhan</th>
                   <th class="border p-2">Poli Tujuan</th>
-                  <th class="border p-2">Tanggal Kunjungan</th>
+                  <th class="border p-2">Tanggal Antrian</th>
                   <th class="border p-2">Status Antrian</th>
                   <th class="border p-2">Action</th>
                 </tr>
               </thead>
               <tbody class="text-xs">
-
-
                 <?php $i = 1; ?>
-                <?php foreach ($pasien as $row)
-                : ?>
+                <?php foreach ($antrian as $row): ?>
                   <tr>
                     <td class="border p-2 md"><?= $i; ?></td>
-                    <td class="border p-2 w-8 md"><?= $row["no_antrian"]; ?></td>
+                    <td class="border p-2 w-8 md"><?= htmlspecialchars($row["no_antrian"]); ?></td>
+                    <td class="border p-2 truncate w-52 md"><?= htmlspecialchars($row["nama"]); ?></td>
                     <td class="border p-2 truncate w-20 md">
-                      <?= $row["nama"]; ?>
+                      <?= strlen($row['nik']) > 13 ? htmlspecialchars(substr($row['nik'], 0, 13)) . '...' : htmlspecialchars($row["nik"]); ?>
                     </td>
-                    <td class="border p-2 truncate w-20 md">
-                      <?= strlen($row['nik']) > 13 ? substr($row['nik'], 0, 13) . '...' : $row["nik"]; ?>
+                    <td class="border p-2 w-28 md">
+                      <?= $row["jenis_kelamin"] == 'Laki-laki' ? 'Laki-laki' : ($row["jenis_kelamin"] == 'Perempuan' ? 'Perempuan' : '-') ?>
                     </td>
-                    <td class="border p-2 w-8 md"><?= $row["jenis_kelamin"]; ?></td>
-                    <td class="border p-2 w-8 md"><?= $row["no_hp"]; ?></td>
-                    <td class="border p-2 truncate  md">
-                      <?= strlen($row['keluhan']) > 15 ? substr($row['keluhan'], 0, 15) . '...' : $row["keluhan"]; ?>
-                    </td>
-                    <td class="border p-2 truncate w-20 md"><?= $row["poli_tujuan"]; ?></td>
-                    <td class="border p-2 md w-28"><?= $row["tanggal_kunjungan"]; ?></td>
-                    <td class="border p-2 w-20 md"><?= $row["status_antrian"]; ?></td>
+                    <td class="border p-2 w-8 md"><?= htmlspecialchars($row["no_hp"]); ?></td>
+                    <td class="border p-2 truncate w-36 md"><?= htmlspecialchars($row["poli_tujuan"]); ?></td>
+                    <td class="border p-2 md w-28"><?= htmlspecialchars($row["tanggal_antrian"]); ?></td>
+                    <td class="border p-2 w-20 md"><?= htmlspecialchars($row["status_antrian"]); ?></td>
                     <td class="border p-2 w-fit">
                       <div class="flex justify-end space-x-1">
                         <button onclick="lihatPasien('<?= $row['id']; ?>')"
                           class="bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs">
                           View
                         </button>
-
                         <form action="../../php/functions.php" method="POST" style="display: inline;">
                           <input type="hidden" name="id" value="<?= $row['id']; ?>">
                           <button type="submit" name="panggil"
@@ -538,16 +567,15 @@ if (isset($_POST["cari"])) {
                             class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs">
                             Selesai
                           </button>
+                        </form>
                       </div>
-                      </form>
                     </td>
                   </tr>
-
                   <?php $i++; ?>
                 <?php endforeach; ?>
-
               </tbody>
             </table>
+
           </div>
 
           <div class="pagination text-xs font-poppins mt-2 ml-1 text-gray-500">

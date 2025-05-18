@@ -12,17 +12,31 @@ if (!isset($_SESSION["login"])) {
 
 //pagination table
 $JumlahDataPerHalaman = 5;
-$JumlahData = count(query("SELECT * FROM rekam_medis"));
+$JumlahData = count(query("SELECT * FROM kunjungan"));
 $JumlahHalaman = ceil($JumlahData / $JumlahDataPerHalaman);
 $HalamanAktif = (isset($_GET["halaman"])) ? $_GET["halaman"] : 1;
 $AwalData = ($JumlahDataPerHalaman * $HalamanAktif) - $JumlahDataPerHalaman;
 
+$kunjungan = query("SELECT 
+  kunjungan.*, 
+  pasien.tanggal_lahir,
+  pasien.nama AS nama_pasien, 
+  dokter.nama AS nama_dokter
+FROM kunjungan
+LEFT JOIN rekam_medis ON kunjungan.no_rm = rekam_medis.no_rm
+LEFT JOIN pasien ON rekam_medis.nik = pasien.nik
+LEFT JOIN dokter ON kunjungan.dokter_id = dokter.id
+ORDER BY kunjungan.tanggal_kunjungan DESC
+LIMIT $AwalData, $JumlahDataPerHalaman
+");
 
-$rekam_medis = query("SELECT * FROM rekam_medis ORDER BY tanggal_kunjungan DESC LIMIT $AwalData, $JumlahDataPerHalaman");
+
+
+
 
 //tombol cari
 if (isset($_POST["cari_rm"])) {
-  $rekam_medis = cari_rm($_POST["keyword"]);
+  $kunjungan = cari_rm($_POST["keyword"]);
 }
 ?>
 
@@ -450,11 +464,11 @@ if (isset($_POST["cari_rm"])) {
                   <th class="border p-2">No</th>
                   <th class="border p-2">No RM</th>
                   <th class="border p-2">Nama</th>
-                  <th class="border p-2">Jenis Kelamin</th>
+                  <th class="border p-2">tanggal_Kunjungan</th>
                   <th class="border p-2">Tanggal Lahir</th>
-                  <th class="border p-2">Tanggal Kunjungan</th>
-                  <th class="border p-2">No. HP</th>
-                  <th class="border p-2">Obat</th>
+                  <th class="border p-2">Keluhan</th>
+                  <th class="border p-2">Poli Tujuan</th>
+                  <th class="border p-2">Jenis Pasien</th>
                   <th class="border p-2">Dokter</th>
 
                   <th class="border p-2">Action</th>
@@ -463,20 +477,20 @@ if (isset($_POST["cari_rm"])) {
               <tbody class="text-xs">
 
                 <?php $i = 1; ?>
-                <?php foreach ($rekam_medis as $row)
+                <?php foreach ($kunjungan as $row)
                 : ?>
 
                   <tr>
                     <td class="border p-2 md"><?= $i; ?></td>
                     <td class="border p-2 md"><?= $row["no_rm"]; ?></td>
-                    <td class="border p-2 truncate md"><?= $row["nama"]; ?></td>
-                    <td class="border p-2 md"><?= $row["jenis_kelamin"]; ?></td>
+                    <td class="border p-2 truncate md"><?= $row["nama_pasien"]; ?></td>
+                    <td class="border p-2 md"><?= $row["tanggal_kunjungan"]; ?></td>
                     <td class="border p-2 md"><?= $row["tanggal_lahir"]; ?></td>
-                    <td class="border p-2"><?= $row["tanggal_kunjungan"]; ?></td>
-                    <td class="border p-2 md"><?= $row["no_hp"]; ?></td>
-                    <td class="border p-2 md"><?= $row["obat"]; ?></td>
+                    <td class="border p-2"><?= $row["keluhan"]; ?></td>
+                    <td class="border p-2 md"><?= $row["poli_tujuan"]; ?></td>
+                    <td class="border p-2 md"><?= $row["jenis_pasien"]; ?></td>
                     <td class="border p-2 md">
-                      <?= strlen($row['dokter']) > 18 ? substr($row['dokter'], 0, 18) . '...' : $row["dokter"]; ?>
+                      <?= strlen($row['nama_dokter']) > 18 ? substr($row['nama_dokter'], 0, 18) . '...' : $row["nama_dokter"]; ?>
                     </td>
 
                     <td class="border p-2">
@@ -652,8 +666,8 @@ if (isset($_POST["cari_rm"])) {
         <div><span class="font-semibold font-poppins">Denyut Nadi:</span><br>${data.denyut_nadi}</div>
           <div><span class="font-semibold font-poppins">Laju Pernapasan:</span><br>${data.laju_pernapasan}</div>
         <div><span class="font-semibold font-poppins">Diagnosa:</span><br>${data.diagnosa}</div>
-          <div><span class="font-semibold font-poppins">Obat:</span><br>${data.obat}</div>
-            <div><span class="font-semibold font-poppins">Dokter:</span><br>${data.dokter}</div>
+          <div><span class="font-semibold font-poppins">Obat:</span><br>${data.detail_obat}</div>
+            <div><span class="font-semibold font-poppins">Dokter:</span><br>${data.nama_dokter}</div>
     
       `;
 

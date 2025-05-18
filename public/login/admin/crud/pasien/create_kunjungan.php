@@ -479,28 +479,30 @@ echo "</body></html>";
 
 
 
-                        <form action="" method="POST" class="space-y-4 text-xs text-gray-600">
-                            <input type="hidden" name="id" value="<?= $pasien['id']; ?>">
+                        <form action="../../../../php/proses_admin.php" method="POST"
+                            class="space-y-4 text-xs text-gray-600">
+                            <input type="hidden" name="pasien_id" value="<?= $pasien['id']; ?>">
 
                             <div class="grid grid-cols-3 gap-4">
 
                                 <div>
                                     <label class="block font-medium">Nama Pasien</label>
                                     <input type="text" name="nama" id="nama" class="w-full p-2 border rounded-md"
-                                        value="<?= htmlspecialchars($pasien['nama'] ?? '') ?>" required>
+                                        value="<?= htmlspecialchars($pasien['nama'] ?? '') ?>" readonly>
                                 </div>
 
                                 <div>
                                     <label class="block font-medium">No. KTP</label>
                                     <input type="text" name="nik" id="nik" class="w-full p-2 border rounded-md"
-                                        value="<?= htmlspecialchars($pasien['nik'] ?? '') ?>" required pattern="\d{16}">
+                                        value="<?= htmlspecialchars($pasien['nik'] ?? '') ?>" required pattern="\d{16}"
+                                        readonly>
                                 </div>
 
                                 <?php $jk = isset($pasien['jenis_kelamin']) ? $pasien['jenis_kelamin'] : ''; ?>
                                 <div>
                                     <label class="block font-medium">Jenis Kelamin</label>
                                     <select name="jenis_kelamin" id="jenis_kelamin" class="w-full p-2 border rounded-md"
-                                        required>
+                                        readonly>
 
                                         <option value="Laki-laki" <?= $jk === 'Laki-laki' ? 'selected' : '' ?>>Laki-laki
                                         </option>
@@ -517,47 +519,60 @@ echo "</body></html>";
                                 <div>
                                     <label class="block font-medium">No. HP</label>
                                     <input type="text" name="no_hp" id="no_hp" class="w-full p-2 border rounded-md"
-                                        value="<?= htmlspecialchars($pasien['no_hp'] ?? '') ?>" required
+                                        value="<?= htmlspecialchars($pasien['no_hp'] ?? '') ?>" readonly
                                         pattern="\d{10,13}">
                                 </div>
 
                                 <div>
                                     <label class="block font-medium">Alamat</label>
                                     <input type="text" name="alamat" id="alamat" class="w-full p-2 border rounded-md"
-                                        value="<?= htmlspecialchars($pasien['alamat'] ?? '') ?>" required>
+                                        value="<?= htmlspecialchars($pasien['alamat'] ?? '') ?>" readonly>
                                 </div>
 
                                 <div>
                                     <label class="block font-medium">Tempat Lahir</label>
                                     <input type="text" name="tempat_lahir" id="tempat_lahir"
                                         class="w-full p-2 border rounded-md"
-                                        value="<?= htmlspecialchars($pasien['tempat_lahir'] ?? '') ?>" required>
+                                        value="<?= htmlspecialchars($pasien['tempat_lahir'] ?? '') ?>" readonly>
                                 </div>
 
                             </div>
 
-                            <div class="grid grid-cols-3 gap-4">
+                            <div class="grid grid-cols-4 gap-4">
 
                                 <div>
                                     <label class="block font-medium">Tanggal Lahir</label>
                                     <input type="date" name="tanggal_lahir" id="tanggal_lahir"
                                         class="w-full p-2 border rounded-md"
-                                        value="<?= htmlspecialchars($pasien['tanggal_lahir'] ?? '') ?>" required>
+                                        value="<?= htmlspecialchars($pasien['tanggal_lahir'] ?? '') ?>" readonly>
                                 </div>
 
                                 <div>
                                     <label class="block font-medium">NIK / No. BPJS</label>
                                     <input type="text" name="nik_bpjs" id="nik_bpjs"
                                         class="w-full p-2 border rounded-md"
-                                        value="<?= htmlspecialchars($pasien['nik_bpjs'] ?? '') ?>" required>
+                                        value="<?= htmlspecialchars($pasien['nik_bpjs'] ?? '') ?>" readonly>
                                 </div>
 
-                                <div></div> <!-- Kosong untuk kolom ketiga -->
+                                <div>
+                                    <label class="block font-medium">Poli Tujuan</label>
+                                    <select name="poli_tujuan" id="poli_tujuan" class="w-full p-2 border rounded-md"
+                                        required>
+                                        <option value="">---Pilih Poli---</option>
+                                        <option value="Poli Umum">Poli Umum</option>
+                                        <option value="Poli Gigi">Poli Gigi</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block font-medium">Tanggal Antrian</label>
+                                    <input type="date" name="tanggal_antrian" id="tanggal_antrian"
+                                        class="w-full p-2 border rounded-md" required>
+                                </div>
 
                             </div>
 
                             <button type="submit" name="submit"
-                                class="mt-4 bg-green-800 hover:bg-green-900 text-white py-2 px-3 rounded-md text-xs">Update</button>
+                                class="mt-4 bg-green-800 hover:bg-green-900 text-white py-2 px-3 rounded-md text-xs">Create</button>
 
                             <a href="manage.php"
                                 class="bg-red-700 hover:bg-red-900 text-white py-2 px-3 rounded-md text-xs relative inline-block">

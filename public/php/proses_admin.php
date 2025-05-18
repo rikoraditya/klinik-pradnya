@@ -1,100 +1,96 @@
 <?php
-// Koneksi ke Database
-$conn = mysqli_connect("localhost", "root", "", "klinik");
-
-// Cek koneksi
-if ($conn->connect_error) {
-    die("Koneksi gagal: " . $conn->connect_error);
-}
-
-if (isset($_POST['no_hp'])) {
-    $no_hp = preg_replace('/[^0-9]/', '', $_POST['no_hp']);
-    if (substr($no_hp, 0, 1) === '0') {
-        $no_hp = '62' . substr($no_hp, 1);
-    }
-}
-
-// HTML & SweetAlert di awal
+$conn = mysqli_connect("localhost", "root", "", "klinik_pradnya");
 echo "<!DOCTYPE html><html><head>
 <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
 </head><body>";
 
-// Pastikan data dari form tidak kosong
-if (
-    isset(
-    $_POST['nama'],
-    $_POST['nik'],
-    $_POST['jenis_kelamin'],
-    $_POST['no_hp'],
-    $_POST['tempat_lahir'],
-    $_POST['tanggal_lahir'],
-    $_POST['alamat'],
-    $_POST['tanggal_kunjungan'],
-    $_POST['keluhan'],
-    $_POST['poli_tujuan'],
-    $_POST['jenis_pasien'],
-    $_POST['nik_bpjs']
-)
-) {
-    // Ambil dan bersihkan data
-    $nama = htmlspecialchars($_POST['nama']);
-    $nik = htmlspecialchars($_POST['nik']);
-    $jenis_kelamin = htmlspecialchars($_POST['jenis_kelamin']);
-    $no_hp = htmlspecialchars($no_hp);
-    $tempat_lahir = htmlspecialchars($_POST['tempat_lahir']);
-    $tanggal_lahir = htmlspecialchars($_POST['tanggal_lahir']);
-    $alamat = htmlspecialchars($_POST['alamat']);
-    $tanggal_kunjungan = htmlspecialchars($_POST['tanggal_kunjungan']);
-    $keluhan = htmlspecialchars($_POST['keluhan']);
+if (!$conn) {
+    die("<script>
+        Swal.fire({ icon: 'error', title: 'Koneksi Gagal', text: 'Tidak bisa terhubung ke database!' });
+    </script>");
+}
+
+if (isset($_POST['nik'], $_POST['tanggal_antrian'], $_POST['poli_tujuan'])) {
+    $nik = $_POST['nik'];
+    $tanggal_antrian = $_POST['tanggal_antrian'];
     $poli_tujuan = htmlspecialchars($_POST['poli_tujuan']);
-    $jenis_pasien = htmlspecialchars($_POST['jenis_pasien']);
-    $nik_bpjs = htmlspecialchars($_POST['nik_bpjs']);
+    $status_antrian = "menunggu";
 
-    // Cek apakah sudah daftar hari ini
-    $cek_pasien = $conn->prepare("SELECT COUNT(*) FROM pasien WHERE nik = ? AND tanggal_kunjungan = ?");
-    $cek_pasien->bind_param("ss", $nik, $tanggal_kunjungan);
-    $cek_pasien->execute();
-    $cek_pasien->bind_result($jumlah);
-    $cek_pasien->fetch();
-    $cek_pasien->close();
+    // ✅ Cek apakah pasien sudah terdaftar
+    $q = $conn->prepare("SELECT id FROM pasien WHERE nik = ?");
+    $q->bind_param("s", $nik);
+    $q->execute();
+    $result = $q->get_result();
 
-    if ($jumlah > 0) {
-        // Sudah pernah daftar hari ini
+    if ($result->num_rows === 0) {
         echo "<script>
             Swal.fire({
                 icon: 'error',
-                title: 'Sudah Terdaftar!',
-                text: 'Pasien dengan NIK ini sudah melakukan pendaftaran pada tanggal tersebut.',
-                confirmButtonText: 'Kembali'
-            }).then(() => {
-                window.history.back();
-            });
+                title: 'Pasien Tidak Terdaftar',
+                text: 'Silakan daftarkan pasien terlebih dahulu.',
+                confirmButtonText: 'OK'
+            }).then(() => { window.history.back(); });
         </script>";
-        exit; // Hentikan proses insert
+        $q->close();
+        $conn->close();
+        exit;
     }
 
-    // Insert data baru
-    $sql = "INSERT INTO pasien (nama, nik, jenis_kelamin, no_hp, tempat_lahir, tanggal_lahir, alamat, tanggal_kunjungan, keluhan, poli_tujuan, jenis_pasien, nik_bpjs) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    // ✅ Ambil pasien_id
+    $row = $result->fetch_assoc();
+    $pasien_id = $row['id'];
+    $q->close();
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssssssss", $nama, $nik, $jenis_kelamin, $no_hp, $tempat_lahir, $tanggal_lahir, $alamat, $tanggal_kunjungan, $keluhan, $poli_tujuan, $jenis_pasien, $nik_bpjs);
+    // ✅ Cek apakah pasien sudah antri di tanggal yang sama
+    $cek = $conn->prepare("SELECT id FROM antrian WHERE pasien_id = ? AND tanggal_antrian = ?");
+    $cek->bind_param("is", $pasien_id, $tanggal_antrian);
+    $cek->execute();
+    $cek_result = $cek->get_result();
+    if ($cek_result->num_rows > 0) {
+        echo "<script>
+            Swal.fire({
+                icon: 'warning',
+                title: 'Sudah Terdaftar',
+                text: 'Pasien ini sudah memiliki antrian di tanggal tersebut.',
+                confirmButtonText: 'OK'
+            }).then(() => { window.history.back(); });
+        </script>";
+        $cek->close();
+        $conn->close();
+        exit;
+    }
+    $cek->close();
+
+    // ✅ Buat no_antrian baru
+    $stmtNo = $conn->prepare("SELECT MAX(no_antrian) AS max_no FROM antrian WHERE tanggal_antrian = ?");
+    $stmtNo->bind_param("s", $tanggal_antrian);
+    $stmtNo->execute();
+    $max = $stmtNo->get_result()->fetch_assoc();
+    $last_no = $max['max_no'] ?? 'A-000';
+    $angka = intval(substr($last_no, 2)) + 1;
+    $no_antrian_baru = 'A-' . str_pad($angka, 3, '0', STR_PAD_LEFT);
+    $stmtNo->close();
+
+    // ✅ Insert ke antrian
+    $stmt = $conn->prepare("INSERT INTO antrian (pasien_id, no_antrian, tanggal_antrian, poli_tujuan, status_antrian) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("issss", $pasien_id, $no_antrian_baru, $tanggal_antrian, $poli_tujuan, $status_antrian);
 
     if ($stmt->execute()) {
         echo "<script>
             Swal.fire({
                 icon: 'success',
-                title: 'Pendaftaran Berhasil',
+                title: 'Antrian Berhasil',
+                text: 'No Antrian Anda: $no_antrian_baru',
                 confirmButtonText: 'OK'
             }).then(() => {
-                window.location.href = '../login/admin/crud/pasien/registrasi.php';
+                window.location.href = '../login/admin/crud/pasien/manage.php';
             });
         </script>";
     } else {
         echo "<script>
             Swal.fire({
                 icon: 'error',
-                title: 'Gagal Mendaftar!',
+                title: 'Gagal Menyimpan',
                 text: '" . addslashes($stmt->error) . "',
                 confirmButtonText: 'Kembali'
             }).then(() => {
@@ -108,8 +104,8 @@ if (
     echo "<script>
         Swal.fire({
             icon: 'warning',
-            title: 'Data Tidak Lengkap!',
-            text: 'Mohon isi semua form sebelum mengirim.',
+            title: 'Data Tidak Lengkap',
+            text: 'Mohon isi semua field yang dibutuhkan.',
             confirmButtonText: 'Kembali'
         }).then(() => {
             window.history.back();

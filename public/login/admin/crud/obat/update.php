@@ -20,7 +20,7 @@ echo "<!DOCTYPE html><html><head>
 
 if (isset($_POST["submit"])) {
 
-    if (update_obat($_POST) > 0) {
+    if (updateObat($_POST) > 0) {
 
         echo "<script> 
         Swal.fire({
