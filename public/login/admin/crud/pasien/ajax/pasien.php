@@ -9,24 +9,42 @@ $page = $_GET["page"] ?? 1;
 $limit = 5; // jumlah data per halaman
 $offset = ($page - 1) * $limit;
 
-$query = "SELECT * FROM pasien 
-    WHERE 
-    nama LIKE '%$keyword%' OR
-    nik LIKE '%$keyword%' OR
-    no_hp LIKE '%$keyword%' 
-    LIMIT $limit OFFSET $offset";
+// Query data pasien dengan join ke kunjungan
+$query = "SELECT 
+    pasien.*, 
+    antrian.no_antrian,
+    kunjungan.tanggal_kunjungan, 
+    kunjungan.poli_tujuan, 
+    kunjungan.keluhan 
+FROM pasien
+LEFT JOIN kunjungan ON kunjungan.id = pasien.id
+LEFT JOIN antrian ON antrian.pasien_id = pasien.id
+WHERE 
 
+    pasien.nama LIKE '%$keyword%' OR
+    pasien.nik LIKE '%$keyword%' OR
+    pasien.no_hp LIKE '%$keyword%'
+GROUP BY pasien.id
+ORDER BY kunjungan.tanggal_kunjungan DESC
+LIMIT $limit OFFSET $offset";
 
-$total_query = "SELECT COUNT(*) as total FROM pasien 
-    WHERE 
-    nama LIKE '%$keyword%' OR
-    nik LIKE '%$keyword%' OR
-    no_hp LIKE '%$keyword%'";
+// Query total data
+$total_query = "SELECT COUNT(DISTINCT pasien.id) as total 
+FROM pasien
+LEFT JOIN kunjungan ON kunjungan.id = pasien.id
+WHERE 
+    pasien.nama LIKE '%$keyword%' OR
+    pasien.nik LIKE '%$keyword%' OR
+    pasien.no_hp LIKE '%$keyword%'";
 
+// Eksekusi query total
 $total_result = mysqli_query($conn, $total_query);
 $total_data = mysqli_fetch_assoc($total_result)['total'];
 $total_pages = ceil($total_data / $limit);
+
+// Eksekusi query data pasien
 $pasien = query($query);
+
 
 
 ?>

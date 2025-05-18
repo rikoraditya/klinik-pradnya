@@ -10,50 +10,59 @@ if (!isset($_SESSION["login"])) {
     exit;
 }
 
-$obat = query("SELECT * FROM obat");
-$dokter = query("SELECT * FROM dokter");
+$id = $_GET["id"];
+$id = $_GET['id'];
+
+$pasien = query("SELECT 
+                  pasien.*,
+                  antrian.no_antrian,
+                  kunjungan.keluhan,
+                  kunjungan.poli_tujuan,
+                  pasien.jenis_kelamin,
+                  kunjungan.tanggal_kunjungan,
+                  kunjungan.jenis_pasien
+                FROM pasien
+                LEFT JOIN antrian ON antrian.pasien_id = pasien.id
+                LEFT JOIN kunjungan ON kunjungan.id = pasien.id
+                WHERE pasien.id = $id
+                ORDER BY kunjungan.tanggal_kunjungan DESC
+                LIMIT 1")[0];
+
+
+echo "<!DOCTYPE html><html><head>
+<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+</head><body>";
 
 
 
-$pasien = null;
+if (isset($_POST["submit"])) {
+    $result = updatePasien($_POST);
 
-if (isset($_GET['id'])) {
-    $id_antrian = mysqli_real_escape_string($conn, $_GET['id']);
-
-    $query = mysqli_query($conn, "SELECT 
-        antrian.id AS antrian_id,
-        antrian.no_antrian,
-        antrian.tanggal_antrian,
-        antrian.poli_tujuan,
-        antrian.status_antrian,
-        
-        pasien.id AS pasien_id,
-        pasien.nama,
-        pasien.nik,
-        pasien.jenis_kelamin,
-        pasien.no_hp,
-        pasien.tempat_lahir,
-        pasien.tanggal_lahir,
-        pasien.alamat,
-        pasien.nik_bpjs
-
-    FROM antrian
-    JOIN pasien ON antrian.pasien_id = pasien.id
-    WHERE antrian.id = '$id_antrian'
-    LIMIT 1");
-
-    if ($query && mysqli_num_rows($query) > 0) {
-        $pasien = mysqli_fetch_assoc($query);
+    if ($result >= 0) {
+        echo "<script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Data Berhasil Disimpan',
+                text: '" . ($result > 0 ? "Perubahan telah dilakukan." : "Tidak ada data yang berubah.") . "',
+                confirmButtonText: 'Kembali'
+            }).then(() => {
+                window.location.href = 'manage.php';
+            });
+        </script>";
     } else {
         echo "<script>
-            alert('Data antrian tidak ditemukan!');
-            window.location.href='manage.php';
+            Swal.fire({
+                icon: 'error',
+                title: 'Data Gagal Diubah',
+                confirmButtonText: 'Kembali'
+            }).then(() => {
+                window.location.href = 'manage.php';
+            });
         </script>";
-        exit;
     }
 }
 
-
+echo "</body></html>";
 ?>
 
 
@@ -462,197 +471,121 @@ if (isset($_GET['id'])) {
 
             <!-- Main Content -->
             <main class="flex-1 p-8 ml-64 transition-all duration-300 font-poppins" id="mainContent">
-                <h1 class="text-2xl font-bold">Rekam Medis</h1>
-                <p class="text-gray-600">Lengkapi Data Rekam Medis Pasien</p>
+                <h1 class="text-2xl font-bold">Data</h1>
+                <p class="text-gray-600">Update Data</p>
                 <div class="max-w-7xl bg-white p-6 rounded-lg shadow-md mt-4">
-                    <h4 class="text-lg font-semibold mb-4">Form Rekam Medis</h4>
+                    <h4 class="text-lg font-semibold mb-4">Pasien</h4>
                     <div id="formContainer text-xs">
 
 
 
-                        <form action="proses_rm.php" method="POST" class="space-y-4 text-xs text-gray-600">
-                            <div class="grid grid-cols-3 gap-4">
-                                <div>
-                                    <label class="block  font-medium">No. Pendaftaran Pasien</label>
-                                    <input type="text" name="no_antrian" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['no_antrian'] ?? '' ?>" readonly>
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">Nama Pasien</label>
-                                    <input type="text" name="nama" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['nama'] ?? '' ?>" readonly>
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">No. KTP</label>
-                                    <input type="text" name="nik" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['nik'] ?? '' ?>" readonly>
-                                </div>
+                        <form action="../../../../php/proses_admin.php" method="POST"
+                            class="space-y-4 text-xs text-gray-600">
+                            <input type="hidden" name="pasien_id" value="<?= $pasien['id']; ?>">
 
-                            </div>
                             <div class="grid grid-cols-3 gap-4">
 
                                 <div>
-                                    <label class="block  font-medium">Jenis Kelamin</label>
-                                    <input type="text" name="jenis_kelamin" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['jenis_kelamin'] ?? '' ?>" readonly>
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">No. HP</label>
-                                    <input type="text" name="no_hp" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['no_hp'] ?? '' ?>" readonly>
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">Alamat</label>
-                                    <input type="text" name="alamat" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['alamat'] ?? '' ?>" readonly>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-3 gap-4">
-                                <div>
-                                    <label class="block  font-medium">Tempat Lahir</label>
-                                    <input type="text" name="tempat_lahir" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['tempat_lahir'] ?? '' ?>" readonly>
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">Tanggal Lahir</label>
-                                    <input type="date" name="tanggal_lahir" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['tanggal_lahir'] ?? '' ?>" readonly>
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">Tanggal Kunjungan</label>
-                                    <input type="date" name="tanggal_kunjungan" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['tanggal_antrian'] ?>" readonly>
+                                    <label class="block font-medium">Nama Pasien</label>
+                                    <input type="text" name="nama" id="nama" class="w-full p-2 border rounded-md"
+                                        value="<?= htmlspecialchars($pasien['nama'] ?? '') ?>" readonly>
                                 </div>
 
-                            </div>
-                            <div class="grid grid-cols-3 gap-4">
                                 <div>
-                                    <label class="block  font-medium">Poli Tujuan</label>
-                                    <select class="w-full p-2 border rounded-md" name="poli_tujuan">
-                                        <option value="<?= $pasien['poli_tujuan'] ?>" <?= ($pasien['poli_tujuan'] ?? '') === $pasien['poli_tujuan'] ? 'selected' : '' ?>>
-                                            <?= $pasien['poli_tujuan'] ?>
+                                    <label class="block font-medium">No. KTP</label>
+                                    <input type="text" name="nik" id="nik" class="w-full p-2 border rounded-md"
+                                        value="<?= htmlspecialchars($pasien['nik'] ?? '') ?>" required pattern="\d{16}"
+                                        readonly>
+                                </div>
+
+                                <?php $jk = isset($pasien['jenis_kelamin']) ? $pasien['jenis_kelamin'] : ''; ?>
+                                <div>
+                                    <label class="block font-medium">Jenis Kelamin</label>
+                                    <select name="jenis_kelamin" id="jenis_kelamin" class="w-full p-2 border rounded-md"
+                                        readonly>
+
+                                        <option value="Laki-laki" <?= $jk === 'Laki-laki' ? 'selected' : '' ?>>Laki-laki
                                         </option>
-
+                                        <option value="Perempuan" <?= $jk === 'Perempuan' ? 'selected' : '' ?>>Perempuan
+                                        </option>
                                     </select>
                                 </div>
 
-
-                                <div>
-                                    <label class="block font-medium">Jenis Pasien</label>
-                                    <select name="jenis_pasien" class="w-full p-2 border rounded-md" required>
-                                        <option value="">--- Pilih Jenis Pasien ---</option>
-                                        <option value="Umum">Umum</option>
-                                        <option value="BPJS">BPJS</option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label class="block  font-medium">No. NIK/BPJS</label>
-                                    <input type="text" name="nik_bpjs" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['nik_bpjs'] ?>" readonly>
-                                </div>
 
                             </div>
 
                             <div class="grid grid-cols-3 gap-4">
 
                                 <div>
-                                    <label class="block  font-medium">Denyut Nadi</label>
-                                    <input type="text" name="denyut_nadi" required class="w-full p-2 border rounded-md">
+                                    <label class="block font-medium">No. HP</label>
+                                    <input type="text" name="no_hp" id="no_hp" class="w-full p-2 border rounded-md"
+                                        value="<?= htmlspecialchars($pasien['no_hp'] ?? '') ?>" readonly
+                                        pattern="\d{10,13}">
                                 </div>
-                                <div>
-                                    <label class="block  font-medium">Laju Pernapasan</label>
-                                    <input type="text" name="laju_pernapasan" required
-                                        class="w-full p-2 border rounded-md">
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">Dokter</label>
 
-                                    <select name="dokter" class="w-full p-2 border rounded-md" required>
-                                        <option value="">-- Pilih Dokter --</option>
-                                        <?php foreach ($dokter as $o): ?>
-                                            <option value="<?= $o['nama']; ?>"><?= $o['nama']; ?></option>
-                                        <?php endforeach; ?>
+                                <div>
+                                    <label class="block font-medium">Alamat</label>
+                                    <input type="text" name="alamat" id="alamat" class="w-full p-2 border rounded-md"
+                                        value="<?= htmlspecialchars($pasien['alamat'] ?? '') ?>" readonly>
+                                </div>
+
+                                <div>
+                                    <label class="block font-medium">Tempat Lahir</label>
+                                    <input type="text" name="tempat_lahir" id="tempat_lahir"
+                                        class="w-full p-2 border rounded-md"
+                                        value="<?= htmlspecialchars($pasien['tempat_lahir'] ?? '') ?>" readonly>
+                                </div>
+
+                            </div>
+
+                            <div class="grid grid-cols-4 gap-4">
+
+                                <div>
+                                    <label class="block font-medium">Tanggal Lahir</label>
+                                    <input type="date" name="tanggal_lahir" id="tanggal_lahir"
+                                        class="w-full p-2 border rounded-md"
+                                        value="<?= htmlspecialchars($pasien['tanggal_lahir'] ?? '') ?>" readonly>
+                                </div>
+
+                                <div>
+                                    <label class="block font-medium">NIK / No. BPJS</label>
+                                    <input type="text" name="nik_bpjs" id="nik_bpjs"
+                                        class="w-full p-2 border rounded-md"
+                                        value="<?= htmlspecialchars($pasien['nik_bpjs'] ?? '') ?>" readonly>
+                                </div>
+
+                                <div>
+                                    <label class="block font-medium">Poli Tujuan</label>
+                                    <select name="poli_tujuan" id="poli_tujuan" class="w-full p-2 border rounded-md"
+                                        required>
+                                        <option value="">---Pilih Poli---</option>
+                                        <option value="Poli Umum">Poli Umum</option>
+                                        <option value="Poli Gigi">Poli Gigi</option>
                                     </select>
                                 </div>
-
-                            </div>
-
-                            <!-- Wrapper Obat -->
-                            <div class="grid grid-cols-1 gap-4">
                                 <div>
-                                    <label class="block font-medium">Obat</label>
-                                    <div id="obat-wrapper"></div>
-                                    <button type="button" id="tambah-obat"
-                                        class="mt-2 bg-green-500 text-white px-4 py-2 rounded">+ Tambah Obat</button>
-                                </div>
-                            </div>
-
-
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block  font-medium">Keluhan</label>
-                                    <textarea name="keluhan" placeholder="Masukkan Keluhan Pasien" required
-                                        class="w-full p-2 border rounded-md"></textarea>
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">Diagnosa</label>
-                                    <textarea name="diagnosa" placeholder="Masukkan Diagnosa Pasien" required
-                                        class="w-full p-2 border rounded-md"></textarea>
+                                    <label class="block font-medium">Tanggal Antrian</label>
+                                    <input type="date" name="tanggal_antrian" id="tanggal_antrian"
+                                        class="w-full p-2 border rounded-md" required>
                                 </div>
 
                             </div>
 
+                            <button type="submit" name="submit"
+                                class="mt-4 bg-green-800 hover:bg-green-900 text-white py-2 px-3 rounded-md text-xs">Create</button>
 
-                            <button type="submit"
-                                class="mt-4 bg-green-800 hover:bg-green-900 text-white py-2 px-3 rounded-md text-xs">Tambah</button>
-                            <a href="tambah.php"
-                                class="bg-red-700 hover:bg-red-900 text-white py-2 px-3 rounded-md text-xs relative">
+                            <a href="manage.php"
+                                class="bg-red-700 hover:bg-red-900 text-white py-2 px-3 rounded-md text-xs relative inline-block">
                                 Kembali
                             </a>
-
                         </form>
+
                     </div>
 
                 </div>
 
             </main>
         </div>
-
-        <!-- Script untuk menambah dan menghapus baris obat -->
-        <script>
-            document.getElementById('tambah-obat').addEventListener('click', function () {
-                let container = document.getElementById('obat-container');
-                let row = document.createElement('div');
-                row.className = 'grid grid-cols-4 gap-2 mb-2 obat-row';
-                row.innerHTML = `
-                    <div>
-                        <select name="kode_obat[]" class="w-full p-2 border rounded-md" required>
-                            <option value="">-- Pilih Obat --</option>
-                            <?php foreach ($obat as $o): ?>
-                                <option value="<?= $o['kode_obat']; ?>"><?= $o['nama_obat']; ?> (<?= $o['kode_obat']; ?>)</option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div>
-                        <input type="text" name="dosis[]" class="w-full p-2 border rounded-md" placeholder="Dosis" required>
-                    </div>
-                    <div>
-                        <input type="number" name="jumlah[]" class="w-full p-2 border rounded-md" placeholder="Jumlah" min="1" required>
-                    </div>
-                    <div>
-                        <button type="button" class="remove-obat bg-red-500 text-white px-2 py-1 rounded">Hapus</button>
-                    </div>
-                `;
-                container.appendChild(row);
-            });
-
-            document.addEventListener('click', function (e) {
-                if (e.target && e.target.classList.contains('remove-obat')) {
-                    e.target.closest('.obat-row').remove();
-                }
-            });
-        </script>
 
         <!--Logout-->
 
@@ -683,37 +616,6 @@ if (isset($_GET['id'])) {
                     return;
                 menu.classList.toggle("hidden");
             }
-        </script>
-        <!--Scrip tambah Obat-->
-        <script>
-            document.getElementById('tambah-obat').addEventListener('click', function () {
-                const wrapper = document.getElementById('obat-wrapper');
-                const div = document.createElement('div');
-                div.className = 'mb-2 p-2 border rounded-md flex gap-2 items-center';
-
-                div.innerHTML = `
-<select name="obat[]" class="p-2 border rounded-md" required>
-    <?php foreach ($obat as $o): ?>
-        <option value="<?= $o['kode_obat'] ?>"><?= $o['nama_obat'] ?></option>
-    <?php endforeach; ?>
-</select>
-
-
-        <input type="number" name="jumlah[]" class="p-2 border rounded-md w-24" placeholder="Jumlah" required>
-        <input type="text" name="dosis[]" class="p-2 border rounded-md w-32" placeholder="Dosis" required>
-
-        <button type="button" class="remove-obat bg-red-500 text-white px-2 rounded">Hapus</button>
-    `;
-
-                wrapper.appendChild(div);
-            });
-
-            // Hapus baris obat
-            document.addEventListener('click', function (e) {
-                if (e.target.classList.contains('remove-obat')) {
-                    e.target.parentElement.remove();
-                }
-            });
         </script>
 </body>
 

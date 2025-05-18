@@ -18,7 +18,7 @@ echo "<!DOCTYPE html><html><head>
 </head><body>";
 
 
-if (data_pasien($id) > 0) {
+if (deletePasien($id) > 0) {
     // Berhasil Delete
     echo "<script>
    Swal.fire({

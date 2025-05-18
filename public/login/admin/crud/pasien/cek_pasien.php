@@ -1,59 +1,51 @@
 <?php
 session_start();
-use LDAP\Result;
-
 require '../../../../php/functions.php';
-
 
 if (!isset($_SESSION["login"])) {
     header("location:../../../admin_login.php");
     exit;
 }
 
-
 echo "<!DOCTYPE html><html><head>
 <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
 </head><body>";
 
-if (isset($_POST['nik_cari'])) {
-    $cari = $_POST['nik_cari'];
+if (isset($_POST['no_rm_cari'])) {
+    $no_rm = htmlspecialchars($_POST['no_rm_cari']);
 
-    $query = $conn->prepare("
-    SELECT 
-        rekam_medis.*, 
-        pasien.nama, 
-        pasien.jenis_kelamin, 
-        pasien.no_hp, 
-        pasien.tempat_lahir, 
-        pasien.tanggal_lahir, 
-        pasien.alamat 
-    FROM rekam_medis 
-    JOIN pasien ON rekam_medis.nik = pasien.nik 
-    WHERE rekam_medis.nik = ?
-");
 
-    $query->bind_param("s", $cari);
+    // Query untuk ambil data pasien dari no_rm
+    $query = $conn->prepare("SELECT pasien.* 
+                             FROM rekam_medis 
+                             JOIN pasien ON rekam_medis.nik = pasien.nik 
+                             WHERE rekam_medis.no_rm = ?");
+    $query->bind_param("s", $no_rm);
     $query->execute();
     $result = $query->get_result();
 
     if ($result->num_rows > 0) {
         $data = $result->fetch_assoc();
-        // Simpan ke session atau tampilkan form isian otomatis
-        session_start();
+
+        // Simpan ke session
         $_SESSION['pasien_lama'] = $data;
+
+        // Redirect ke form isian RM
         header("Location: isi_rm.php");
     } else {
         echo "<script> 
-        Swal.fire({
-            icon: 'error',
-            title: 'No. RM Tidak Ditemukan!',
-            html: 'Silahkan melakukan pendaftaran sebagai <strong>Pasien Baru</strong>',
-            confirmButtonText: 'Lanjutkan'
-        }).then(() => {
-            window.location.href = 'registrasi.php';
-        });
-    </script>";
+            Swal.fire({
+                icon: 'error',
+                title: 'No. RM Tidak Ditemukan!',
+                html: 'Silakan melakukan pendaftaran sebagai <strong>Pasien Baru</strong>.',
+                confirmButtonText: 'Lanjutkan'
+            }).then(() => {
+                window.location.href = 'registrasi.php';
+            });
+        </script>";
     }
+
+    $query->close();
 }
 
 echo "</body></html>";

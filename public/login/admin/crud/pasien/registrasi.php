@@ -411,7 +411,7 @@ if (!isset($_SESSION["login"])) {
               <div class="bg-white p-6 md:h-max rounded-lg shadow-md md:mt-2 font-poppins" data-aos="fade-up"
                 data-aos-duration="2000">
                 <h2 class="text-md font-bold mb-4">Form Data Diri</h2>
-                <form action="../../../../php/proses_admin.php" method="POST" class="space-y-3 md:space-y-2 text-xs">
+                <form action="../../../../php/proses_create_k.php" method="POST" class="space-y-3 md:space-y-3 text-xs">
                   <div class="grid grid-cols-2 gap-4">
                     <div>
                       <label class="block text-gray-700">Nama Pasien</label>
@@ -455,50 +455,24 @@ if (!isset($_SESSION["login"])) {
                         class="w-full border border-gray-300 rounded-md p-2" />
                     </div>
                   </div>
-                  <div class="grid grid-cols-2 gap-4">
-                    <div>
-                      <label class="block text-gray-700">Alamat</label>
-                      <input type="text" name="alamat" required class="w-full border border-gray-300 rounded-md p-2" />
-                    </div>
-                    <div>
-                      <label class="block text-gray-700">Tanggal Kunjungan</label>
-                      <input type="date" name="tanggal_kunjungan" required
-                        class="w-full border border-gray-300 rounded-md p-2" />
-                    </div>
-                  </div>
                   <div>
-                    <label class="block text-gray-700">Keluhan</label>
-                    <textarea name="keluhan" required class="w-full border border-gray-300 rounded-md p-2"></textarea>
-                  </div>
-                  <div>
-                    <label class="block text-gray-700">Poli Tujuan</label>
-                    <select name="poli_tujuan" required class="w-full border border-gray-300 rounded-md p-2">
-                      <option value="">...</option>
-                      <option value="Poli Umum">Poli Umum</option>
-                      <option value="Poli Gigi">Poli Gigi</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="block text-gray-700">Jenis Pasien</label>
-                    <select name="jenis_pasien" required class="w-full border border-gray-300 rounded-md p-2">
-                      <option value="">...</option>
-                      <option value="Umum">Umum</option>
-                      <option value="BPJS">BPJS</option>
-                    </select>
+                    <label class="block text-gray-700">Alamat</label>
+                    <input type="text" name="alamat" required class="w-full border border-gray-300 rounded-md p-2" />
                   </div>
                   <div>
                     <label class="block text-gray-700">NIK / No. BPJS</label>
                     <input type="text" name="nik_bpjs" required placeholder="Masukkan NIK / No. BPJS"
                       class="w-full border border-gray-300 rounded-md p-2" />
                     <div class="mt-1 text-xs ml-2 opacity-50">
-                      <li>Masukkan NIK Jika Pasien Umum</li>
-                      <li>Masukkan No. BPJS Jika Kepesertaan BPJS</li>
+                      <li>Masukkan NIK Jika Pasien Umum contoh NIK000...</li>
+                      <li>Masukkan No. BPJS Jika Kepesertaan BPJS contoh: BPJS000...</li>
                     </div>
                   </div>
                   <button type="submit" class="w-full hover:bg-green-900 bg-green-700 text-white p-2 rounded-md">
                     Daftar
                   </button>
                 </form>
+
 
                 <!-- Tombol untuk buka modal -->
                 <div class="flex items-center space-x-2 mt-3 justify-center">
@@ -524,9 +498,13 @@ if (!isset($_SESSION["login"])) {
       <div class="bg-white p-6 rounded-lg w-96 shadow-lg relative">
         <h2 class="text-xl font-semibold mb-4">Cek Pasien Lama</h2>
         <form id="formCekPasien" action="cek_pasien.php" method="post">
-          <label for="nik" class="block text-sm font-medium">Masukkan NIK</label>
-          <input type="text" name="nik_cari" class="w-full p-2 border text-xs border-gray-300 rounded mt-2 mb-4"
-            required>
+
+          <!-- Label dan Input No. RM -->
+          <label for="no_rm_cari" class="block text-sm font-medium">Masukkan No. RM</label>
+          <input type="text" name="no_rm_cari" id="no_rm_cari"
+            class="w-full p-2 border text-xs border-gray-300 rounded mt-2 mb-4" placeholder="Contoh: RM001" required>
+
+          <!-- Tombol -->
           <div class="flex justify-end gap-2 text-sm">
             <button type="button" onclick="toggleModal()" class="px-4 py-2 bg-gray-300 rounded">Batal</button>
             <button id="submitBtn" type="submit" name="cek_pasien"
@@ -535,6 +513,7 @@ if (!isset($_SESSION["login"])) {
         </form>
       </div>
     </div>
+
 
     <!-- Loading Overlay -->
     <div id="loadingOverlayy"

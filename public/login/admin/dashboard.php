@@ -1,43 +1,43 @@
 <?php
 session_start();
-use LDAP\Result;
-
 require '../../php/functions.php';
-
 
 if (!isset($_SESSION["login"])) {
   header("location:../admin_login.php");
   exit;
 }
 
-// Pagination setup for kunjungan table
+$poli_umum = query("SELECT COUNT(*) AS total FROM antrian WHERE poli_tujuan = 'Poli Umum'")[0]['total'];
+$poli_gigi = query("SELECT COUNT(*) AS total FROM antrian WHERE poli_tujuan = 'Poli Gigi'")[0]['total'];
+
 $JumlahDataPerHalaman = 5;
-$JumlahData = count(query("SELECT * FROM kunjungan"));
+$JumlahData = count(query("SELECT * FROM antrian"));
 $JumlahHalaman = ceil($JumlahData / $JumlahDataPerHalaman);
 $HalamanAktif = (isset($_GET["halaman"])) ? $_GET["halaman"] : 1;
 $AwalData = ($JumlahDataPerHalaman * $HalamanAktif) - $JumlahDataPerHalaman;
 
-// Fetch kunjungan data for table
-$kunjungan = query("SELECT * FROM kunjungan ORDER BY tanggal_kunjungan DESC LIMIT $AwalData, $JumlahDataPerHalaman");
+// Ambil data antrian lengkap
+$antrian = query("
+  SELECT 
+    antrian.id,
+    antrian.no_antrian,
+    pasien.nama,
+    pasien.jenis_kelamin,
+    pasien.no_hp,
+    pasien.nik,
+    antrian.poli_tujuan,
+    antrian.tanggal_antrian,
+    antrian.status_antrian
+  FROM antrian
+  INNER JOIN pasien ON antrian.pasien_id = pasien.id
+  ORDER BY antrian.tanggal_antrian DESC
+  LIMIT $AwalData, $JumlahDataPerHalaman;
+");
 
-// Search functionality
-if (isset($_POST["cari"])) {
-  $keyword = $_POST["keyword"];
-  $kunjungan = query("SELECT * FROM kunjungan WHERE 
-    no_rm LIKE '%$keyword%' OR
-    tanggal_kunjungan LIKE '%$keyword%' OR
-    keluhan LIKE '%$keyword%' OR
-    poli_tujuan LIKE '%$keyword%' OR
-    jenis_pasien LIKE '%$keyword%' OR
-    dokter LIKE '%$keyword%' OR
-    nik_bpjs LIKE '%$keyword%' OR
-    denyut_nadi LIKE '%$keyword%' OR
-    laju_pernapasan LIKE '%$keyword%' OR
-    diagnosa LIKE '%$keyword%'
-    ORDER BY tanggal_kunjungan DESC
-  ");
-}
+
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="id">
@@ -493,47 +493,39 @@ if (isset($_POST["cari"])) {
                   <th class="border p-2">NIK</th>
                   <th class="border p-2">Jenis Kelamin</th>
                   <th class="border p-2">No HP</th>
-                  <th class="border p-2">Keluhan</th>
                   <th class="border p-2">Poli Tujuan</th>
-                  <th class="border p-2">Tanggal Kunjungan</th>
+                  <th class="border p-2">Tanggal Antrian</th>
                   <th class="border p-2">Status Antrian</th>
                   <th class="border p-2">Action</th>
                 </tr>
               </thead>
               <tbody class="text-xs">
-
-
                 <?php $i = 1; ?>
-                <?php foreach ($pasien as $row)
-                : ?>
+                <?php foreach ($antrian as $row): ?>
                   <tr>
                     <td class="border p-2 md"><?= $i; ?></td>
-                    <td class="border p-2 w-8 md"><?= $row["no_antrian"]; ?></td>
+                    <td class="border p-2 w-8 md"><?= htmlspecialchars($row["no_antrian"]); ?></td>
+                    <td class="border p-2 truncate w-52 md"><?= htmlspecialchars($row["nama"]); ?></td>
                     <td class="border p-2 truncate w-20 md">
-                      <?= $row["nama"]; ?>
+                      <?= strlen($row['nik']) > 13 ? htmlspecialchars(substr($row['nik'], 0, 13)) . '...' : htmlspecialchars($row["nik"]); ?>
                     </td>
-                    <td class="border p-2 truncate w-20 md">
-                      <?= strlen($row['nik']) > 13 ? substr($row['nik'], 0, 13) . '...' : $row["nik"]; ?>
+                    <td class="border p-2 w-28 md">
+                      <?= $row["jenis_kelamin"] == 'Laki-laki' ? 'Laki-laki' : ($row["jenis_kelamin"] == 'Perempuan' ? 'Perempuan' : '-') ?>
                     </td>
-                    <td class="border p-2 w-8 md"><?= $row["jenis_kelamin"]; ?></td>
-                    <td class="border p-2 w-8 md"><?= $row["no_hp"]; ?></td>
-                    <td class="border p-2 truncate  md">
-                      <?= strlen($row['keluhan']) > 15 ? substr($row['keluhan'], 0, 15) . '...' : $row["keluhan"]; ?>
-                    </td>
-                    <td class="border p-2 truncate w-20 md"><?= $row["poli_tujuan"]; ?></td>
-                    <td class="border p-2 md w-28"><?= $row["tanggal_kunjungan"]; ?></td>
-                    <td class="border p-2 w-20 md"><?= $row["status_antrian"]; ?></td>
+                    <td class="border p-2 w-8 md"><?= htmlspecialchars($row["no_hp"]); ?></td>
+                    <td class="border p-2 truncate w-36 md"><?= htmlspecialchars($row["poli_tujuan"]); ?></td>
+                    <td class="border p-2 md w-28"><?= htmlspecialchars($row["tanggal_antrian"]); ?></td>
+                    <td class="border p-2 w-20 md"><?= htmlspecialchars($row["status_antrian"]); ?></td>
                     <td class="border p-2 w-fit">
                       <div class="flex justify-end space-x-1">
                         <button onclick="lihatPasien('<?= $row['id']; ?>')"
                           class="bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs">
                           View
                         </button>
-
                         <form action="../../php/functions.php" method="POST" style="display: inline;">
                           <input type="hidden" name="id" value="<?= $row['id']; ?>">
-                          <button type="submit" name="panggil"
-                            class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs">
+                          <button type="button" class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs"
+                            onclick="panggilPasien('<?= $row['id'] ?>', '<?= $row['no_antrian'] ?>', '<?= $row['poli_tujuan'] ?>')">
                             Panggil
                           </button>
                         </form>
@@ -543,16 +535,15 @@ if (isset($_POST["cari"])) {
                             class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs">
                             Selesai
                           </button>
+                        </form>
                       </div>
-                      </form>
                     </td>
                   </tr>
-
                   <?php $i++; ?>
                 <?php endforeach; ?>
-
               </tbody>
             </table>
+
           </div>
 
           <div class="pagination text-xs font-poppins mt-2 ml-1 text-gray-500">
@@ -581,7 +572,31 @@ if (isset($_POST["cari"])) {
     <!--Script JS-->
     <script src="../../js/script.js"></script>
 
-    <!--Logout-->
+    <!--suara panggil-->
+
+    <script>
+      function panggilPasien(id, noAntrian, poli) {
+        // Format suara: A 0 0 1
+        const noAntrianTerpisah = noAntrian.replace(/-/g, '').split('').join(' ');
+        const pesan = `Nomor antrian. ${noAntrianTerpisah}. Silakan menuju ke ${poli}.terimakasih`;
+
+        // AJAX update status antrian
+        fetch('../../php/panggil.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `id=${id}`
+        }).then(() => {
+          // Suara
+          const ucap = new SpeechSynthesisUtterance(pesan);
+          ucap.lang = 'id-ID';
+          ucap.rate = 0.9; // Lebih lambat
+          window.speechSynthesis.speak(ucap);
+        });
+      }
+    </script>
+
+
+
 
     <script>
       function toggleSidebar() {

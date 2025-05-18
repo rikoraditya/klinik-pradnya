@@ -1,32 +1,36 @@
 <?php
 session_start();
-use LDAP\Result;
-
 require '../../../../php/functions.php';
 
-
 if (!isset($_SESSION["login"])) {
-    header("location:../../../admin_login.php");
+    header("Location: ../../../admin_login.php");
     exit;
 }
 
-
-$rekam_medis = [];
-$pasien = [];
-
-
-// Cek apakah ada data pasien di session
-if (isset($_SESSION['pasien_lama'])) {
-    $pasien = $_SESSION['pasien_lama'];
-    $rekam_medis = $_SESSION['pasien_lama'];
-} else {
-    // Redirect jika data tidak ada di session
+// Cek apakah ada data pasien lama di session
+if (!isset($_SESSION['pasien_lama'])) {
     header("Location: registrasi.php");
-    exit();
+    exit;
 }
 
+$pasien = $_SESSION['pasien_lama'];
+$rekam_medis = [];
 
+// Ambil no_rm dari database berdasarkan nik
+$nik = $pasien['nik'];
+$q = mysqli_query($conn, "SELECT no_rm FROM rekam_medis WHERE nik = '$nik' LIMIT 1");
+if ($q && mysqli_num_rows($q) > 0) {
+    $rekam_medis = mysqli_fetch_assoc($q);
+} else {
+    // Jika tidak ada rekam medis, redirect atau beri alert
+    echo "<script>
+        alert('No. RM tidak ditemukan untuk pasien ini.');
+        window.location.href = 'registrasi.php';
+    </script>";
+    exit;
+}
 ?>
+
 
 
 

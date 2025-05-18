@@ -9,41 +9,42 @@ if (!isset($_SESSION["login"])) {
     header("location:../../../admin_login.php");
     exit;
 }
-
-$id = $_GET["id"];
-// Ambil data rekam_medis, pasien, kunjungan, dokter, dan obat sesuai struktur tabel terbaru
+$id = $_GET['id'];
 $rekam_medis = query("
-    SELECT 
-        rm.id,
-        rm.no_rm,
-        rm.nik,
-        p.nama AS nama_pasien,
-        p.jenis_kelamin,
-        p.no_hp,
-        p.tempat_lahir,
-        p.tanggal_lahir,
-        p.alamat,
-        k.id AS id_kunjungan,
-        k.tanggal_kunjungan,
-        k.keluhan,
-        k.poli_tujuan,
-        k.jenis_pasien,
-        k.dokter AS id_dokter,
-        d.nama AS nama_dokter,
-        d.poliklinik,
-        d.profile_picture,
-        k.nik_bpjs,
-        k.denyut_nadi,
-        k.laju_pernapasan,
-        k.diagnosa
-    FROM rekam_medis rm
-    LEFT JOIN pasien p ON rm.nik = p.nik
-    LEFT JOIN kunjungan k ON rm.no_rm = k.no_rm
-    LEFT JOIN dokter d ON k.dokter = d.id_dokter
-    WHERE rm.id = $id
-    ORDER BY k.tanggal_kunjungan DESC
-    LIMIT 1
+SELECT 
+  kunjungan.id,
+  kunjungan.no_rm,
+  pasien.nama,
+  pasien.jenis_kelamin,
+  pasien.no_hp,
+  pasien.nik,
+  pasien.tanggal_lahir,
+  pasien.tempat_lahir,
+  pasien.alamat,
+  pasien.nik_bpjs,
+  kunjungan.tanggal_kunjungan,
+  kunjungan.poli_tujuan,
+  kunjungan.keluhan,
+  kunjungan.diagnosa,
+  kunjungan.denyut_nadi,
+  kunjungan.laju_pernapasan,
+  dokter.nama AS nama_dokter,
+  kunjungan.jenis_pasien,
+
+  GROUP_CONCAT(CONCAT(obat.nama_obat, ' (', kunjungan_obat.jumlah, ') (', kunjungan_obat.dosis, ')') SEPARATOR ', ') AS detail_obat
+
+FROM kunjungan
+LEFT JOIN rekam_medis ON kunjungan.no_rm = rekam_medis.no_rm
+LEFT JOIN dokter ON kunjungan.dokter_id = dokter.id
+LEFT JOIN pasien ON rekam_medis.nik = pasien.nik
+LEFT JOIN kunjungan_obat ON kunjungan.id = kunjungan_obat.id_kunjungan
+LEFT JOIN obat ON kunjungan_obat.kode_obat = obat.kode_obat
+WHERE kunjungan.id = '$id'
+GROUP BY kunjungan.id
+LIMIT 1
 ")[0];
+
+
 
 // Ambil daftar obat (untuk dropdown)
 $obat = query("SELECT * FROM obat");
@@ -69,7 +70,7 @@ echo "<!DOCTYPE html><html><head>
 
 if (isset($_POST["submit"])) {
 
-    if (update_rm($_POST) > 0) {
+    if (updateRM($_POST) > 0) {
 
         echo "<script> 
         Swal.fire({
@@ -521,7 +522,7 @@ echo "</body></html>";
                                 <div>
                                     <label class="block  font-medium">Nama Pasien</label>
                                     <input type="text" name="nama" class="w-full p-2 border rounded-md"
-                                        value="<?= $rekam_medis['nama_pasien'] ?? '' ?>" readonly>
+                                        value="<?= $rekam_medis['nama'] ?? '' ?>" readonly>
                                 </div>
                                 <div>
                                     <label class="block  font-medium">No. KTP</label>
@@ -601,7 +602,7 @@ echo "</body></html>";
 
                             </div>
 
-                            <div class="grid grid-cols-4 gap-4">
+                            <div class="grid grid-cols-3 gap-4">
                                 <div>
                                     <label class="block  font-medium">Laju Pernapasan</label>
                                     <input type="text" name="laju_pernapasan" required
@@ -617,26 +618,50 @@ echo "</body></html>";
 
                                 <div>
                                     <label class="block  font-medium">Dokter</label>
-
                                     <select name="dokter" class="w-full p-2 border rounded-md" required>
-                                        <?php foreach ($dokter as $d): ?>
-                                            <option value="<?= $d['id_dokter'] ?>" <?= ($rekam_medis['id_dokter'] ?? '') == $d['id_dokter'] ? 'selected' : '' ?>>
-                                                <?= $d['nama'] ?>
+
+
+                                        <?php foreach ($dokter as $o): ?>
+                                            <option value="<?= $o['nama'] ?>" <?= ($rekam_medis['nama_dokter'] ?? '') === $o['nama'] ? 'selected' : '' ?>>
+                                                <?= $o['nama'] ?>
+
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
+
                                 </div>
+
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-4">
                                 <div>
                                     <label class="block font-medium">Obat</label>
-                                    <select name="obat" class="w-full p-2 border rounded-md" required>
-                                        <?php foreach ($obat as $o): ?>
-                                            <option value="<?= $o['kode_obat'] ?>" <?= isset($obat_kunjungan[0]) && ($obat_kunjungan[0]['kode_obat'] ?? '') == $o['kode_obat'] ? 'selected' : '' ?>>
-                                                <?= $o['nama_obat'] ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
+
+                                    <div id="obat-wrapper">
+                                        <?php
+                                        // $rekam_medis['nama_obat'] = "Paracetamol, Amoxicillin";
+                                        $obat_dipilih = explode(', ', $rekam_medis['detail_obat'] ?? '');
+                                        ?>
+
+                                        <select name="obat[]" multiple class="w-full p-2 border rounded-md" required>
+                                            <?php foreach ($obat_dipilih as $nama_obat): ?>
+                                                <option value="<?= htmlspecialchars($nama_obat) ?>" selected>
+                                                    <?= htmlspecialchars($nama_obat) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+
+
+                                    </div>
+
+                                    <button type="button" id="tambah-obat"
+                                        class="mt-2 bg-green-500 text-white px-4 py-2 rounded">+ Tambah Obat</button>
+
+
                                 </div>
                             </div>
+
+
                             <div>
                                 <label class="block  font-medium">Diagnosa</label>
                                 <textarea name="diagnosa" required class="w-full p-2 border rounded-md"
@@ -686,6 +711,38 @@ echo "</body></html>";
                     return;
                 menu.classList.toggle("hidden");
             }
+        </script>
+
+
+        <!--Scrip tambah Obat-->
+        <script>
+            document.getElementById('tambah-obat').addEventListener('click', function () {
+                const wrapper = document.getElementById('obat-wrapper');
+                const div = document.createElement('div');
+                div.className = 'mb-2 p-2 border rounded-md flex gap-2 items-center';
+
+                div.innerHTML = `
+        <select name="obat[]" class="p-2 border rounded-md" required>
+            <?php foreach ($obat as $o): ?>
+                <option value="<?= $o['nama_obat'] ?>"><?= $o['nama_obat'] ?></option>
+            <?php endforeach; ?>
+        </select>
+
+        <input type="number" name="jumlah[]" class="p-2 border rounded-md w-24" placeholder="Jumlah" required>
+        <input type="text" name="dosis[]" class="p-2 border rounded-md w-32" placeholder="Dosis" required>
+
+        <button type="button" class="remove-obat bg-red-500 text-white px-2 rounded">Hapus</button>
+    `;
+
+                wrapper.appendChild(div);
+            });
+
+            // Hapus baris obat
+            document.addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-obat')) {
+                    e.target.parentElement.remove();
+                }
+            });
         </script>
 </body>
 

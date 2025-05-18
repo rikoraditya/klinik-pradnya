@@ -55,12 +55,12 @@ $dokter = query($query);
                 <td class="border p-2 truncate w-96 md"><?= $row["poliklinik"]; ?></td>
                 <td class="border p-2">
                     <div class="flex justify-end space-x-1">
-                        <a href="update.php?id=<?= $row['id_nomor']; ?>"
+                        <a href="update.php?id=<?= $row['id']; ?>"
                             class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs inline-block">
                             Update
                         </a>
 
-                        <a href="delete.php?id=<?= $row['id_nomor']; ?>" id="delete-link"
+                        <a href="delete.php?id=<?= $row['id']; ?>" id="delete-link"
                             class="delete-link bg-red-700 hover:bg-red-900 text-white px-2 py-1 rounded text-xs inline-block">
                             Delete
                         </a>

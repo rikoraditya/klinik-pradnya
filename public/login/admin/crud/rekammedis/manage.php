@@ -4,7 +4,6 @@ use LDAP\Result;
 
 require '../../../../php/functions.php';
 
-
 if (!isset($_SESSION["login"])) {
   header("location:../../../admin_login.php");
   exit;
@@ -12,30 +11,32 @@ if (!isset($_SESSION["login"])) {
 
 //pagination table
 $JumlahDataPerHalaman = 5;
-$JumlahData = count(query("SELECT * FROM rekam_medis"));
+$JumlahData = count(query("SELECT * FROM kunjungan"));
 $JumlahHalaman = ceil($JumlahData / $JumlahDataPerHalaman);
 $HalamanAktif = (isset($_GET["halaman"])) ? $_GET["halaman"] : 1;
 $AwalData = ($JumlahDataPerHalaman * $HalamanAktif) - $JumlahDataPerHalaman;
 
-
-$rekam_medis = query("SELECT 
-    rekam_medis.*, 
-    pasien.nama AS nama_pasien,
-    pasien.jenis_kelamin AS jenis_kelamin_pasien,
-    pasien.tanggal_lahir AS tanggal_lahir, 
-    pasien.no_hp AS no_hp, 
-    pasien.nik AS nik_pasien,
-    kunjungan.id AS id_kunjungan,
-    kunjungan.tanggal_kunjungan,
-    kunjungan.dokter
-FROM rekam_medis
-JOIN pasien ON rekam_medis.nik = pasien.nik
-JOIN kunjungan ON rekam_medis.no_rm = kunjungan.no_rm
+$kunjungan = query("SELECT 
+  kunjungan.*, 
+  pasien.nik,
+  pasien.nama AS nama_pasien, 
+  pasien.jenis_kelamin,
+  pasien.no_hp,
+  pasien.tempat_lahir,
+  pasien.tanggal_lahir,
+  pasien.alamat,
+  pasien.nik_bpjs,
+  dokter.nama AS nama_dokter
+FROM kunjungan
+LEFT JOIN rekam_medis ON kunjungan.no_rm = rekam_medis.no_rm
+LEFT JOIN pasien ON rekam_medis.nik = pasien.nik
+LEFT JOIN dokter ON kunjungan.dokter_id = dokter.id
 ORDER BY kunjungan.tanggal_kunjungan DESC
-LIMIT $AwalData, $JumlahDataPerHalaman");
+LIMIT $AwalData, $JumlahDataPerHalaman
+");
 
 // Ambil semua id_kunjungan yang tampil di halaman ini
-$id_kunjungan_list = array_column($rekam_medis, 'id_kunjungan');
+$id_kunjungan_list = array_column($kunjungan, 'id');
 $obat_per_kunjungan = [];
 
 if (!empty($id_kunjungan_list)) {
@@ -60,10 +61,10 @@ if (!empty($id_kunjungan_list)) {
 
 //tombol cari
 if (isset($_POST["cari_rm"])) {
-  $rekam_medis = cari_rm($_POST["keyword"]);
+  $kunjungan = cari_rm($_POST["keyword"]);
 
   // Jika pencarian, ambil ulang id_kunjungan dan data obat
-  $id_kunjungan_list = array_column($rekam_medis, 'id_kunjungan');
+  $id_kunjungan_list = array_column($kunjungan, 'id');
   $obat_per_kunjungan = [];
 
   if (!empty($id_kunjungan_list)) {
@@ -86,6 +87,7 @@ if (isset($_POST["cari_rm"])) {
   }
 }
 ?>
+
 
 
 <!DOCTYPE html>
@@ -512,71 +514,47 @@ if (isset($_POST["cari_rm"])) {
                   <th class="border p-2">No RM</th>
                   <th class="border p-2">NIK</th>
                   <th class="border p-2">Nama</th>
-                  <th class="border p-2">Jenis Kelamin</th>
-                  <th class="border p-2">Tanggal Lahir</th>
                   <th class="border p-2">Tanggal Kunjungan</th>
-                  <th class="border p-2">No. HP</th>
-                  <th class="border p-2">Obat</th>
+                  <th class="border p-2">Tanggal Lahir</th>
+                  <th class="border p-2">Keluhan</th>
+                  <th class="border p-2">Poli Tujuan</th>
+                  <th class="border p-2">Jenis Pasien</th>
                   <th class="border p-2">Dokter</th>
-
                   <th class="border p-2">Action</th>
                 </tr>
               </thead>
               <tbody class="text-xs">
-
                 <?php $i = 1; ?>
-                <?php foreach ($rekam_medis as $row)
-                : ?>
-
+                <?php foreach ($kunjungan as $row): ?>
                   <tr>
-                    <td class="border p-2 md"><?= $i; ?></td>
-                    <td class="border p-2 md"><?= $row["no_rm"]; ?></td>
-                    <td class="border p-2 truncate md"><?= $row["nik"]; ?></td>
-                    <td class="border p-2 md"><?= $row["nama_pasien"]; ?></td>
-                    <td class="border p-2 md"><?= $row["jenis_kelamin_pasien"]; ?></td>
-                    <td class="border p-2 md"><?= $row["tanggal_lahir"]; ?></td>
+                    <td class="border p-2"><?= $i; ?></td>
+                    <td class="border p-2"><?= $row["no_rm"]; ?></td>
+                    <td class="border p-2"><?= $row["nik"]; ?></td>
+                    <td class="border p-2"><?= $row["nama_pasien"]; ?></td>
                     <td class="border p-2"><?= $row["tanggal_kunjungan"]; ?></td>
-                    <td class="border p-2 md"><?= $row["no_hp"]; ?></td>
-                    <td class="border p-2 md">
-                      <?php
-                      $idk = $row['id_kunjungan'];
-                      if (isset($obat_per_kunjungan[$idk]) && count($obat_per_kunjungan[$idk]) > 0) {
-                        foreach ($obat_per_kunjungan[$idk] as $obat) {
-                          echo htmlspecialchars($obat['nama_obat']) . " (" . htmlspecialchars($obat['dosis']) . ", " . htmlspecialchars($obat['jumlah']) . ")<br>";
-                        }
-                      } else {
-                        echo "-";
-                      }
-                      ?>
+                    <td class="border p-2"><?= $row["tanggal_lahir"]; ?></td>
+                    <td class="border p-2"><?= $row["keluhan"]; ?></td>
+                    <td class="border p-2"><?= $row["poli_tujuan"]; ?></td>
+                    <td class="border p-2"><?= $row["jenis_pasien"]; ?></td>
+                    <td class="border p-2">
+                      <?= strlen($row["nama_dokter"]) > 18 ? substr($row["nama_dokter"], 0, 18) . '...' : $row["nama_dokter"]; ?>
                     </td>
-                    <td class="border p-2 md">
-                      <?= isset($row['dokter']) && strlen($row['dokter']) > 18 ? substr($row['dokter'], 0, 18) . '...' : (isset($row['dokter']) ? $row["dokter"] : "-"); ?>
-                    </td>
-
                     <td class="border p-2">
                       <div class="flex justify-end space-x-1">
                         <button onclick="lihatPasien('<?= $row['id']; ?>')"
-                          class="bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs">
-                          View
-                        </button>
+                          class="bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs">View</button>
                         <a href="update.php?id=<?= $row['id']; ?>"
-                          class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs inline-block">
-                          Update
-                        </a>
-
+                          class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs inline-block">Update</a>
                         <a href="delete.php?id=<?= $row['id']; ?>"
-                          class="delete-link bg-red-700 hover:bg-red-900 text-white px-2 py-1 rounded text-xs inline-block">
-                          Delete
-                        </a>
+                          class="delete-link bg-red-700 hover:bg-red-900 text-white px-2 py-1 rounded text-xs inline-block">Delete</a>
                       </div>
                     </td>
                   </tr>
-
                   <?php $i++; ?>
                 <?php endforeach; ?>
-
               </tbody>
             </table>
+
           </div>
 
 
@@ -735,8 +713,10 @@ if (isset($_POST["cari_rm"])) {
         <div><span class="font-semibold font-poppins">Denyut Nadi:</span><br>${data.denyut_nadi}</div>
           <div><span class="font-semibold font-poppins">Laju Pernapasan:</span><br>${data.laju_pernapasan}</div>
         <div><span class="font-semibold font-poppins">Diagnosa:</span><br>${data.diagnosa}</div>
-          <div><span class="font-semibold font-poppins">Obat:</span><br>${obatHtml}</div>
-            <div><span class="font-semibold font-poppins">Dokter:</span><br>${data.dokter}</div>
+
+          <div><span class="font-semibold font-poppins">Obat:</span><br>${data.detail_obat}</div>
+            <div><span class="font-semibold font-poppins">Dokter:</span><br>${data.nama_dokter}</div>
+
     
       `;
 

@@ -11,36 +11,54 @@ if (!isset($_SESSION["login"])) {
 }
 
 $id = $_GET["id"];
-$pasien = query("SELECT * FROM pasien WHERE id = $id")[0];
+$id = $_GET['id'];
+
+$pasien = query("SELECT 
+                  pasien.*,
+                  antrian.no_antrian,
+                  kunjungan.keluhan,
+                  kunjungan.poli_tujuan,
+                  pasien.jenis_kelamin,
+                  kunjungan.tanggal_kunjungan,
+                  kunjungan.jenis_pasien
+                FROM pasien
+                LEFT JOIN antrian ON antrian.pasien_id = pasien.id
+                LEFT JOIN kunjungan ON kunjungan.id = pasien.id
+                WHERE pasien.id = $id
+                ORDER BY kunjungan.tanggal_kunjungan DESC
+                LIMIT 1")[0];
+
 
 echo "<!DOCTYPE html><html><head>
 <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
 </head><body>";
 
 
+
 if (isset($_POST["submit"])) {
+    $result = updatePasien($_POST);
 
-    if (update_pasien($_POST) > 0) {
-
-        echo "<script> 
-        Swal.fire({
-            icon: 'success',
-            title: 'Data Berhasil Diubah',
-            confirmButtonText: 'Kembali'
-        }).then(() => {
-            window.location.href = 'manage.php';
-        });
-    </script>";
+    if ($result >= 0) {
+        echo "<script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Data Berhasil Disimpan',
+                text: '" . ($result > 0 ? "Perubahan telah dilakukan." : "Tidak ada data yang berubah.") . "',
+                confirmButtonText: 'Kembali'
+            }).then(() => {
+                window.location.href = 'manage.php';
+            });
+        </script>";
     } else {
-        echo "<script> 
-        Swal.fire({
-            icon: 'error',
-            title: 'Data Gagal Diubah',
-            confirmButtonText: 'Kembali'
-        }).then(() => {
-            window.location.href = 'manage.php';
-        });
-    </script>";
+        echo "<script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Data Gagal Diubah',
+                confirmButtonText: 'Kembali'
+            }).then(() => {
+                window.location.href = 'manage.php';
+            });
+        </script>";
     }
 }
 
@@ -463,107 +481,89 @@ echo "</body></html>";
 
                         <form action="" method="POST" class="space-y-4 text-xs text-gray-600">
                             <input type="hidden" name="id" value="<?= $pasien['id']; ?>">
+
                             <div class="grid grid-cols-3 gap-4">
 
                                 <div>
-                                    <label class="block  font-medium">No. Pendaftaran Pasien</label>
-                                    <input type="text" name="no_antrian" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['no_antrian'] ?? '' ?>" readonly>
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">Nama Pasien</label>
+                                    <label class="block font-medium">Nama Pasien</label>
                                     <input type="text" name="nama" id="nama" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['nama'] ?? '' ?>">
+                                        value="<?= htmlspecialchars($pasien['nama'] ?? '') ?>" required>
                                 </div>
+
                                 <div>
-                                    <label class="block  font-medium">No. KTP</label>
+                                    <label class="block font-medium">No. KTP</label>
                                     <input type="text" name="nik" id="nik" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['nik'] ?? '' ?>">
+                                        value="<?= htmlspecialchars($pasien['nik'] ?? '') ?>" required pattern="\d{16}">
                                 </div>
 
+                                <?php $jk = isset($pasien['jenis_kelamin']) ? $pasien['jenis_kelamin'] : ''; ?>
+                                <div>
+                                    <label class="block font-medium">Jenis Kelamin</label>
+                                    <select name="jenis_kelamin" id="jenis_kelamin" class="w-full p-2 border rounded-md"
+                                        required>
+
+                                        <option value="Laki-laki" <?= $jk === 'Laki-laki' ? 'selected' : '' ?>>Laki-laki
+                                        </option>
+                                        <option value="Perempuan" <?= $jk === 'Perempuan' ? 'selected' : '' ?>>Perempuan
+                                        </option>
+                                    </select>
+                                </div>
+
+
                             </div>
+
                             <div class="grid grid-cols-3 gap-4">
 
                                 <div>
-                                    <label class="block  font-medium">Jenis Kelamin</label>
-                                    <input type="text" name="jenis_kelamin" id="jenis_kelamin"
-                                        class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['jenis_kelamin'] ?? '' ?>">
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">No. HP</label>
+                                    <label class="block font-medium">No. HP</label>
                                     <input type="text" name="no_hp" id="no_hp" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['no_hp'] ?? '' ?>">
+                                        value="<?= htmlspecialchars($pasien['no_hp'] ?? '') ?>" required
+                                        pattern="\d{10,13}">
                                 </div>
+
                                 <div>
-                                    <label class="block  font-medium">Alamat</label>
+                                    <label class="block font-medium">Alamat</label>
                                     <input type="text" name="alamat" id="alamat" class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['alamat'] ?? '' ?>">
+                                        value="<?= htmlspecialchars($pasien['alamat'] ?? '') ?>" required>
                                 </div>
-                            </div>
-                            <div class="grid grid-cols-3 gap-4">
+
                                 <div>
-                                    <label class="block  font-medium">Tempat Lahir</label>
+                                    <label class="block font-medium">Tempat Lahir</label>
                                     <input type="text" name="tempat_lahir" id="tempat_lahir"
                                         class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['tempat_lahir'] ?? '' ?>">
+                                        value="<?= htmlspecialchars($pasien['tempat_lahir'] ?? '') ?>" required>
                                 </div>
+
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-4">
+
                                 <div>
-                                    <label class="block  font-medium">Tanggal Lahir</label>
+                                    <label class="block font-medium">Tanggal Lahir</label>
                                     <input type="date" name="tanggal_lahir" id="tanggal_lahir"
                                         class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['tanggal_lahir'] ?? '' ?>">
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">Tanggal Kunjungan</label>
-                                    <input type="date" name="tanggal_kunjungan" id="tanggal_kunjungan"
-                                        class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['tanggal_kunjungan'] ?>">
+                                        value="<?= htmlspecialchars($pasien['tanggal_lahir'] ?? '') ?>" required>
                                 </div>
 
-                            </div>
-                            <div class="grid grid-cols-3 gap-4">
                                 <div>
-                                    <label class="block font-medium">Poli Tujuan</label>
-                                    <select class="w-full p-2 border rounded-md" name="poli_tujuan" id="poli_tujuan">
-                                        <option value="Poli Umum" <?= ($pasien['poli_tujuan'] ?? '') === 'Poli Umum' ? 'selected' : '' ?>>Poli Umum</option>
-                                        <option value="Poli Gigi" <?= ($pasien['poli_tujuan'] ?? '') === 'Poli Gigi' ? 'selected' : '' ?>>Poli Gigi</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">Jenis Pasien</label>
-                                    <select class="w-full p-2 border rounded-md" name="jenis_pasien" id="jenis_pasien">
-                                        <option value="Umum" <?= ($pasien['jenis_pasien'] ?? '') === 'Umum' ? 'selected' : '' ?>>Umum</option>
-                                        <option value="BPJS" <?= ($pasien['jenis_pasien'] ?? '') === 'BPJS' ? 'selected' : '' ?>>BPJS</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">No. NIK/BPJS</label>
+                                    <label class="block font-medium">NIK / No. BPJS</label>
                                     <input type="text" name="nik_bpjs" id="nik_bpjs"
-                                        class="w-full p-2 border rounded-md" value="<?= $pasien['nik_bpjs'] ?>">
-                                </div>
-
-
-                            </div>
-
-                            <div class="grid grid-cols-1 gap-4">
-
-                                <div>
-                                    <label class="block  font-medium">Keluhan</label>
-                                    <textarea type="text" name="keluhan" id="keluhan"
                                         class="w-full p-2 border rounded-md"
-                                        value="<?= $pasien['keluhan'] ?>"><?= $pasien['keluhan'] ?></textarea>
+                                        value="<?= htmlspecialchars($pasien['nik_bpjs'] ?? '') ?>" required>
                                 </div>
+
+                                <div></div> <!-- Kosong untuk kolom ketiga -->
 
                             </div>
 
                             <button type="submit" name="submit"
                                 class="mt-4 bg-green-800 hover:bg-green-900 text-white py-2 px-3 rounded-md text-xs">Update</button>
+
                             <a href="manage.php"
-                                class="bg-red-700 hover:bg-red-900 text-white py-2 px-3 rounded-md text-xs relative">
+                                class="bg-red-700 hover:bg-red-900 text-white py-2 px-3 rounded-md text-xs relative inline-block">
                                 Kembali
                             </a>
-
+                        </form>
 
                     </div>
 
