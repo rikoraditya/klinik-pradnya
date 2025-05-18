@@ -30,7 +30,7 @@ $antrian = query("
     antrian.status_antrian
   FROM antrian
   INNER JOIN pasien ON antrian.pasien_id = pasien.id
-  ORDER BY antrian.tanggal_antrian DESC
+  ORDER BY antrian.id DESC
   LIMIT $AwalData, $JumlahDataPerHalaman;
 ");
 
@@ -576,23 +576,35 @@ $antrian = query("
 
     <script>
       function panggilPasien(id, noAntrian, poli) {
-        // Format suara: A 0 0 1
         const noAntrianTerpisah = noAntrian.replace(/-/g, '').split('').join(' ');
-        const pesan = `Nomor antrian. ${noAntrianTerpisah}. Silakan menuju ke ${poli}.terimakasih`;
+        const pesan = `Nomor antrian. ${noAntrianTerpisah}. Silakan menuju ke ${poli}.Terima kasih`;
 
-        // AJAX update status antrian
-        fetch('../../php/panggil.php', {
+        // Simpan pesan ke localStorage sebelum reload
+        fetch('panggil.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: `id=${id}`
-        }).then(() => {
-          // Suara
+        })
+          .then(response => response.text())
+          .then(res => {
+            if (res.trim() === 'ok') {
+              localStorage.setItem('pesan_antrian', pesan);
+              location.reload();
+            }
+          });
+      }
+
+      // Saat halaman dimuat, cek apakah ada pesan antrian untuk dibacakan
+      window.addEventListener('DOMContentLoaded', () => {
+        const pesan = localStorage.getItem('pesan_antrian');
+        if (pesan) {
           const ucap = new SpeechSynthesisUtterance(pesan);
           ucap.lang = 'id-ID';
-          ucap.rate = 0.9; // Lebih lambat
+          ucap.rate = 0.9;
           window.speechSynthesis.speak(ucap);
-        });
-      }
+          localStorage.removeItem('pesan_antrian');
+        }
+      });
     </script>
 
 
@@ -677,11 +689,9 @@ $antrian = query("
         <div><span class="font-semibold font-poppins">Tempat Lahir:</span><br>${data.tempat_lahir}</div>
         <div><span class="font-semibold font-poppins">Tanggal Lahir:</span><br>${data.tanggal_lahir}</div>
         <div><span class="font-semibold font-poppins">Alamat:</span><br>${data.alamat}</div>
-        <div><span class="font-semibold font-poppins">Keluhan:</span><br>${data.keluhan}</div>
+       
         <div><span class="font-semibold font-poppins">Poli Tujuan:</span><br>${data.poli_tujuan}</div>
-        <div><span class="font-semibold font-poppins">Tanggal Kunjungan:</span><br>${data.tanggal_kunjungan}</div>
-        <div><span class="font-semibold font-poppins">Jenis Pasien:</span><br>${data.jenis_pasien}</div>
-        <div><span class="font-semibold font-poppins">NIK/BPJS:</span><br>${data.nik_bpjs}</div>
+        <div><span class="font-semibold font-poppins">Tanggal Kunjungan:</span><br>${data.tanggal_antrian}</div>
     
       `;
             document.getElementById('nomorAntrian').textContent = data.no_antrian;

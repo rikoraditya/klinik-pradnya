@@ -25,25 +25,24 @@ SELECT
     kunjungan.keluhan,
     kunjungan.poli_tujuan,
     kunjungan.jenis_pasien,
-    kunjungan.dokter,
+    dokter.nama AS nama_dokter,
     kunjungan.nik_bpjs,
     kunjungan.denyut_nadi,
     kunjungan.laju_pernapasan,
-    GROUP_CONCAT(CONCAT(obat.nama_obat, ' (', kunjungan_obat.jumlah, ' x ', kunjungan_obat.dosis, ')') SEPARATOR ', ') AS obat,
+    GROUP_CONCAT(CONCAT(obat.nama_obat, ' (', kunjungan_obat.jumlah, ') (', kunjungan_obat.dosis, ')') SEPARATOR ', ') AS obat,
     kunjungan.diagnosa
 FROM rekam_medis
 JOIN pasien ON rekam_medis.nik = pasien.nik
 JOIN kunjungan ON rekam_medis.no_rm = kunjungan.no_rm
 LEFT JOIN kunjungan_obat ON kunjungan.id = kunjungan_obat.id_kunjungan
 LEFT JOIN obat ON kunjungan_obat.kode_obat = obat.kode_obat
-LEFT JOIN dokter ON kunjungan.dokter = dokter.id_dokter
+LEFT JOIN dokter ON kunjungan.dokter_id = dokter.id
 GROUP BY kunjungan.id
 ORDER BY kunjungan.tanggal_kunjungan DESC
 ";
 
 $result = mysqli_query($conn, $query);
 
-// Error handling for SQL query
 if (!$result) {
     die("SQL Error: " . mysqli_error($conn) . "\nQuery: " . $query);
 }
@@ -56,7 +55,6 @@ $sheet->setCellValue('A1', 'Rekapitulasi Rekam Medis Pasien');
 $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
 $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-// Header kolom
 $headers = [
     'A2' => 'No',
     'B2' => 'No RM',
@@ -88,7 +86,6 @@ $sheet->getStyle('A2:S2')->getFill()->setFillType(Fill::FILL_SOLID)->getStartCol
 $sheet->getStyle('A2:S2')->getFont()->getColor()->setARGB('FFFFFF');
 $sheet->getStyle('A2:S2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-// Isi data
 $rowNumber = 3;
 while ($row = mysqli_fetch_assoc($result)) {
     $sheet->setCellValue('A' . $rowNumber, $rowNumber - 2);
@@ -104,7 +101,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     $sheet->setCellValue('K' . $rowNumber, $row['keluhan']);
     $sheet->setCellValue('L' . $rowNumber, $row['poli_tujuan']);
     $sheet->setCellValue('M' . $rowNumber, $row['jenis_pasien']);
-    $sheet->setCellValue('N' . $rowNumber, $row['dokter']);
+    $sheet->setCellValue('N' . $rowNumber, $row['nama_dokter']);
     $sheet->setCellValueExplicit('O' . $rowNumber, $row['nik_bpjs'], DataType::TYPE_STRING);
     $sheet->setCellValue('P' . $rowNumber, $row['denyut_nadi']);
     $sheet->setCellValue('Q' . $rowNumber, $row['laju_pernapasan']);
@@ -113,15 +110,12 @@ while ($row = mysqli_fetch_assoc($result)) {
     $rowNumber++;
 }
 
-// Styling isi data
-$sheet->getStyle('A3:S' . $rowNumber)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+$sheet->getStyle('A3:S' . ($rowNumber - 1))->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 $sheet->getStyle('A3:S' . ($rowNumber - 1))->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
 
-// Output
 $writer = new Xlsx($spreadsheet);
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Content-Disposition: attachment;filename="rekap_rekam_medis.xlsx"');
 header('Cache-Control: max-age=0');
 $writer->save('php://output');
 exit();
-?>

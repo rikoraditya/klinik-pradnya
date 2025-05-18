@@ -60,14 +60,6 @@ $antrian = query("
 ");
 
 
-
-
-
-
-
-
-
-
 //tombol cari
 if (isset($_POST["cari"])) {
   $pasien = cari($_POST["keyword"]);

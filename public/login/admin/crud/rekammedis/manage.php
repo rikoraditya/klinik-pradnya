@@ -518,7 +518,6 @@ if (isset($_POST["cari_rm"])) {
                   <th class="border p-2">Tanggal Lahir</th>
                   <th class="border p-2">Keluhan</th>
                   <th class="border p-2">Poli Tujuan</th>
-                  <th class="border p-2">Jenis Pasien</th>
                   <th class="border p-2">Dokter</th>
                   <th class="border p-2">Action</th>
                 </tr>
@@ -533,9 +532,10 @@ if (isset($_POST["cari_rm"])) {
                     <td class="border p-2"><?= $row["nama_pasien"]; ?></td>
                     <td class="border p-2"><?= $row["tanggal_kunjungan"]; ?></td>
                     <td class="border p-2"><?= $row["tanggal_lahir"]; ?></td>
-                    <td class="border p-2"><?= $row["keluhan"]; ?></td>
+                    <td class="border p-2">
+                      <?= strlen($row["keluhan"]) > 15 ? substr($row["keluhan"], 0, 15) . '...' : $row["keluhan"]; ?>
+                    </td>
                     <td class="border p-2"><?= $row["poli_tujuan"]; ?></td>
-                    <td class="border p-2"><?= $row["jenis_pasien"]; ?></td>
                     <td class="border p-2">
                       <?= strlen($row["nama_dokter"]) > 18 ? substr($row["nama_dokter"], 0, 18) . '...' : $row["nama_dokter"]; ?>
                     </td>

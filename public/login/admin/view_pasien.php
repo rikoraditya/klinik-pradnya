@@ -10,6 +10,7 @@ if (isset($_GET['id'])) {
             a.id,
             a.no_antrian,
             a.tanggal_antrian,
+            a.poli_tujuan,
             a.status_antrian,
 
             p.nama,
@@ -22,7 +23,6 @@ if (isset($_GET['id'])) {
 
             k.tanggal_kunjungan,
             k.keluhan,
-            k.poli_tujuan,
             k.jenis_pasien,
             k.nik_bpjs
 

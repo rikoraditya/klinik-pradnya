@@ -159,7 +159,8 @@ if (
         echo "<script>
             Swal.fire({
                 icon: 'success',
-                title: 'Data kunjungan tersimpan!',
+                title: 'Data Dibuat',
+                text: 'No. Rekam Medis Pasien Telah dibuat!',
                 confirmButtonText: 'OK'
             }).then(() => {
                 window.location.href = 'tambah.php';

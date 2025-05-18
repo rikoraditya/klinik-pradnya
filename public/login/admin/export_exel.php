@@ -1,76 +1,93 @@
 <?php
-// Memasukkan autoload Composer
-require '../../../vendor/autoload.php'; // Sesuaikan path jika perlu
+require '../../../vendor/autoload.php';
+require '../../php/functions.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
-use PhpOffice\PhpSpreadsheet\Style\Alignment; // Impor Alignment
-use PhpOffice\PhpSpreadsheet\Style\Font; // Impor Font
-use PhpOffice\PhpSpreadsheet\Style\Fill; // Impor Fill
-use PhpOffice\PhpSpreadsheet\Style\Border; // Impor Border
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Font;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
-// Ambil data dari database
-require '../../php/functions.php';
+// Ambil data kunjungan dari antrian dan pasien
+$query = "
+SELECT 
+    a.no_antrian,
+    p.nama,
+    p.nik,
+    p.jenis_kelamin,
+    p.no_hp,
+    p.tempat_lahir,
+    p.tanggal_lahir,
+    p.alamat,
+    a.poli_tujuan,
+    a.tanggal_antrian,
+    a.status_antrian
+FROM antrian a
+JOIN pasien p ON a.pasien_id = p.id
+ORDER BY a.tanggal_antrian DESC
+";
 
-$query = "SELECT * FROM pasien"; // Ubah sesuai kebutuhan
 $result = mysqli_query($conn, $query);
 
-// Membuat spreadsheet baru
+if (!$result) {
+    die("SQL Error: " . mysqli_error($conn) . "\nQuery: " . $query);
+}
+
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 
-// Menambahkan teks di bagian atas tabel
-$sheet->mergeCells('A1:J1');
+$sheet->mergeCells('A1:K1');
 $sheet->setCellValue('A1', 'Rekapitulasi Kunjungan Pasien');
-
-// Styling untuk teks "Rekapitulasi Kunjungan Pasien"
-$sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14); // Ukuran font lebih kecil
+$sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
 $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-// Menambahkan header kolom
-$sheet->setCellValue('A2', 'No');
-$sheet->setCellValue('B2', 'No Antrian');
-$sheet->setCellValue('C2', 'Nama');
-$sheet->setCellValue('D2', 'NIK');
-$sheet->setCellValue('E2', 'Jenis Kelamin');
-$sheet->setCellValue('F2', 'No HP');
-$sheet->setCellValue('G2', 'Keluhan');
-$sheet->setCellValue('H2', 'Poli Tujuan');
-$sheet->setCellValue('I2', 'Tanggal Kunjungan');
-$sheet->setCellValue('J2', 'Status Antrian');
+$headers = [
+    'A2' => 'No',
+    'B2' => 'No Antrian',
+    'C2' => 'Nama',
+    'D2' => 'NIK',
+    'E2' => 'Jenis Kelamin',
+    'F2' => 'No HP',
+    'G2' => 'Tempat Lahir',
+    'H2' => 'Tanggal Lahir',
+    'I2' => 'Alamat',
+    'J2' => 'Poli Tujuan',
+    'K2' => 'Tanggal Kunjungan'
+];
 
-// Styling untuk header
-$sheet->getStyle('A2:J2')->getFont()->setBold(true)->setSize(10); // Ukuran font header lebih kecil
-$sheet->getStyle('A2:J2')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('4F81BD');
-$sheet->getStyle('A2:J2')->getFont()->getColor()->setARGB('FFFFFF');
-$sheet->getStyle('A2:J2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+foreach ($headers as $cell => $text) {
+    $sheet->setCellValue($cell, $text);
+}
 
-// Menambahkan data pasien ke Excel
-$rowNumber = 3; // Mulai di baris ketiga
+$sheet->getStyle('A2:K2')->getFont()->setBold(true);
+$sheet->getStyle('A2:K2')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('4F81BD');
+$sheet->getStyle('A2:K2')->getFont()->getColor()->setARGB('FFFFFF');
+$sheet->getStyle('A2:K2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+$rowNumber = 3;
 while ($row = mysqli_fetch_assoc($result)) {
     $sheet->setCellValue('A' . $rowNumber, $rowNumber - 2);
     $sheet->setCellValueExplicit('B' . $rowNumber, $row['no_antrian'], DataType::TYPE_STRING);
     $sheet->setCellValue('C' . $rowNumber, $row['nama']);
     $sheet->setCellValueExplicit('D' . $rowNumber, $row['nik'], DataType::TYPE_STRING);
     $sheet->setCellValue('E' . $rowNumber, $row['jenis_kelamin']);
-    $sheet->setCellValueExplicit('F' . $rowNumber, $row['no_hp'], DataType::TYPE_STRING); // <-- Perbaikan disini
-    $sheet->setCellValue('G' . $rowNumber, $row['keluhan']);
-    $sheet->setCellValue('H' . $rowNumber, $row['poli_tujuan']);
-    $sheet->setCellValue('I' . $rowNumber, $row['tanggal_kunjungan']);
-    $sheet->setCellValue('J' . $rowNumber, $row['status_antrian']);
+    $sheet->setCellValueExplicit('F' . $rowNumber, $row['no_hp'], DataType::TYPE_STRING);
+    $sheet->setCellValue('G' . $rowNumber, $row['tempat_lahir']);
+    $sheet->setCellValue('H' . $rowNumber, $row['tanggal_lahir']);
+    $sheet->setCellValue('I' . $rowNumber, $row['alamat']);
+    $sheet->setCellValue('J' . $rowNumber, $row['poli_tujuan']);
+    $sheet->setCellValue('K' . $rowNumber, $row['tanggal_antrian']);
     $rowNumber++;
 }
 
-// Styling untuk data
-$sheet->getStyle('A3:J' . ($rowNumber - 1))->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-$sheet->getStyle('A3:J' . ($rowNumber - 1))->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+$sheet->getStyle('A3:K' . ($rowNumber - 1))->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+$sheet->getStyle('A3:K' . ($rowNumber - 1))->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
 
-// Menyimpan file Excel
 $writer = new Xlsx($spreadsheet);
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-header('Content-Disposition: attachment;filename="data_kunjungan_pasien.xlsx"');
+header('Content-Disposition: attachment;filename="rekap_kunjungan_pasien.xlsx"');
 header('Cache-Control: max-age=0');
 $writer->save('php://output');
 exit();
-?>

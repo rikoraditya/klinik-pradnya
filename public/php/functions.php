@@ -43,7 +43,7 @@ function tambahAntrian($pasien_id)
 function panggilAntrian($id)
 {
     global $conn;
-    $query = "UPDATE antrian SET status_antrian = 'diperiksa' WHERE id = $id";
+    $query = "UPDATE antrian SET status_antrian = 'dipanggil' WHERE id = $id";
     mysqli_query($conn, $query);
     return mysqli_affected_rows($conn);
 }
@@ -206,10 +206,8 @@ if (isset($_POST['selesai'])) {
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        echo "<script>
-            alert('Status pasien diperbarui: SELESAI');
-            window.location.href = '../login/admin/dashboard.php';
-        </script>";
+
+        header('Location: ../login/admin/dashboard.php');
     } else {
         echo "<script>alert('Gagal menyelesaikan antrian!'); window.history.back();</script>";
     }
