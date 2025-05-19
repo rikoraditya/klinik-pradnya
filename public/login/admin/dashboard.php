@@ -16,6 +16,8 @@ $JumlahHalaman = ceil($JumlahData / $JumlahDataPerHalaman);
 $HalamanAktif = (isset($_GET["halaman"])) ? $_GET["halaman"] : 1;
 $AwalData = ($JumlahDataPerHalaman * $HalamanAktif) - $JumlahDataPerHalaman;
 
+
+
 // Ambil data antrian lengkap
 $antrian = query("
   SELECT 
@@ -429,7 +431,7 @@ $antrian = query("
       <!-- Main Content -->
       <main class="flex-1 p-8 ml-64 transition-all duration-300 font-poppins" id="mainContent">
         <h1 class="text-2xl font-bold">Dashboard</h1>
-        <p class="text-gray-600">Laporan Kunjungan Rawat Jalan</p>
+        <p class="text-gray-600">Antrian Kunjungan Rawat Jalan</p>
 
         <div class="grid grid-cols-3 gap-6 my-4">
           <div class="bg-green-800 text-white p-4 rounded-lg flex justify-between items-center">
@@ -689,7 +691,6 @@ $antrian = query("
         <div><span class="font-semibold font-poppins">Tempat Lahir:</span><br>${data.tempat_lahir}</div>
         <div><span class="font-semibold font-poppins">Tanggal Lahir:</span><br>${data.tanggal_lahir}</div>
         <div><span class="font-semibold font-poppins">Alamat:</span><br>${data.alamat}</div>
-       
         <div><span class="font-semibold font-poppins">Poli Tujuan:</span><br>${data.poli_tujuan}</div>
         <div><span class="font-semibold font-poppins">Tanggal Kunjungan:</span><br>${data.tanggal_antrian}</div>
     

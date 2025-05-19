@@ -572,7 +572,8 @@ echo "</body></html>";
                             </div>
 
                             <button type="submit" name="submit"
-                                class="mt-4 bg-green-800 hover:bg-green-900 text-white py-2 px-3 rounded-md text-xs">Create</button>
+                                class="mt-4 bg-green-800 hover:bg-green-900 text-white py-2 px-3 rounded-md text-xs">+
+                                Antrian</button>
 
                             <a href="manage.php"
                                 class="bg-red-700 hover:bg-red-900 text-white py-2 px-3 rounded-md text-xs relative inline-block">
