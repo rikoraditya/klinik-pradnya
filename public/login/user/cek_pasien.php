@@ -31,71 +31,41 @@ if (!isset($_SESSION['no_hp'])) {
 }
 
 // Ambil NIK dari input user
-if (isset($_POST['nik_cari'])) {
-    $nik_input = $_POST['nik_cari'];
-    $no_hp_login = $_SESSION['no_hp'];
+if (isset($_POST['no_rm_cari'])) {
+    $no_rm = htmlspecialchars($_POST['no_rm_cari']);
 
-    // Ambil NIK dari database berdasarkan no_hp akun yang sedang login
-    $stmt = $conn->prepare("SELECT nik FROM rekam_medis WHERE no_hp = ?");
-    $stmt->bind_param("s", $no_hp_login);
-    $stmt->execute();
-    $result_nik = $stmt->get_result();
 
-    if ($result_nik->num_rows > 0) {
-        $row = $result_nik->fetch_assoc();
-        $nik_asli = $row['nik'];
+    // Query untuk ambil data pasien dari no_rm
+    $query = $conn->prepare("SELECT pasien.* 
+                             FROM rekam_medis 
+                             JOIN pasien ON rekam_medis.nik = pasien.nik 
+                             WHERE rekam_medis.no_rm = ?");
+    $query->bind_param("s", $no_rm);
+    $query->execute();
+    $result = $query->get_result();
 
-        if ($nik_input !== $nik_asli) {
-            echo "<script> 
+    if ($result->num_rows > 0) {
+        $data = $result->fetch_assoc();
+
+        // Simpan ke session
+        $_SESSION['pasien_lama'] = $data;
+
+        // Redirect ke form isian RM
+        header("Location: pasien_lama.php");
+    } else {
+        echo "<script> 
             Swal.fire({
                 icon: 'error',
-                title: 'NIK Tidak Sesuai!',
-                text: 'NIK yang Anda masukkan tidak cocok dengan akun Anda.',
-                confirmButtonText: 'Coba Lagi'
-            }).then(() => {
-                window.location.href = 'buat_kunjungan.php';
-            });
-            </script>";
-            exit;
-        }
-
-        // Jika nik_input sama dengan nik akun login, lanjut cari data rekam medis
-        $query = $conn->prepare("SELECT * FROM rekam_medis WHERE nik = ?");
-        $query->bind_param("s", $nik_input);
-        $query->execute();
-        $result = $query->get_result();
-
-        if ($result->num_rows > 0) {
-            $data = $result->fetch_assoc();
-            $_SESSION['pasien_lama'] = $data;
-            header("Location: pasien_lama.php");
-            exit;
-        } else {
-            echo "<script> 
-            Swal.fire({
-                icon: 'error',
-                title: 'Rekam Medis Tidak Ditemukan!',
+                title: 'No. RM Tidak Ditemukan!',
                 html: 'Silakan melakukan pendaftaran sebagai <strong>Pasien Baru</strong>.',
                 confirmButtonText: 'Lanjutkan'
             }).then(() => {
                 window.location.href = 'buat_kunjungan.php';
             });
-            </script>";
-        }
-
-    } else {
-        echo "<script> 
-        Swal.fire({
-            icon: 'error',
-            title: 'Data Akun Tidak Valid!',
-            text: 'Data NIK tidak ditemukan pada Rekam Medis.',
-             html:  'Jika anda belum pernah berobat, anda tidak akan bisa mendaftar sebagai <strong>Pasien Lama</strong>.',
-            confirmButtonText: 'OK'
-        }).then(() => {
-            window.location.href = 'buat_kunjungan.php';
-        });
         </script>";
     }
+
+    $query->close();
 }
 
 echo "</body></html>";

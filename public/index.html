@@ -51,9 +51,50 @@
 
 
 <!--AKHIR JUMBOTRON-->
-      <button id="closePopup" class="mt-6 bg-gray-400 text-gray-100 px-4 py-2 rounded-full hover:bg-gray-600">
-        X
-      </button>
+      <button  
+  id="closePopup" 
+  class="mt-6 bg-gray-400 text-gray-100 px-4 py-2 rounded-full hover:bg-gray-600"
+  onclick="sambutanKlinik()">
+  X
+</button>
+
+<audio id="alarmSound" src="audio/audioo.mp3" preload="auto"></audio>
+
+<audio id="alarmSound" src="audio/alarm.mp3" preload="auto"></audio>
+
+<script>
+  function sambutanKlinik() {
+    const pesan = `Selamat datang di klinik Pradnya Usadha Klungkung. 
+    Kami hadir dalam memberikan pelayanan terbaik untuk pasien. 
+    Saat ini pendaftaran bisa dilakukan melalui website, Terima kasih.`;
+
+    const alarm = document.getElementById('alarmSound');
+    alarm.currentTime = 0;
+
+    // Putar alarm, lalu bicara setelah selesai
+    alarm.play().then(() => {
+      alarm.onended = () => {
+        window.speechSynthesis.cancel(); // pastikan tidak tabrakan suara
+        const ucap = new SpeechSynthesisUtterance(pesan);
+        ucap.lang = 'id-ID';
+        ucap.rate = 0.9;
+        window.speechSynthesis.speak(ucap);
+      };
+    }).catch(() => {
+      // Kalau alarm gagal (misal diblokir), langsung bicara
+      const ucap = new SpeechSynthesisUtterance(pesan);
+      ucap.lang = 'id-ID';
+      ucap.rate = 0.9;
+      window.speechSynthesis.speak(ucap);
+    });
+  }
+</script>
+
+
+
+
+
+
   </div>
 </div>
 <script>
@@ -64,14 +105,7 @@
 </script>
 
 <!--Audio-->
-<script>
-document.addEventListener("click", function playAudio() {
-    let audio = new Audio("audio/audio.mp3"); // Pastikan file ini ada di lokasi yang benar
-    audio.play().catch(error => console.log("Autoplay dicegah:", error));
-    document.removeEventListener("click", playAudio);
-});
 
-</script>
 
 
 <!--Audio-->

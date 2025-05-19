@@ -26,6 +26,19 @@ if (isset($_SESSION['pasien_lama'])) {
 }
 
 
+// Ambil no_rm dari database berdasarkan nik
+$nik = $pasien['nik'];
+$q = mysqli_query($conn, "SELECT no_rm FROM rekam_medis WHERE nik = '$nik' LIMIT 1");
+if ($q && mysqli_num_rows($q) > 0) {
+  $rekam_medis = mysqli_fetch_assoc($q);
+} else {
+  // Jika tidak ada rekam medis, redirect atau beri alert
+  echo "<script>
+        alert('No. RM tidak ditemukan untuk pasien ini.');
+        window.location.href = 'buat_kunjungan.php';
+    </script>";
+  exit;
+}
 ?>
 
 
@@ -273,12 +286,12 @@ if (isset($_SESSION['pasien_lama'])) {
                 Lakukan Pendaftaran Untuk <br />
                 Keluarga Tercinta Anda
               </h1>
-              <img src="../../img/pendaftaran.PNG" alt="" class="w-11/12 mt-3 -ml- hidden md:block" />
+              <img src="../../img/pendaftaran.PNG" alt="" class="w-10/12 mt-3 -ml- hidden md:block" />
             </div>
             <!-- Form Pendaftaran -->
-            <div class="bg-white p-6 md:h-max rounded-lg shadow-md md:mt-2 font-poppins">
+            <div class="bg-white p-6 md:h-max rounded-lg shadow-md md:mt-7 font-poppins">
               <h2 class="text-md font-bold mb-4">Pendaftaran Pasien Lama</h2>
-              <form action="../../php/proses.php" method="POST" class="space-y-3 md:space-y-2 text-xs">
+              <form action="../../php/proses_admin.php" method="POST" class="space-y-3 md:space-y-3  text-xs">
                 <div class="grid grid-cols-1 gap-4">
                   <div>
                     <label class="block text-gray-700">No. RM</label>
@@ -338,14 +351,11 @@ if (isset($_SESSION['pasien_lama'])) {
                   </div>
                   <div>
                     <label class="block text-gray-700">Tanggal Kunjungan</label>
-                    <input type="date" name="tanggal_kunjungan" required
+                    <input type="date" name="tanggal_antrian" required
                       class="w-full border border-gray-300 rounded-md p-2" />
                   </div>
                 </div>
-                <div>
-                  <label class="block text-gray-700">Keluhan</label>
-                  <textarea name="keluhan" required class="w-full border border-gray-300 rounded-md p-2"></textarea>
-                </div>
+
                 <div>
                   <label class="block text-gray-700">Poli Tujuan</label>
                   <select name="poli_tujuan" required class="w-full border border-gray-300 rounded-md p-2">
@@ -354,23 +364,8 @@ if (isset($_SESSION['pasien_lama'])) {
                     <option value="Poli Gigi">Poli Gigi</option>
                   </select>
                 </div>
-                <div>
-                  <label class="block text-gray-700">Jenis Pasien</label>
-                  <select name="jenis_pasien" required class="w-full border border-gray-300 rounded-md p-2">
-                    <option value="">...</option>
-                    <option value="Umum">Umum</option>
-                    <option value="BPJS">BPJS</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-gray-700">NIK / No. BPJS</label>
-                  <input type="text" name="nik_bpjs" required placeholder="Masukkan NIK / No. BPJS"
-                    class="w-full border border-gray-300 rounded-md p-2" />
-                  <div class="mt-1 text-xs ml-2 opacity-50">
-                    <li>Masukkan NIK Jika Pasien Umum</li>
-                    <li>Masukkan No. BPJS Jika Kepesertaan BPJS</li>
-                  </div>
-                </div>
+
+
                 <button type="submit" class="w-full hover:bg-green-900 bg-green-700 text-white p-2 rounded-md">
                   Daftar
                 </button>

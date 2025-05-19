@@ -242,13 +242,13 @@ if (!isset($_SESSION["login_user"])) {
     </script>
 
     <!-- Main Content -->
-    <main class="flex-1 p-4 transition-all md:ml-48 duration-300" id="mainContent">
+    <main class="flex-1 p-4 transition-all md:ml-48 md:mt-10 duration-300" id="mainContent">
       <div class="bg-gray-100">
         <div class="max-w-6xl mx-auto pb-10">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- Informasi Pendaftaran -->
             <div class="font-poppins" data-aos="fade-up" data-aos-duration="2000">
-              <h2 class="text-green-700 font-bold mt-14 md:mt-7 text-sm">
+              <h2 class="text-green-700 font-bold mt-14 md:mt-0 text-sm">
                 PENDAFTARAN PASIEN RAWAT JALAN
               </h2>
               <h1 class="text-xl md:text-2xl font-bold">
@@ -305,21 +305,14 @@ if (!isset($_SESSION["login_user"])) {
                       class="w-full border border-gray-300 rounded-md p-2" />
                   </div>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 gap-4">
                   <div>
                     <label class="block text-gray-700">Alamat</label>
                     <input type="text" name="alamat" required class="w-full border border-gray-300 rounded-md p-2" />
                   </div>
-                  <div>
-                    <label class="block text-gray-700">Tanggal Kunjungan</label>
-                    <input type="date" name="tanggal_kunjungan" required
-                      class="w-full border border-gray-300 rounded-md p-2" />
-                  </div>
+
                 </div>
-                <div>
-                  <label class="block text-gray-700">Keluhan</label>
-                  <textarea name="keluhan" required class="w-full border border-gray-300 rounded-md p-2"></textarea>
-                </div>
+
                 <div>
                   <label class="block text-gray-700">Poli Tujuan</label>
                   <select name="poli_tujuan" required class="w-full border border-gray-300 rounded-md p-2">
@@ -328,14 +321,7 @@ if (!isset($_SESSION["login_user"])) {
                     <option value="Poli Gigi">Poli Gigi</option>
                   </select>
                 </div>
-                <div>
-                  <label class="block text-gray-700">Jenis Pasien</label>
-                  <select name="jenis_pasien" required class="w-full border border-gray-300 rounded-md p-2">
-                    <option value="">...</option>
-                    <option value="Umum">Umum</option>
-                    <option value="BPJS">BPJS</option>
-                  </select>
-                </div>
+
                 <div>
                   <label class="block text-gray-700">NIK / No. BPJS</label>
                   <input type="text" name="nik_bpjs" required placeholder="Masukkan NIK / No. BPJS"
@@ -372,8 +358,10 @@ if (!isset($_SESSION["login_user"])) {
     <div class="bg-white p-6 rounded-lg w-96 shadow-lg relative">
       <h2 class="text-xl font-semibold mb-4">Pasien Lama</h2>
       <form id="formCekPasien" action="cek_pasien.php" method="post">
-        <label for="nik" class="block text-sm font-medium">Masukkan NIK</label>
-        <input type="text" name="nik_cari" class="w-full p-2 border text-xs border-gray-300 rounded mt-2 mb-4" required>
+        <label for="no_rm_cari" class="block text-sm font-medium">Masukkan No. RM</label>
+        <input type="text" name="no_rm_cari" id="no_rm_cari"
+          class="w-full p-2 border text-xs border-gray-300 rounded mt-2 mb-4" placeholder="Contoh: RM001" required>
+        <!-- Tombol -->
         <div class="flex justify-end gap-2 text-sm">
           <button type="button" onclick="toggleModal()" class="px-4 py-2 bg-gray-300 rounded">Batal</button>
           <button id="submitBtn" type="submit" name="cek_pasien"

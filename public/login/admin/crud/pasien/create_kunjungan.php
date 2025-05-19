@@ -472,7 +472,7 @@ echo "</body></html>";
             <!-- Main Content -->
             <main class="flex-1 p-8 ml-64 transition-all duration-300 font-poppins" id="mainContent">
                 <h1 class="text-2xl font-bold">Data</h1>
-                <p class="text-gray-600">Update Data</p>
+                <p class="text-gray-600">Buat Kunjungan</p>
                 <div class="max-w-7xl bg-white p-6 rounded-lg shadow-md mt-4">
                     <h4 class="text-lg font-semibold mb-4">Pasien</h4>
                     <div id="formContainer text-xs">

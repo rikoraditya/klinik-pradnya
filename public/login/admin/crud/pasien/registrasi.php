@@ -411,7 +411,8 @@ if (!isset($_SESSION["login"])) {
               <div class="bg-white p-6 md:h-max rounded-lg shadow-md md:mt-2 font-poppins" data-aos="fade-up"
                 data-aos-duration="2000">
                 <h2 class="text-md font-bold mb-4">Form Data Diri</h2>
-                <form action="../../../../php/proses_create_k.php" method="POST" class="space-y-3 md:space-y-3 text-xs">
+                <form action="../../../../php/proses_registrasi.php" method="POST"
+                  class="space-y-3 md:space-y-3 text-xs">
                   <div class="grid grid-cols-2 gap-4">
                     <div>
                       <label class="block text-gray-700">Nama Pasien</label>

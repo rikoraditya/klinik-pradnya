@@ -498,7 +498,7 @@ if ($q && mysqli_num_rows($q) > 0) {
                                 </div>
                                 <div>
                                     <label class="block  font-medium">Tanggal Kunjungan</label>
-                                    <input type="date" name="tanggal_kunjungan" required
+                                    <input type="date" name="tanggal_antrian" required
                                         class="w-full p-2 border rounded-md">
                                 </div>
 
@@ -514,30 +514,10 @@ if ($q && mysqli_num_rows($q) > 0) {
                                     </select>
                                 </div>
 
-
-                                <div>
-                                    <label class="block  font-medium">Jenis Pasien</label>
-                                    <select name="jenis_pasien" class="w-full p-2 border rounded-md" required>
-                                        <option>...</option>
-                                        <option value="Umum">Umum</option>
-                                        <option value="BPJS">BPJS</option>
-
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block  font-medium">No. NIK/BPJS</label>
-                                    <input type="text" name="nik_bpjs" required class="w-full p-2 border rounded-md">
-                                </div>
                             </div>
 
                             <div class="grid grid-cols-1 gap-4">
 
-
-                                <div>
-                                    <label class="block  font-medium">Keluhan</label>
-                                    <textarea type="text" name="keluhan" required
-                                        class="w-full p-2 border rounded-md"></textarea>
-                                </div>
                             </div>
 
                             <button type="submit"
