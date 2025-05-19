@@ -33,31 +33,27 @@ if (!isset($_SESSION['no_hp'])) {
 // Ambil NIK dari input user
 if (isset($_POST['no_rm_cari'])) {
     $no_rm = htmlspecialchars($_POST['no_rm_cari']);
+    $no_hp_login = $_SESSION['no_hp']; // Tambahan: ambil dari session
 
-
-    // Query untuk ambil data pasien dari no_rm
+    // Query untuk mencocokkan no_rm dan no_hp login
     $query = $conn->prepare("SELECT pasien.* 
                              FROM rekam_medis 
                              JOIN pasien ON rekam_medis.nik = pasien.nik 
-                             WHERE rekam_medis.no_rm = ?");
-    $query->bind_param("s", $no_rm);
+                             WHERE rekam_medis.no_rm = ? AND pasien.no_hp = ?");
+    $query->bind_param("ss", $no_rm, $no_hp_login);
     $query->execute();
     $result = $query->get_result();
 
     if ($result->num_rows > 0) {
         $data = $result->fetch_assoc();
-
-        // Simpan ke session
         $_SESSION['pasien_lama'] = $data;
-
-        // Redirect ke form isian RM
         header("Location: pasien_lama.php");
     } else {
         echo "<script> 
             Swal.fire({
                 icon: 'error',
                 title: 'No. RM Tidak Ditemukan!',
-                html: 'Silakan melakukan pendaftaran sebagai <strong>Pasien Baru</strong>.',
+                html: 'No. RM tidak sesuai dengan akun anda, Silakan melakukan pendaftaran sebagai <strong>Pasien Baru</strong>.',
                 confirmButtonText: 'Lanjutkan'
             }).then(() => {
                 window.location.href = 'buat_kunjungan.php';

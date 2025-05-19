@@ -18,7 +18,7 @@ if (!isset($_SESSION["login_user"])) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard Antrian</title>
+  <title>User Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
@@ -125,7 +125,14 @@ if (!isset($_SESSION["login_user"])) {
           <a href="kunjungan.php"
             class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
             <i class="fas fa-clock"></i>
-            <span class="sidebar-text">Kunjungan Anda</span>
+            <span class="sidebar-text">Antrian Anda</span>
+          </a>
+        </div>
+        <div class="mb-4">
+          <a href="rekam_medis_pasien.php"
+            class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
+            <i class="fas fa-book-open"></i>
+            <span class="sidebar-text">Riwayat Kunjungan</span>
           </a>
         </div>
       </nav>

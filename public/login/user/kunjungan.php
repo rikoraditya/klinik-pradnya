@@ -4,12 +4,13 @@ use LDAP\Result;
 
 require '../../php/functions.php';
 
+// Set zona waktu lokal agar date('Y-m-d') sesuai
+date_default_timezone_set('Asia/Makassar');
 
 if (!isset($_SESSION["login_user"])) {
   header("location:../user_login.php");
   exit;
 }
-
 
 // Fungsi normalisasi no HP
 function normalize_hp($no_hp)
@@ -30,14 +31,24 @@ if (!isset($_SESSION['no_hp'])) {
 $no_hp = normalize_hp($_SESSION['no_hp']);
 $row = null;
 $notif = null;
-$today = date('Y-m-d');
+$today = date('Y-m-d'); // hasil akan sesuai zona waktu lokal
 
 // Cek koneksi database
 if (!$conn) {
   die("Koneksi database gagal: " . mysqli_connect_error());
 }
 
-$stmt = mysqli_prepare($conn, "SELECT * FROM pasien WHERE no_hp = ? AND tanggal_kunjungan = ? ORDER BY id DESC LIMIT 1");
+// Query ke tabel antrian dan join ke pasien
+$stmt = mysqli_prepare($conn, "
+  SELECT 
+    pasien.nama, pasien.nik, pasien.no_hp, pasien.jenis_kelamin, pasien.tanggal_lahir, pasien.alamat, 
+    antrian.tanggal_antrian, antrian.poli_tujuan, antrian.status_antrian, antrian.no_antrian
+  FROM antrian
+  JOIN pasien ON antrian.pasien_id = pasien.id
+  WHERE pasien.no_hp = ? AND DATE(antrian.tanggal_antrian) = ?
+  ORDER BY antrian.id DESC
+  LIMIT 1
+");
 
 if ($stmt) {
   mysqli_stmt_bind_param($stmt, 'ss', $no_hp, $today);
@@ -55,6 +66,7 @@ if ($stmt) {
   $notif = "Gagal menyiapkan statement SQL.";
 }
 ?>
+
 
 
 
@@ -173,7 +185,14 @@ if ($stmt) {
           <a href="kunjungan.php"
             class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
             <i class="fas fa-clock"></i>
-            <span class="sidebar-text">Kunjungan Anda</span>
+            <span class="sidebar-text">Antrian Anda</span>
+          </a>
+        </div>
+        <div class="mb-4">
+          <a href="rekam_medis_pasien.php"
+            class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
+            <i class="fas fa-book-open"></i>
+            <span class="sidebar-text">Riwayat Kunjungan</span>
           </a>
         </div>
       </nav>
@@ -418,11 +437,10 @@ if ($stmt) {
                         'No. HP' => $row["no_hp"],
                         'Tanggal Lahir' => $row["tanggal_lahir"],
                         'Alamat' => $row["alamat"],
-                        'Keluhan' => $row["keluhan"],
-                        'Tanggal Kunjungan' => $row["tanggal_kunjungan"],
+                        'Tanggal Kunjungan' => $row["tanggal_antrian"],
                         'Poli Tujuan' => $row["poli_tujuan"],
-                        'Jenis Pasien' => $row["jenis_pasien"],
-                        'NIK / No. BPJS' => $row["nik_bpjs"]
+                        'Status Antrian' => $row["status_antrian"],
+
                       ];
 
                       foreach ($dataPasien as $label => $value): ?>
