@@ -17,17 +17,15 @@ if (!$pasien_data) {
 }
 $nik_login = $pasien_data[0]['nik'];
 
+$limit = 5;
+$page = isset($_GET["halaman"]) ? (int) $_GET["halaman"] : 1;
+$offset = ($page - 1) * $limit;
+
 // Pagination
-$JumlahDataPerHalaman = 5;
-$JumlahData = count(query("
-    SELECT kunjungan.id FROM kunjungan
-    LEFT JOIN rekam_medis ON kunjungan.no_rm = rekam_medis.no_rm
-    LEFT JOIN pasien ON rekam_medis.nik = pasien.nik
-    WHERE pasien.no_hp = '$no_hp_login' AND pasien.nik = '$nik_login'
-"));
-$JumlahHalaman = ceil($JumlahData / $JumlahDataPerHalaman);
-$HalamanAktif = (isset($_GET["halaman"])) ? $_GET["halaman"] : 1;
-$AwalData = ($JumlahDataPerHalaman * $HalamanAktif) - $JumlahDataPerHalaman;
+$HalamanAktif = $page;
+$JumlahData = count(query("SELECT * FROM kunjungan"));
+$JumlahHalaman = ceil($JumlahData / $limit);
+
 
 // Ambil data kunjungan berdasarkan no_hp dan nik login
 $kunjungan = query("
@@ -48,7 +46,7 @@ $kunjungan = query("
     LEFT JOIN dokter ON kunjungan.dokter_id = dokter.id
     WHERE pasien.no_hp = '$no_hp_login' AND pasien.nik = '$nik_login'
     ORDER BY kunjungan.tanggal_kunjungan DESC
-    LIMIT $AwalData, $JumlahDataPerHalaman
+     LIMIT $limit OFFSET $offset;
 ");
 
 // Ambil semua ID kunjungan yang muncul
@@ -380,69 +378,12 @@ if (isset($_POST["cari_rm"])) {
 
                 </div>
                 <div id="container">
-                    <table class="w-full border-collapse border border-gray-300">
-                        <thead class="bg-gray-200">
-                            <tr class="text-xs">
-                                <th class="border p-2">No</th>
-                                <th class="border p-2">No RM</th>
 
-                                <th class="border p-2">Tanggal Kunjungan</th>
-                                <th class="border p-2">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-xs">
-                            <?php if (empty($kunjungan)): ?>
-                                <tr>
-                                    <td colspan="5" class="text-center py-4 text-gray-500 text-sm">
-                                        Anda belum memiliki rekam medis<br>
-                                        Silakan datang ke klinik untuk berkonsultasi jika anda sudah melakukan pendaftaran.
-                                    </td>
-                                </tr>
-                            <?php else: ?>
-                                <?php $i = 1; ?>
-                                <?php foreach ($kunjungan as $row): ?>
-                                    <tr>
-                                        <td class="border p-2"><?= $i; ?></td>
-                                        <td class="border p-2"><?= $row["no_rm"]; ?></td>
-
-                                        <td class="border p-2 w-24"><?= $row["tanggal_kunjungan"]; ?></td>
-                                        <td class="border p-2">
-                                            <div class="flex justify-end">
-                                                <button onclick="lihatPasien('<?= $row['id']; ?>')"
-                                                    class="bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs">
-                                                    View RM
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <?php $i++; ?>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
                 </div>
 
 
 
-                <?php if (!empty($kunjungan)): ?>
-                    <div class="pagination text-xs font-poppins mt-2 ml-1 text-gray-500">
-                        <?php if ($HalamanAktif > 1): ?>
-                            <a href="?halaman=<?= $HalamanAktif - 1; ?>" class="text-base ">&laquo;</a>
-                        <?php endif; ?>
 
-                        <?php for ($i = 1; $i <= $JumlahHalaman; $i++): ?>
-                            <?php if ($i == $HalamanAktif): ?>
-                                <a href="?halaman=<?= $i; ?>" class="font-bold text-green-950"><?= $i; ?></a>
-                            <?php else: ?>
-                                <a href="?halaman=<?= $i; ?>"><?= $i; ?></a>
-                            <?php endif; ?>
-                        <?php endfor; ?>
-
-                        <?php if ($HalamanAktif < $JumlahHalaman): ?>
-                            <a href="?halaman=<?= $HalamanAktif + 1; ?>" class="text-base ">&raquo;</a>
-                        <?php endif; ?>
-                    </div>
-                <?php endif; ?>
 
 
             </div>
@@ -601,6 +542,48 @@ if (isset($_POST["cari_rm"])) {
             document.getElementById('modal').classList.add('hidden');
         }
 
+    </script>
+
+    <!--Script JS-->
+    <script>
+        const keyword = document.getElementById('keyword');
+        const container = document.getElementById('container');
+
+        function loadTable(page = 1) {
+            const search = keyword?.value.trim() || '';
+            container.innerHTML = '<div class="text-center p-4 text-gray-500">Memuat data...</div>';
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `ajax/riwayat_kunjungan.php?keyword=${encodeURIComponent(search)}&halaman=${page}`, true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    container.innerHTML = xhr.responseText;
+                    setupPaginationEvents(); // Penting!
+                }
+            };
+            xhr.send();
+        }
+
+        // Saat halaman dimuat, langsung ambil data awal
+        window.addEventListener('DOMContentLoaded', () => {
+            loadTable(1);
+        });
+
+        // Event pencarian otomatis
+        keyword?.addEventListener('keyup', () => loadTable(1));
+
+        // Pasang ulang event tombol pagination setelah konten baru di-load
+        function setupPaginationEvents() {
+            const buttons = container.querySelectorAll('.pagination button[data-page]');
+            buttons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const page = parseInt(this.dataset.page);
+                    if (!isNaN(page)) {
+                        loadTable(page);
+                    }
+                });
+            });
+        }
     </script>
 
 </body>

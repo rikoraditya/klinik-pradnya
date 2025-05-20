@@ -2,8 +2,8 @@
 require '../../../../../php/functions.php';
 
 $keyword = $_GET["keyword"] ?? '';
-$page = $_GET["page"] ?? 1;
-$limit = 5;
+$page = $_GET["halaman"] ?? 1;
+$limit = 8;
 $offset = ($page - 1) * $limit;
 
 // Ambil data dari tabel kunjungan dan relasi lainnya
@@ -27,8 +27,9 @@ $query = "SELECT
     p.nik LIKE '%$keyword%' OR
     k.keluhan LIKE '%$keyword%' OR
     k.poli_tujuan LIKE '%$keyword%'
-  ORDER BY k.tanggal_kunjungan DESC
+  ORDER BY CAST(SUBSTRING(k.no_rm, 3) AS UNSIGNED) DESC
   LIMIT $limit OFFSET $offset";
+
 
 // Total data
 $total_query = "SELECT COUNT(*) as total
@@ -47,6 +48,10 @@ $total_data = mysqli_fetch_assoc($total_result)['total'];
 $total_pages = ceil($total_data / $limit);
 
 $kunjungan = query($query);
+
+// Baru bisa didefinisikan ini:
+$HalamanAktif = $page;
+$JumlahHalaman = $total_pages;
 ?>
 
 
@@ -97,3 +102,20 @@ $kunjungan = query($query);
         <?php endforeach; ?>
     </tbody>
 </table>
+
+<!-- PAGINATION AJAX -->
+<div class="pagination text-xs font-poppins mt-2 ml-1 text-gray-500">
+    <?php if ($page > 1): ?>
+        <button class="px-2" data-page="<?= $page - 1 ?>">&laquo;</button>
+    <?php endif; ?>
+
+    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+        <button class="px-2 <?= $i == $page ? 'font-bold text-green-950' : '' ?>" data-page="<?= $i ?>">
+            <?= $i ?>
+        </button>
+    <?php endfor; ?>
+
+    <?php if ($page < $total_pages): ?>
+        <button class="px-2" data-page="<?= $page + 1 ?>">&raquo;</button>
+    <?php endif; ?>
+</div>

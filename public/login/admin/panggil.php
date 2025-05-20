@@ -1,7 +1,6 @@
 <?php
 require '../../php/functions.php';
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
     $id = intval($_POST['id']);
     $status = '';

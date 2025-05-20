@@ -10,15 +10,15 @@ if (!isset($_SESSION["login"])) {
 $poli_umum = query("SELECT COUNT(*) AS total FROM antrian WHERE poli_tujuan = 'Poli Umum'")[0]['total'];
 $poli_gigi = query("SELECT COUNT(*) AS total FROM antrian WHERE poli_tujuan = 'Poli Gigi'")[0]['total'];
 
-$JumlahDataPerHalaman = 5;
+$limit = 5;
+$page = isset($_GET["halaman"]) ? (int) $_GET["halaman"] : 1;
+$offset = ($page - 1) * $limit;
+
+$HalamanAktif = $page;
 $JumlahData = count(query("SELECT * FROM antrian"));
-$JumlahHalaman = ceil($JumlahData / $JumlahDataPerHalaman);
-$HalamanAktif = (isset($_GET["halaman"])) ? $_GET["halaman"] : 1;
-$AwalData = ($JumlahDataPerHalaman * $HalamanAktif) - $JumlahDataPerHalaman;
+$JumlahHalaman = ceil($JumlahData / $limit);
 
 
-
-// Ambil data antrian lengkap
 $antrian = query("
   SELECT 
     antrian.id,
@@ -33,8 +33,9 @@ $antrian = query("
   FROM antrian
   INNER JOIN pasien ON antrian.pasien_id = pasien.id
   ORDER BY antrian.id DESC
-  LIMIT $AwalData, $JumlahDataPerHalaman;
+  LIMIT $limit OFFSET $offset;
 ");
+
 
 
 
@@ -497,254 +498,208 @@ $antrian = query("
 
 
           <div id="container">
-            <table class="w-full border-collapse border border-gray-300">
-              <thead class="bg-gray-200">
-                <tr class="text-xs">
-                  <th class="border p-2">No</th>
-                  <th class="border p-2">No Antrian</th>
-                  <th class="border p-2">Nama</th>
-                  <th class="border p-2">NIK</th>
-                  <th class="border p-2">Jenis Kelamin</th>
-                  <th class="border p-2">No HP</th>
-                  <th class="border p-2">Poli Tujuan</th>
-                  <th class="border p-2">Tanggal Antrian</th>
-                  <th class="border p-2">Status Antrian</th>
-                  <th class="border p-2">Action</th>
-                </tr>
-              </thead>
-              <tbody class="text-xs">
-                <?php $i = 1; ?>
-                <?php foreach ($antrian as $row): ?>
-                  <tr>
-                    <td class="border p-2 md"><?= $i; ?></td>
-                    <td class="border p-2 w-8 md"><?= htmlspecialchars($row["no_antrian"]); ?></td>
-                    <td class="border p-2 truncate w-52 md"><?= htmlspecialchars($row["nama"]); ?></td>
-                    <td class="border p-2 truncate w-20 md">
-                      <?= strlen($row['nik']) > 13 ? htmlspecialchars(substr($row['nik'], 0, 13)) . '...' : htmlspecialchars($row["nik"]); ?>
-                    </td>
-                    <td class="border p-2 w-28 md">
-                      <?= $row["jenis_kelamin"] == 'Laki-laki' ? 'Laki-laki' : ($row["jenis_kelamin"] == 'Perempuan' ? 'Perempuan' : '-') ?>
-                    </td>
-                    <td class="border p-2 w-8 md"><?= htmlspecialchars($row["no_hp"]); ?></td>
-                    <td class="border p-2 truncate w-36 md"><?= htmlspecialchars($row["poli_tujuan"]); ?></td>
-                    <td class="border p-2 md w-28"><?= htmlspecialchars($row["tanggal_antrian"]); ?></td>
-                    <td id="status-antrian-<?= $row['id']; ?>" class="border p-2 w-20 md 
-      <?= $row['status_antrian'] === 'menunggu' ? '' :
-        ($row['status_antrian'] === 'dipanggil' ? 'text-blue-600' :
-          ($row['status_antrian'] === 'selesai' ? 'text-green-600' : 'text-gray-500')) ?>">
-                      <?= htmlspecialchars($row["status_antrian"]); ?>
-                    </td>
 
-
-                    <td class="border p-2 w-fit">
-                      <div class="flex justify-end space-x-1">
-                        <button onclick="lihatPasien('<?= $row['id']; ?>')"
-                          class="bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs">
-                          View
-                        </button>
-                        <button
-                          onclick="panggilPasien('<?= $row['id']; ?>', '<?= $row['no_antrian']; ?>', '<?= $row['poli_tujuan']; ?>')"
-                          class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs">
-                          Panggil
-                        </button>
-                        <button onclick="selesaikanPasien('<?= $row['id']; ?>')"
-                          class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs">
-                          Selesai
-                        </button>
-
-                      </div>
-                    </td>
-                  </tr>
-                  <?php $i++; ?>
-                <?php endforeach; ?>
-              </tbody>
-            </table>
 
           </div>
 
-          <div class="pagination text-xs font-poppins mt-2 ml-1 text-gray-500">
-            <?php if ($HalamanAktif > 1): ?>
-              <a href="?halaman=<?= $HalamanAktif - 1; ?>" class="text-base ">&laquo;</a>
-            <?php endif; ?>
+          <!-- PAGINATION AJAX -->
 
-            <?php for ($i = 1; $i <= $JumlahHalaman; $i++): ?>
-              <?php if ($i == $HalamanAktif): ?>
-                <a href="?halaman=<?= $i; ?>" class="font-bold text-green-950">
-                  <?= $i; ?></a>
-
-              <?php else: ?>
-                <a href="?halaman=<?= $i; ?>"><?= $i; ?></a>
-              <?php endif; ?>
-            <?php endfor; ?>
-
-            <?php if ($HalamanAktif < $JumlahHalaman): ?>
-              <a href="?halaman=<?= $HalamanAktif + 1; ?>" class="text-base ">&raquo;</a>
-            <?php endif; ?>
-          </div>
         </div>
-      </main>
     </div>
+    </main>
+  </div>
 
-    <!--Script JS-->
-    <script src="../../js/script.js"></script>
+  <!--Script JS-->
+  <script>
+    const keyword = document.getElementById('keyword');
+    const container = document.getElementById('container');
 
-    <!--suara panggil-->
-    <script>
-      function panggilPasien(id, noAntrian, poli) {
-        const pesan = `Nomor antrian. ${noAntrian.replace(/-/g, '').split('').join(' ')}. Silakan menuju ke ${poli}. Terima kasih.`;
-        const statusEl = document.getElementById('status-antrian-' + id);
+    function loadTable(page = 1) {
+      const search = keyword?.value.trim() || '';
+      container.innerHTML = '<div class="text-center p-4 text-gray-500">Memuat data...</div>';
 
-        // Spinner sebelum status berubah
-        statusEl.innerHTML = `
-      <div class="flex justify-center items-center h-full">
-        <span class="w-5 h-5 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></span>
-      </div>
-    `;
-
-        const data = new URLSearchParams();
-        data.append('id', id);
-        data.append('panggil', 'true');
-
-        fetch('panggil.php', {
-          method: 'POST',
-          body: data
-        })
-          .then(res => res.text())
-          .then(response => {
-            setTimeout(() => {
-              if (response.trim() === 'ok') {
-                // Set status dan warna biru
-                statusEl.textContent = 'dipanggil';
-                statusEl.className = 'text-blue-600 border p-2';
-
-                // Baca suara
-                const ucap = new SpeechSynthesisUtterance(pesan);
-                ucap.lang = 'id-ID';
-                ucap.rate = 0.9;
-                window.speechSynthesis.speak(ucap);
-              } else {
-                statusEl.textContent = 'Gagal';
-                statusEl.className = 'text-red-600 border p-2';
-                alert('Gagal memanggil pasien. (' + response + ')');
-              }
-            }, 1500);
-          });
-      }
-
-      function selesaikanPasien(id) {
-        const statusEl = document.getElementById('status-antrian-' + id);
-
-        // Spinner
-        statusEl.innerHTML = `
-      <div class="flex justify-center items-center h-full">
-        <span class="w-5 h-5 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></span>
-      </div>
-    `;
-
-        const data = new URLSearchParams();
-        data.append('id', id);
-        data.append('selesai', 'true');
-
-        fetch('panggil.php', {
-          method: 'POST',
-          body: data
-        })
-          .then(res => res.text())
-          .then(response => {
-            setTimeout(() => {
-              if (response.trim() === 'ok') {
-                // Set status dan warna hijau
-                statusEl.textContent = 'selesai';
-                statusEl.className = 'text-green-600 border p-2';
-              } else {
-                statusEl.textContent = 'Gagal';
-                statusEl.className = 'text-red-600 border p-2';
-                alert('Gagal menyelesaikan pasien. (' + response + ')');
-              }
-            }, 1500);
-          });
-      }
-    </script>
-
-
-
-
-
-
-
-
-
-    <script>
-      function toggleSidebar() {
-        let sidebar = document.getElementById("sidebar");
-        let mainContent = document.getElementById("mainContent");
-        let sidebarTexts = document.querySelectorAll(".sidebar-text");
-        let submenus = document.querySelectorAll(".submenu");
-        let dropdownIcons = document.querySelectorAll(".submenu i");
-
-        if (sidebar.classList.contains("w-64")) {
-          sidebar.classList.replace("w-64", "w-16");
-          mainContent.classList.replace("ml-64", "ml-16");
-          sidebarTexts.forEach((text) => text.classList.add("hidden"));
-          submenus.forEach((submenu) => submenu.classList.add("hidden"));
-          dropdownIcons.forEach((icon) => icon.classList.add("hidden"));
-        } else {
-          sidebar.classList.replace("w-16", "w-64");
-          mainContent.classList.replace("ml-16", "ml-64");
-          sidebarTexts.forEach((text) => text.classList.remove("hidden"));
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', `../../js/ajax/pasien.php?keyword=${encodeURIComponent(search)}&halaman=${page}`, true);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          container.innerHTML = xhr.responseText;
+          setupPaginationEvents(); // Penting!
         }
+      };
+      xhr.send();
+    }
+
+    // Saat halaman dimuat, langsung ambil data awal
+    window.addEventListener('DOMContentLoaded', () => {
+      loadTable(1);
+    });
+
+    // Event pencarian otomatis
+    keyword?.addEventListener('keyup', () => loadTable(1));
+
+    // Pasang ulang event tombol pagination setelah konten baru di-load
+    function setupPaginationEvents() {
+      const buttons = container.querySelectorAll('.pagination button[data-page]');
+      buttons.forEach(button => {
+        button.addEventListener('click', function () {
+          const page = parseInt(this.dataset.page);
+          if (!isNaN(page)) {
+            loadTable(page);
+          }
+        });
+      });
+    }
+  </script>
+
+
+  <!--suara panggil-->
+  <script>
+    function panggilPasien(id, noAntrian, poli) {
+      const pesan = `Nomor antrian. ${noAntrian.replace(/-/g, '').split('').join(' ')}. Silakan menuju ke ${poli}, Terima kasih`;
+      const statusEl = document.getElementById('status-antrian-' + id);
+
+      statusEl.innerHTML = `<div class="flex justify-center items-center h-full">
+        <span class="w-5 h-5 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></span>
+    </div>`;
+
+      const data = new URLSearchParams();
+      data.append('id', id);
+      data.append('panggil', 'true');
+
+      fetch('panggil.php', {
+        method: 'POST',
+        body: data
+      })
+        .then(res => res.text())
+        .then(response => {
+          setTimeout(() => {
+            if (response.trim() === 'ok') {
+              statusEl.textContent = 'dipanggil';
+              statusEl.className = 'text-blue-600 border p-2';
+              window.speechSynthesis.cancel();
+              const ucap = new SpeechSynthesisUtterance(pesan);
+              ucap.lang = 'id-ID';
+              ucap.rate = 0.9;
+              window.speechSynthesis.speak(ucap);
+            } else {
+              statusEl.textContent = 'Gagal';
+              statusEl.className = 'text-red-600 border p-2';
+              alert('Gagal memanggil pasien. (' + response + ')');
+            }
+          }, 1500);
+        });
+    }
+
+    function selesaikanPasien(id) {
+      const statusEl = document.getElementById('status-antrian-' + id);
+
+      statusEl.innerHTML = `<div class="flex justify-center items-center h-full">
+        <span class="w-5 h-5 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></span>
+    </div>`;
+
+      const data = new URLSearchParams();
+      data.append('id', id);
+      data.append('selesai', 'true');
+
+      fetch('panggil.php', {
+        method: 'POST',
+        body: data
+      })
+        .then(res => res.text())
+        .then(response => {
+          setTimeout(() => {
+            if (response.trim() === 'ok') {
+              statusEl.textContent = 'selesai';
+              statusEl.className = 'text-green-600 border p-2';
+            } else {
+              statusEl.textContent = 'Gagal';
+              statusEl.className = 'text-red-600 border p-2';
+              alert('Gagal menyelesaikan pasien. (' + response + ')');
+            }
+          }, 1500);
+        });
+    }
+  </script>
+
+
+
+
+
+
+
+
+
+  <script>
+    function toggleSidebar() {
+      let sidebar = document.getElementById("sidebar");
+      let mainContent = document.getElementById("mainContent");
+      let sidebarTexts = document.querySelectorAll(".sidebar-text");
+      let submenus = document.querySelectorAll(".submenu");
+      let dropdownIcons = document.querySelectorAll(".submenu i");
+
+      if (sidebar.classList.contains("w-64")) {
+        sidebar.classList.replace("w-64", "w-16");
+        mainContent.classList.replace("ml-64", "ml-16");
+        sidebarTexts.forEach((text) => text.classList.add("hidden"));
+        submenus.forEach((submenu) => submenu.classList.add("hidden"));
+        dropdownIcons.forEach((icon) => icon.classList.add("hidden"));
+      } else {
+        sidebar.classList.replace("w-16", "w-64");
+        mainContent.classList.replace("ml-16", "ml-64");
+        sidebarTexts.forEach((text) => text.classList.remove("hidden"));
       }
+    }
 
-      function toggleMenu(menuId) {
-        let menu = document.getElementById(menuId);
-        if (!document.getElementById("sidebar").classList.contains("w-64"))
-          return;
-        menu.classList.toggle("hidden");
-      }
-    </script>
+    function toggleMenu(menuId) {
+      let menu = document.getElementById(menuId);
+      if (!document.getElementById("sidebar").classList.contains("w-64"))
+        return;
+      menu.classList.toggle("hidden");
+    }
+  </script>
 
-    <!-- Modal -->
-    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
-      <div class="bg-white rounded-xl shadow-2xl w-full max-w-xl p-6 sm:p-7">
+  <!-- Modal -->
+  <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-xl p-6 sm:p-7">
 
-        <!-- Header dengan Icon -->
-        <div class="flex items-center mb-5 border-b pb-3">
-          <!-- Icon Profil -->
-          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-            <svg class="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.9V22h19.2v-2.7c0-3.3-6.4-4.9-9.6-4.9z" />
-            </svg>
-          </div>
-          <!-- Judul -->
-          <h2 class="font-poppins text-xl font-semibold text-gray-800">Data Pasien</h2>
-
-          <!-- Tombol Tutup -->
-          <button onclick="closeModal()" class="ml-auto text-gray-400 hover:text-red-600 text-2xl">&times;</button>
+      <!-- Header dengan Icon -->
+      <div class="flex items-center mb-5 border-b pb-3">
+        <!-- Icon Profil -->
+        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+          <svg class="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.9V22h19.2v-2.7c0-3.3-6.4-4.9-9.6-4.9z" />
+          </svg>
         </div>
+        <!-- Judul -->
+        <h2 class="font-poppins text-xl font-semibold text-gray-800">Data Pasien</h2>
 
-        <!-- Konten Data Pasien -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 text-sm text-gray-700" id="modalContent">
-          <!-- Konten dinamis diisi via JS -->
-        </div>
+        <!-- Tombol Tutup -->
+        <button onclick="closeModal()" class="ml-auto text-gray-400 hover:text-red-600 text-2xl">&times;</button>
+      </div>
 
-        <!-- Footer -->
-        <hr class="flex justify-end mt-6 pt-3 border-t">
-        <div class="mt-3 font-poppins p-3 bg-green-800 text-white text-center rounded-xl shadow-md">
-          <h3 class="text-sm font-semibold">Nomor Antrian Pasien</h3>
-          <p class="text-2xl font-bold mt-2" id="nomorAntrian"></p>
+      <!-- Konten Data Pasien -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 text-sm text-gray-700" id="modalContent">
+        <!-- Konten dinamis diisi via JS -->
+      </div>
 
-        </div>
+      <!-- Footer -->
+      <hr class="flex justify-end mt-6 pt-3 border-t">
+      <div class="mt-3 font-poppins p-3 bg-green-800 text-white text-center rounded-xl shadow-md">
+        <h3 class="text-sm font-semibold">Nomor Antrian Pasien</h3>
+        <p class="text-2xl font-bold mt-2" id="nomorAntrian"></p>
+
       </div>
     </div>
+  </div>
 
-    <script>
-      function lihatPasien(id) {
-        fetch('view_pasien.php?id=' + id)
-          .then(response => response.json())
-          .then(data => {
-            const modal = document.getElementById('modalContent');
-            modal.innerHTML = `
+  <script>
+    function lihatPasien(id) {
+      fetch('view_pasien.php?id=' + id)
+        .then(response => response.json())
+        .then(data => {
+          const modal = document.getElementById('modalContent');
+          modal.innerHTML = `
      
         <div><span class="font-semibold font-poppins">Nama:</span><br>${data.nama}</div>
         <div><span class="font-semibold font-poppins">NIK:</span><br>${data.nik}</div>
@@ -757,21 +712,21 @@ $antrian = query("
         <div><span class="font-semibold font-poppins">Tanggal Kunjungan:</span><br>${data.tanggal_antrian}</div>
     
       `;
-            document.getElementById('nomorAntrian').textContent = data.no_antrian;
+          document.getElementById('nomorAntrian').textContent = data.no_antrian;
 
-            document.getElementById('modal').classList.remove('hidden');
-          })
-          .catch(error => {
-            document.getElementById('modalContent').innerHTML = `<p class="text-red-600 col-span-2">Gagal memuat data pasien.</p>`;
-            document.getElementById('modal').classList.remove('hidden');
-          });
-      }
+          document.getElementById('modal').classList.remove('hidden');
+        })
+        .catch(error => {
+          document.getElementById('modalContent').innerHTML = `<p class="text-red-600 col-span-2">Gagal memuat data pasien.</p>`;
+          document.getElementById('modal').classList.remove('hidden');
+        });
+    }
 
-      function closeModal() {
-        document.getElementById('modal').classList.add('hidden');
-      }
+    function closeModal() {
+      document.getElementById('modal').classList.add('hidden');
+    }
 
-    </script>
+  </script>
 
 </body>
 

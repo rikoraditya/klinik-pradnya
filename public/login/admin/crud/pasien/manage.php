@@ -9,11 +9,13 @@ if (!isset($_SESSION["login"])) {
 
 // Jumlah data per halaman
 
-$JumlahDataPerHalaman = 5;
+$limit = 5;
+$page = isset($_GET["halaman"]) ? (int) $_GET["halaman"] : 1;
+$offset = ($page - 1) * $limit;
+
+$HalamanAktif = $page;
 $JumlahData = count(query("SELECT * FROM pasien"));
-$JumlahHalaman = ceil($JumlahData / $JumlahDataPerHalaman);
-$HalamanAktif = (isset($_GET["halaman"])) ? $_GET["halaman"] : 1;
-$AwalData = ($JumlahDataPerHalaman * $HalamanAktif) - $JumlahDataPerHalaman;
+$JumlahHalaman = ceil($JumlahData / $limit);
 
 // Ambil data pasien + kunjungan terbaru
 $pasien = query("
@@ -36,7 +38,7 @@ $pasien = query("
   LEFT JOIN antrian a ON a.pasien_id = p.id
   GROUP BY p.id
   ORDER BY k.tanggal_kunjungan DESC
-  LIMIT $AwalData, $JumlahDataPerHalaman
+  LIMIT $limit OFFSET $offset;
 ");
 
 
@@ -462,84 +464,12 @@ if (isset($_POST["cari"])) {
           </form>
 
           <div id="container">
-            <table class="w-full border-collapse border border-gray-300">
-              <thead class="bg-gray-200">
-                <tr class="text-xs">
-                  <th class="border p-2">No</th>
-                  <th class="border p-2">Nama</th>
-                  <th class="border p-2">NIK</th>
-                  <th class="border p-2">Jenis Kelamin</th>
-                  <th class="border p-2">No HP</th>
-                  <th class="border p-2">Tempat Lahir</th>
-                  <th class="border p-2">Tanggal Lahir</th>
-                  <th class="border p-2">Alamat</th>
 
-                  <th class="border p-2">Action</th>
-                </tr>
-              </thead>
-              <tbody class="text-xs">
-
-                <?php $i = 1; ?>
-                <?php foreach ($pasien as $row): ?>
-
-                  <tr>
-                    <td class="border p-2 md"><?= $i; ?></td>
-                    <td class="border p-2 truncate w-20 md"><?= $row["nama"]; ?></td>
-                    <td class="border p-2 truncate w-20 md"><?= $row["nik"]; ?></td>
-                    <td class="border p-2 md"><?= $row["jenis_kelamin"]; ?></td>
-                    <td class="border p-2 truncate w-20 md"><?= $row["no_hp"]; ?></td>
-                    <td class="border p-2"><?= $row["tempat_lahir"]; ?></td>
-                    <td class="border p-2"><?= $row["tanggal_lahir"]; ?></td>
-                    <td class="border p-2 truncate w-52 md">
-                      <?= strlen($row['alamat']) > 15 ? substr($row['alamat'], 0, 15) . '...' : $row["alamat"]; ?>
-                    </td>
-
-                    <td class="border p-2">
-                      <div class="flex justify-end space-x-1">
-                        <a href="create_kunjungan.php?id=<?= $row['id']; ?>"
-                          class="bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs inline-block">
-                          + Antrian
-                        </a>
-                        <a href="update.php?id=<?= $row['id']; ?>"
-                          class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs inline-block">
-                          Update
-                        </a>
-                        <a href="delete.php?id=<?= $row['id']; ?>" id="delete-link"
-                          class="delete-link bg-red-700 hover:bg-red-900 text-white px-2 py-1 rounded text-xs inline-block">
-                          Delete
-                        </a>
-                      </div>
-                    </td>
-                  </tr>
-
-                  <?php $i++; ?>
-                <?php endforeach; ?>
-
-              </tbody>
-            </table>
 
 
           </div>
 
-          <div class="pagination text-xs font-poppins mt-2 ml-1 text-gray-500">
-            <?php if ($HalamanAktif > 1): ?>
-              <a href="?halaman=<?= $HalamanAktif - 1; ?>" class="text-base ">&laquo;</a>
-            <?php endif; ?>
 
-            <?php for ($i = 1; $i <= $JumlahHalaman; $i++): ?>
-              <?php if ($i == $HalamanAktif): ?>
-                <a href="?halaman=<?= $i; ?>" class="font-bold text-green-950">
-                  <?= $i; ?></a>
-
-              <?php else: ?>
-                <a href="?halaman=<?= $i; ?>"><?= $i; ?></a>
-              <?php endif; ?>
-            <?php endfor; ?>
-
-            <?php if ($HalamanAktif < $JumlahHalaman): ?>
-              <a href="?halaman=<?= $HalamanAktif + 1; ?>" class="text-base ">&raquo;</a>
-            <?php endif; ?>
-          </div>
 
         </div>
 
@@ -652,8 +582,47 @@ if (isset($_POST["cari"])) {
     </div>
 
     <!--Script JS-->
-    <script src="script.js"></script>
+    <!--Script JS-->
+    <script>
+      const keyword = document.getElementById('keyword');
+      const container = document.getElementById('container');
 
+      function loadTable(page = 1) {
+        const search = keyword?.value.trim() || '';
+        container.innerHTML = '<div class="text-center p-4 text-gray-500">Memuat data...</div>';
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', `ajax/pasien.php?keyword=${encodeURIComponent(search)}&halaman=${page}`, true);
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            container.innerHTML = xhr.responseText;
+            setupPaginationEvents(); // Penting!
+          }
+        };
+        xhr.send();
+      }
+
+      // Saat halaman dimuat, langsung ambil data awal
+      window.addEventListener('DOMContentLoaded', () => {
+        loadTable(1);
+      });
+
+      // Event pencarian otomatis
+      keyword?.addEventListener('keyup', () => loadTable(1));
+
+      // Pasang ulang event tombol pagination setelah konten baru di-load
+      function setupPaginationEvents() {
+        const buttons = container.querySelectorAll('.pagination button[data-page]');
+        buttons.forEach(button => {
+          button.addEventListener('click', function () {
+            const page = parseInt(this.dataset.page);
+            if (!isNaN(page)) {
+              loadTable(page);
+            }
+          });
+        });
+      }
+    </script>
 
 
 

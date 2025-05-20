@@ -440,15 +440,25 @@ if ($stmt) {
                         'Tanggal Kunjungan' => $row["tanggal_antrian"],
                         'Poli Tujuan' => $row["poli_tujuan"],
                         'Status Antrian' => $row["status_antrian"],
-
                       ];
 
-                      foreach ($dataPasien as $label => $value): ?>
+                      foreach ($dataPasien as $label => $value):
+                        // Khusus status antrian, tambahkan class warna
+                        $valueClass = '';
+                        if ($label === 'Status Antrian') {
+                          if ($value === 'dipanggil') {
+                            $valueClass = 'text-blue-600';
+                          } elseif ($value === 'selesai') {
+                            $valueClass = 'text-green-600';
+                          }
+                        }
+                        ?>
                         <div class="grid grid-cols-3 gap-2 items-start border-b pb-2">
                           <span class="text-green-800 font-semibold col-span-1"><?= $label; ?></span>
-                          <span class="col-span-2"><?= htmlspecialchars($value); ?></span>
+                          <span class="col-span-2 <?= $valueClass ?>"><?= htmlspecialchars($value); ?></span>
                         </div>
                       <?php endforeach; ?>
+
                     </div>
 
                     <!-- Antrian -->

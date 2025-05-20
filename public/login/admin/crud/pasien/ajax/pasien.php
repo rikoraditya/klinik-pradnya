@@ -5,8 +5,8 @@ require '../../../../../php/functions.php';
 
 
 $keyword = $_GET["keyword"] ?? '';
-$page = $_GET["page"] ?? 1;
-$limit = 5; // jumlah data per halaman
+$page = $_GET["halaman"] ?? 1;
+$limit = 8;
 $offset = ($page - 1) * $limit;
 
 // Query data pasien dengan join ke kunjungan
@@ -20,13 +20,13 @@ FROM pasien
 LEFT JOIN kunjungan ON kunjungan.id = pasien.id
 LEFT JOIN antrian ON antrian.pasien_id = pasien.id
 WHERE 
-
     pasien.nama LIKE '%$keyword%' OR
     pasien.nik LIKE '%$keyword%' OR
     pasien.no_hp LIKE '%$keyword%'
 GROUP BY pasien.id
-ORDER BY kunjungan.tanggal_kunjungan DESC
+ORDER BY pasien.id DESC
 LIMIT $limit OFFSET $offset";
+
 
 // Query total data
 $total_query = "SELECT COUNT(DISTINCT pasien.id) as total 
@@ -45,7 +45,9 @@ $total_pages = ceil($total_data / $limit);
 // Eksekusi query data pasien
 $pasien = query($query);
 
-
+// Baru bisa didefinisikan ini:
+$HalamanAktif = $page;
+$JumlahHalaman = $total_pages;
 
 ?>
 
@@ -104,3 +106,20 @@ $pasien = query($query);
 
     </tbody>
 </table>
+
+<!-- PAGINATION AJAX -->
+<div class="pagination text-xs font-poppins mt-2 ml-1 text-gray-500">
+    <?php if ($page > 1): ?>
+        <button class="px-2" data-page="<?= $page - 1 ?>">&laquo;</button>
+    <?php endif; ?>
+
+    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+        <button class="px-2 <?= $i == $page ? 'font-bold text-green-950' : '' ?>" data-page="<?= $i ?>">
+            <?= $i ?>
+        </button>
+    <?php endfor; ?>
+
+    <?php if ($page < $total_pages): ?>
+        <button class="px-2" data-page="<?= $page + 1 ?>">&raquo;</button>
+    <?php endif; ?>
+</div>

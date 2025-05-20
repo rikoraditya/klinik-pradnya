@@ -11,11 +11,13 @@ if (!isset($_SESSION["login"])) {
 }
 
 //pagination table
-$JumlahDataPerHalaman = 5;
+$limit = 5;
+$page = isset($_GET["halaman"]) ? (int) $_GET["halaman"] : 1;
+$offset = ($page - 1) * $limit;
+
+$HalamanAktif = $page;
 $JumlahData = count(query("SELECT * FROM antrian"));
-$JumlahHalaman = ceil($JumlahData / $JumlahDataPerHalaman);
-$HalamanAktif = (isset($_GET["halaman"])) ? $_GET["halaman"] : 1;
-$AwalData = ($JumlahDataPerHalaman * $HalamanAktif) - $JumlahDataPerHalaman;
+$JumlahHalaman = ceil($JumlahData / $limit);
 
 $antrian = query("
   SELECT 
@@ -56,7 +58,7 @@ $antrian = query("
     ) k2 ON k1.no_rm = k2.no_rm AND k1.tanggal_kunjungan = k2.max_tanggal
   ) k ON k.no_rm = (SELECT no_rm FROM rekam_medis WHERE rekam_medis.nik = p.nik LIMIT 1)
   ORDER BY a.tanggal_antrian DESC
-  LIMIT $AwalData, $JumlahDataPerHalaman
+  LIMIT $limit OFFSET $offset;
 ");
 
 
@@ -464,77 +466,24 @@ if (isset($_POST["cari"])) {
         <p class="text-gray-600">Tambah Rekam Medis</p>
 
         <div class="bg-white shadow-md mt-4 rounded-lg p-4">
-          <form action="" method="post" class="flex items-center pb-3">
-            <input type="text" name="keyword" size="30" placeholder="masukkan keyword pencarian.." autocomplete="off"
-              id="keyword" autofocus
-              class="border-2 border-gray-600 rounded-md text-xs py-0.5 pl-1 placeholder:text-xs placeholder:pl-1">
+          <form action="" method="post" class="relative w-full max-w-xs pb-2">
+            <input type="text" name="keyword" id="keyword" autocomplete="off" autofocus placeholder="Cari data..."
+              class="w-full pl-8 pr-3 py-1.5 text-xs rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 transition placeholder-gray-400" />
+
+            <!-- Ikon pencarian -->
+            <div class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none pb-2">
+              <svg class="w-3.5 h-3.5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M21 21l-4.35-4.35M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z" />
+              </svg>
+            </div>
           </form>
           <div id="container">
-            <table class="w-full border-collapse border border-gray-300">
-              <thead class="bg-gray-200">
-                <tr class="text-xs">
-                  <th class="border p-2">No</th>
-                  <th class="border p-2">Nama</th>
-                  <th class="border p-2">NIK</th>
-                  <th class="border p-2">Jenis Kelamin</th>
-                  <th class="border p-2">Tanggal Lahir</th>
-                  <th class="border p-2">Tanggal Kunjungan</th>
-                  <th class="border p-2">No HP</th>
-                  <th class="border p-2">Status Antrian</th>
-                  <th class="border p-2">Action</th>
-                </tr>
-              </thead>
-              <tbody class="text-xs">
 
-
-                <?php $i = 1; ?>
-                <?php foreach ($antrian as $row)
-                : ?>
-
-                  <tr>
-                    <td class="border p-2 md"><?= $i; ?></td>
-                    <td class="border p-2 truncate md"><?= $row["nama"]; ?></td>
-                    <td class="border p-2 truncate md"><?= $row["nik"]; ?></td>
-                    <td class="border p-2 md"><?= $row["jenis_kelamin"]; ?></td>
-                    <td class="border p-2 md"><?= $row["tanggal_lahir"]; ?></td>
-                    <td class="border p-2 md"><?= $row["tanggal_antrian"]; ?></td>
-                    <td class="border p-2 md"><?= $row["no_hp"]; ?></td>
-                    <td class="border p-2 md"><?= $row["status_antrian"]; ?></td>
-                    <td class="border p-2 space-x-1 w-56">
-
-                      <a href="rm.php?id=<?= $row['antrian_id']; ?>"
-                        class="bg-green-700 hover:bg-green-800 text-white px-2 py-1 rounded text-xs flex items-center gap-2">
-                        <i class="fas fa-book"></i>Tambah Rekam Medis</a>
-
-                    </td>
-                  </tr>
-
-                  <?php $i++; ?>
-                <?php endforeach; ?>
-
-              </tbody>
-            </table>
           </div>
 
-          <div class="pagination text-xs font-poppins mt-2 ml-1 text-gray-500">
-            <?php if ($HalamanAktif > 1): ?>
-              <a href="?halaman=<?= $HalamanAktif - 1; ?>" class="text-base ">&laquo;</a>
-            <?php endif; ?>
 
-            <?php for ($i = 1; $i <= $JumlahHalaman; $i++): ?>
-              <?php if ($i == $HalamanAktif): ?>
-                <a href="?halaman=<?= $i; ?>" class="font-bold text-green-950">
-                  <?= $i; ?></a>
-
-              <?php else: ?>
-                <a href="?halaman=<?= $i; ?>"><?= $i; ?></a>
-              <?php endif; ?>
-            <?php endfor; ?>
-
-            <?php if ($HalamanAktif < $JumlahHalaman): ?>
-              <a href="?halaman=<?= $HalamanAktif + 1; ?>" class="text-base ">&raquo;</a>
-            <?php endif; ?>
-          </div>
 
         </div>
       </main>
@@ -542,7 +491,47 @@ if (isset($_POST["cari"])) {
 
     <!--Logout-->
 
-    <script src="ajax/tambah.js"></script>
+    <!--Script JS-->
+    <script>
+      const keyword = document.getElementById('keyword');
+      const container = document.getElementById('container');
+
+      function loadTable(page = 1) {
+        const search = keyword?.value.trim() || '';
+        container.innerHTML = '<div class="text-center p-4 text-gray-500">Memuat data...</div>';
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', `ajax/tambah.php?keyword=${encodeURIComponent(search)}&halaman=${page}`, true);
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            container.innerHTML = xhr.responseText;
+            setupPaginationEvents(); // Penting!
+          }
+        };
+        xhr.send();
+      }
+
+      // Saat halaman dimuat, langsung ambil data awal
+      window.addEventListener('DOMContentLoaded', () => {
+        loadTable(1);
+      });
+
+      // Event pencarian otomatis
+      keyword?.addEventListener('keyup', () => loadTable(1));
+
+      // Pasang ulang event tombol pagination setelah konten baru di-load
+      function setupPaginationEvents() {
+        const buttons = container.querySelectorAll('.pagination button[data-page]');
+        buttons.forEach(button => {
+          button.addEventListener('click', function () {
+            const page = parseInt(this.dataset.page);
+            if (!isNaN(page)) {
+              loadTable(page);
+            }
+          });
+        });
+      }
+    </script>
 
     <script>
       function toggleSidebar() {
