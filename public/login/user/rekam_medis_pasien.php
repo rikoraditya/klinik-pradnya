@@ -404,7 +404,9 @@ if (isset($_POST["cari_rm"])) {
                                     <tr>
                                         <td class="border p-2"><?= $i; ?></td>
                                         <td class="border p-2"><?= $row["no_rm"]; ?></td>
-                                        <td class="border p-2"><?= $row["nama_pasien"]; ?></td>
+                                        <td class="border p-2 truncate w-20 md">
+                                            <?= strlen($row['nama_pasien']) > 7 ? htmlspecialchars(substr($row['nama_pasien'], 0, 7)) . '...' : htmlspecialchars($row["nama_pasien"]); ?>
+                                        </td>
                                         <td class="border p-2"><?= $row["tanggal_kunjungan"]; ?></td>
                                         <td class="border p-2 w-40">
                                             <div class="flex justify-end">
@@ -521,7 +523,7 @@ if (isset($_POST["cari_rm"])) {
 
     <!-- Modal -->
     <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden ">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-xl p-6 sm:p-7">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md md:max-w-xl p-6 sm:p-7">
 
             <!-- Header dengan Icon -->
             <div class="flex items-center mb-5 border-b pb-3 ">
@@ -539,7 +541,7 @@ if (isset($_POST["cari_rm"])) {
             </div>
 
             <!-- Konten Data Pasien -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 text-sm text-gray-700" id="modalContent">
+            <div class="grid grid-cols-2 sm:grid-cols-2 gap-x-4 gap-y-3 text-sm text-gray-700" id="modalContent">
                 <!-- Konten dinamis diisi via JS -->
             </div>
 
