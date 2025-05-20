@@ -487,21 +487,30 @@ if (isset($_POST["cari_rm"])) {
         <div class="bg-white shadow-md mt-4 rounded-lg p-4">
           <div class="flex justify-between items-center pb-2">
             <!-- Kolom kiri: Form pencarian -->
-            <form action="" method="post" class="flex items-center">
-              <input type="text" name="keyword" size="30" placeholder="masukkan keyword pencarian.." autocomplete="off"
-                id="keyword" autofocus
-                class="border-2 border-gray-600 rounded-md text-xs py-0.5 pl-1 placeholder:text-xs placeholder:pl-1">
+            <form action="" method="post" class="relative w-full max-w-xs">
+              <input type="text" name="keyword" id="keyword" autocomplete="off" autofocus placeholder="Cari data..."
+                class="w-full pl-8 pr-3 py-1.5 text-xs rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 transition placeholder-gray-400" />
+
+              <!-- Ikon pencarian -->
+              <div class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                <svg class="w-3.5 h-3.5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M21 21l-4.35-4.35M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z" />
+                </svg>
+              </div>
             </form>
 
             <!-- Kolom kanan: Tombol export -->
+            <!-- Kolom kanan: Tombol export -->
             <button onclick="window.location.href='export_exel.php'"
-              class="bg-green-600 hover:bg-green-700 text-white text-xs py-1.5 px-1.5 rounded-md ml-2 flex items-center gap-1">
-              <!-- Ikon Excel SVG -->
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" class="w-4 h-4 fill-white">
+              class="bg-[#18c161] hover:bg-[#1e623b] text-white text-xs py-2 px-3 rounded-md flex items-center gap-2 shadow-sm transition">
+              <!-- Ikon Excel (customized for Excel brand) -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current text-white" viewBox="0 0 24 24">
                 <path
-                  d="M224,48V208a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32H208A16,16,0,0,1,224,48ZM92.9,128l18.5-25.4a8,8,0,0,0-12.8-9.6L80,117.4,68.4,93a8,8,0,1,0-14.8,6.4L65.1,128,53.6,149.6a8,8,0,0,0,14.8,6.4L80,138.6l18.6,25.4a8,8,0,0,0,12.8-9.6Z" />
+                  d="M19 2H8a2 2 0 0 0-2 2v3H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1v3a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2ZM8 4h11v16H8v-3h6a1 1 0 1 0 0-2H5V9h9a1 1 0 1 0 0-2H8V4Zm1.67 8.66 1.26 2.67a.75.75 0 0 1-1.34.68L9 13.34l-.59 1.26a.75.75 0 1 1-1.34-.68l1.26-2.67-1.26-2.66a.75.75 0 1 1 1.34-.68L9 10.66l.59-1.26a.75.75 0 0 1 1.34.68l-1.26 2.66Z" />
               </svg>
-              <span>Excel</span>
+              <span class="font-medium">Download</span>
             </button>
 
 

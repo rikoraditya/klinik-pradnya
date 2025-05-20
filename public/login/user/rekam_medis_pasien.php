@@ -385,7 +385,7 @@ if (isset($_POST["cari_rm"])) {
                             <tr class="text-xs">
                                 <th class="border p-2">No</th>
                                 <th class="border p-2">No RM</th>
-                                <th class="border p-2">Nama</th>
+
                                 <th class="border p-2">Tanggal Kunjungan</th>
                                 <th class="border p-2">Action</th>
                             </tr>
@@ -404,15 +404,13 @@ if (isset($_POST["cari_rm"])) {
                                     <tr>
                                         <td class="border p-2"><?= $i; ?></td>
                                         <td class="border p-2"><?= $row["no_rm"]; ?></td>
-                                        <td class="border p-2 truncate w-20 md">
-                                            <?= strlen($row['nama_pasien']) > 7 ? htmlspecialchars(substr($row['nama_pasien'], 0, 7)) . '...' : htmlspecialchars($row["nama_pasien"]); ?>
-                                        </td>
-                                        <td class="border p-2"><?= $row["tanggal_kunjungan"]; ?></td>
-                                        <td class="border p-2 w-40">
+
+                                        <td class="border p-2 w-24"><?= $row["tanggal_kunjungan"]; ?></td>
+                                        <td class="border p-2">
                                             <div class="flex justify-end">
                                                 <button onclick="lihatPasien('<?= $row['id']; ?>')"
                                                     class="bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs">
-                                                    View Rekam Medis
+                                                    View RM
                                                 </button>
                                             </div>
                                         </td>
@@ -523,7 +521,7 @@ if (isset($_POST["cari_rm"])) {
 
     <!-- Modal -->
     <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden ">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md md:max-w-xl p-6 sm:p-7">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm md:max-w-xl p-6 sm:p-5">
 
             <!-- Header dengan Icon -->
             <div class="flex items-center mb-5 border-b pb-3 ">

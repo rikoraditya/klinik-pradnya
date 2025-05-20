@@ -425,11 +425,18 @@ if (isset($_POST["cari_obat"])) {
         <p class="text-gray-600">Manage Obat</p>
 
         <div class="bg-white mt-4 shadow-md rounded-lg p-4">
-          <form action="" method="post" class="pb-2">
-            <input type="text" name="keyword" size="30" placeholder="masukkan keyword pencarian.." autocomplete="off"
-              id="keyword" autofocus
-              class="border-2 border-gray-600 rounded-md text-xs py-0.5 pl-1 placeholder:text-xs placeholder:pl-1">
+          <form action="" method="post" class="relative w-full max-w-xs pb-2">
+            <input type="text" name="keyword" id="keyword" autocomplete="off" autofocus placeholder="Cari data..."
+              class="w-full pl-8 pr-3 py-1.5 text-xs rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 transition placeholder-gray-400" />
 
+            <!-- Ikon pencarian -->
+            <div class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none pb-2">
+              <svg class="w-3.5 h-3.5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M21 21l-4.35-4.35M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z" />
+              </svg>
+            </div>
           </form>
 
           <div id="container">

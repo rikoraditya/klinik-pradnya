@@ -464,22 +464,33 @@ $antrian = query("
 
           <div class="flex justify-between items-center pb-2">
             <!-- Kolom kiri: Form pencarian -->
-            <form action="" method="post" class="flex items-center">
-              <input type="text" name="keyword" size="30" placeholder="masukkan keyword pencarian.." autocomplete="off"
-                id="keyword" autofocus
-                class="border-2 border-gray-600 rounded-md text-xs py-0.5 pl-1 placeholder:text-xs placeholder:pl-1">
+            <form action="" method="post" class="relative w-full max-w-xs">
+              <input type="text" name="keyword" id="keyword" autocomplete="off" autofocus placeholder="Cari data..."
+                class="w-full pl-8 pr-3 py-1.5 text-xs rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 transition placeholder-gray-400" />
+
+              <!-- Ikon pencarian -->
+              <div class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                <svg class="w-3.5 h-3.5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M21 21l-4.35-4.35M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z" />
+                </svg>
+              </div>
             </form>
+
+
 
             <!-- Kolom kanan: Tombol export -->
             <button onclick="window.location.href='export_exel.php'"
-              class="bg-green-600 hover:bg-green-700 text-white text-xs py-1.5 px-1.5 rounded-md ml-2 flex items-center gap-1">
-              <!-- Ikon Excel SVG -->
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" class="w-4 h-4 fill-white">
+              class="bg-[#18c161] hover:bg-[#1e623b] text-white text-xs py-2 px-3 rounded-md flex items-center gap-2 shadow-sm transition">
+              <!-- Ikon Excel (customized for Excel brand) -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current text-white" viewBox="0 0 24 24">
                 <path
-                  d="M224,48V208a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32H208A16,16,0,0,1,224,48ZM92.9,128l18.5-25.4a8,8,0,0,0-12.8-9.6L80,117.4,68.4,93a8,8,0,1,0-14.8,6.4L65.1,128,53.6,149.6a8,8,0,0,0,14.8,6.4L80,138.6l18.6,25.4a8,8,0,0,0,12.8-9.6Z" />
+                  d="M19 2H8a2 2 0 0 0-2 2v3H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1v3a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2ZM8 4h11v16H8v-3h6a1 1 0 1 0 0-2H5V9h9a1 1 0 1 0 0-2H8V4Zm1.67 8.66 1.26 2.67a.75.75 0 0 1-1.34.68L9 13.34l-.59 1.26a.75.75 0 1 1-1.34-.68l1.26-2.67-1.26-2.66a.75.75 0 1 1 1.34-.68L9 10.66l.59-1.26a.75.75 0 0 1 1.34.68l-1.26 2.66Z" />
               </svg>
-              <span>Excel</span>
+              <span class="font-medium">Download</span>
             </button>
+
 
 
           </div>
@@ -517,27 +528,30 @@ $antrian = query("
                     <td class="border p-2 w-8 md"><?= htmlspecialchars($row["no_hp"]); ?></td>
                     <td class="border p-2 truncate w-36 md"><?= htmlspecialchars($row["poli_tujuan"]); ?></td>
                     <td class="border p-2 md w-28"><?= htmlspecialchars($row["tanggal_antrian"]); ?></td>
-                    <td class="border p-2 w-20 md"><?= htmlspecialchars($row["status_antrian"]); ?></td>
+                    <td id="status-antrian-<?= $row['id']; ?>" class="border p-2 w-20 md 
+      <?= $row['status_antrian'] === 'menunggu' ? '' :
+        ($row['status_antrian'] === 'dipanggil' ? 'text-blue-600' :
+          ($row['status_antrian'] === 'selesai' ? 'text-green-600' : 'text-gray-500')) ?>">
+                      <?= htmlspecialchars($row["status_antrian"]); ?>
+                    </td>
+
+
                     <td class="border p-2 w-fit">
                       <div class="flex justify-end space-x-1">
                         <button onclick="lihatPasien('<?= $row['id']; ?>')"
                           class="bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs">
                           View
                         </button>
-                        <form action="../../php/functions.php" method="POST" style="display: inline;">
-                          <input type="hidden" name="id" value="<?= $row['id']; ?>">
-                          <button type="button" class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs"
-                            onclick="panggilPasien('<?= $row['id'] ?>', '<?= $row['no_antrian'] ?>', '<?= $row['poli_tujuan'] ?>')">
-                            Panggil
-                          </button>
-                        </form>
-                        <form action="../../php/functions.php" method="POST" style="display: inline;">
-                          <input type="hidden" name="id" value="<?= $row['id']; ?>">
-                          <button type="submit" name="selesai"
-                            class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs">
-                            Selesai
-                          </button>
-                        </form>
+                        <button
+                          onclick="panggilPasien('<?= $row['id']; ?>', '<?= $row['no_antrian']; ?>', '<?= $row['poli_tujuan']; ?>')"
+                          class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs">
+                          Panggil
+                        </button>
+                        <button onclick="selesaikanPasien('<?= $row['id']; ?>')"
+                          class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs">
+                          Selesai
+                        </button>
+
                       </div>
                     </td>
                   </tr>
@@ -575,39 +589,87 @@ $antrian = query("
     <script src="../../js/script.js"></script>
 
     <!--suara panggil-->
-
     <script>
       function panggilPasien(id, noAntrian, poli) {
-        const noAntrianTerpisah = noAntrian.replace(/-/g, '').split('').join(' ');
-        const pesan = `Nomor antrian. ${noAntrianTerpisah}. Silakan menuju ke ${poli}.Terima kasih`;
+        const pesan = `Nomor antrian. ${noAntrian.replace(/-/g, '').split('').join(' ')}. Silakan menuju ke ${poli}. Terima kasih.`;
+        const statusEl = document.getElementById('status-antrian-' + id);
 
-        // Simpan pesan ke localStorage sebelum reload
+        // Spinner sebelum status berubah
+        statusEl.innerHTML = `
+      <div class="flex justify-center items-center h-full">
+        <span class="w-5 h-5 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></span>
+      </div>
+    `;
+
+        const data = new URLSearchParams();
+        data.append('id', id);
+        data.append('panggil', 'true');
+
         fetch('panggil.php', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `id=${id}`
+          body: data
         })
-          .then(response => response.text())
-          .then(res => {
-            if (res.trim() === 'ok') {
-              localStorage.setItem('pesan_antrian', pesan);
-              location.reload();
-            }
+          .then(res => res.text())
+          .then(response => {
+            setTimeout(() => {
+              if (response.trim() === 'ok') {
+                // Set status dan warna biru
+                statusEl.textContent = 'dipanggil';
+                statusEl.className = 'text-blue-600 border p-2';
+
+                // Baca suara
+                const ucap = new SpeechSynthesisUtterance(pesan);
+                ucap.lang = 'id-ID';
+                ucap.rate = 0.9;
+                window.speechSynthesis.speak(ucap);
+              } else {
+                statusEl.textContent = 'Gagal';
+                statusEl.className = 'text-red-600 border p-2';
+                alert('Gagal memanggil pasien. (' + response + ')');
+              }
+            }, 1500);
           });
       }
 
-      // Saat halaman dimuat, cek apakah ada pesan antrian untuk dibacakan
-      window.addEventListener('DOMContentLoaded', () => {
-        const pesan = localStorage.getItem('pesan_antrian');
-        if (pesan) {
-          const ucap = new SpeechSynthesisUtterance(pesan);
-          ucap.lang = 'id-ID';
-          ucap.rate = 0.9;
-          window.speechSynthesis.speak(ucap);
-          localStorage.removeItem('pesan_antrian');
-        }
-      });
+      function selesaikanPasien(id) {
+        const statusEl = document.getElementById('status-antrian-' + id);
+
+        // Spinner
+        statusEl.innerHTML = `
+      <div class="flex justify-center items-center h-full">
+        <span class="w-5 h-5 border-4 border-gray-300 border-t-transparent rounded-full animate-spin"></span>
+      </div>
+    `;
+
+        const data = new URLSearchParams();
+        data.append('id', id);
+        data.append('selesai', 'true');
+
+        fetch('panggil.php', {
+          method: 'POST',
+          body: data
+        })
+          .then(res => res.text())
+          .then(response => {
+            setTimeout(() => {
+              if (response.trim() === 'ok') {
+                // Set status dan warna hijau
+                statusEl.textContent = 'selesai';
+                statusEl.className = 'text-green-600 border p-2';
+              } else {
+                statusEl.textContent = 'Gagal';
+                statusEl.className = 'text-red-600 border p-2';
+                alert('Gagal menyelesaikan pasien. (' + response + ')');
+              }
+            }, 1500);
+          });
+      }
     </script>
+
+
+
+
+
 
 
 
