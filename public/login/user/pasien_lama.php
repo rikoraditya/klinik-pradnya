@@ -155,7 +155,14 @@ if ($q && mysqli_num_rows($q) > 0) {
           <a href="kunjungan.php"
             class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
             <i class="fas fa-clock"></i>
-            <span class="sidebar-text">Kunjungan Anda</span>
+            <span class="sidebar-text">Antrian Anda</span>
+          </a>
+        </div>
+        <div class="mb-4">
+          <a href="rekam_medis_pasien.php"
+            class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
+            <i class="fas fa-book-open"></i>
+            <span class="sidebar-text">Riwayat Kunjungan</span>
           </a>
         </div>
       </nav>
