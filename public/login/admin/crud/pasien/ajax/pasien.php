@@ -87,7 +87,7 @@ $JumlahHalaman = $total_pages;
                     <div class="flex justify-end space-x-1">
                         <a href="create_kunjungan.php?id=<?= $row['id']; ?>"
                             class="bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs inline-block">
-                            Create.K
+                            + Antrian
                         </a>
                         <a href="update.php?id=<?= $row['id']; ?>"
                             class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs inline-block">

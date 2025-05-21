@@ -521,7 +521,8 @@ if ($q && mysqli_num_rows($q) > 0) {
                             </div>
 
                             <button type="submit"
-                                class="mt-4 bg-green-800 hover:bg-green-900 text-white py-2 px-3 rounded-md text-xs">Daftar</button>
+                                class="mt-4 bg-green-800 hover:bg-green-900 text-white py-2 px-3 rounded-md text-xs">+
+                                Antrian</button>
                             <a href="registrasi.php"
                                 class="bg-red-700 hover:bg-red-900 text-white py-2 px-3 rounded-md text-xs relative">
                                 Kembali
