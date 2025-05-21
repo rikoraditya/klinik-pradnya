@@ -31,6 +31,7 @@ if (!isset($_SESSION['no_hp'])) {
 $no_hp = normalize_hp($_SESSION['no_hp']);
 $row = null;
 $notif = null;
+$info = null;
 $today = date('Y-m-d'); // hasil akan sesuai zona waktu lokal
 
 // Cek koneksi database
@@ -58,8 +59,29 @@ if ($stmt) {
   if ($result && mysqli_num_rows($result) > 0) {
     $row = mysqli_fetch_assoc($result);
   } else {
-    $notif = "Anda belum melakukan pendaftaran hari ini.";
+    $notif = "
+
+<strong>Catatan:</strong>
+<ol class='pl-4' font-poppins style='list-style-type: decimal; padding-left: 1.25rem;'>
+  <li>Jika anda melakukan pendaftaran sebagai pasien baru, anda dapat langsung datang ke klinik untuk konfirmasi data diri kepada petugas ketika pertama kali melakukan pendaftaran!.</li>
+  <li>Setelah konsultasi, Anda akan mendapat Nomor RM yang dapat diakses melalui menu <em>Riwayat Kunjungan</em>.</li>
+  <li>Untuk kunjungan berikutnya, cukup daftar sebagai pasien lama menggunakan Nomor RM tanpa mengisi data ulang.</li>
+</ol>
+<p class='mt-4'>Terima kasih atas perhatian Anda.<br><strong>#We Care With Cencerity</strong></p>
+";
+
+
+
+    $info = "
+<p class='mb-2 font-bold text-yellow-400 animate-pulse glow-text'>
+  Anda belum melakukan pendaftaran hari ini.
+</p>
+";
+
+
+
   }
+
 
   mysqli_stmt_close($stmt);
 } else {
@@ -128,6 +150,10 @@ if ($stmt) {
 
     /* Menambahkan style untuk header */
   </style>
+
+
+
+
 </head>
 
 <body class="bg-gray-100">
@@ -370,12 +396,20 @@ if ($stmt) {
                     <!-- Isi konten notifikasi -->
                     <div class="flex-1">
                       <h3 class="font-bold text-xl mb-1">🔔 Klinik Pradnya Usadha</h3>
-                      <p class="text-base leading-relaxed"><?= htmlspecialchars($notif); ?></p>
+                      <div class="text-base leading-relaxed space-y-2   font-poppins text-sm ">
+                        <?= $info; ?>
+                      </div>
+                      <div class="text-base leading-relaxed space-y-2  text-justify font-poppins text-sm opacity-50">
+                        <?= $notif; ?>
+                      </div>
+
+
+
 
                       <!-- Tombol CTA -->
                       <div class="mt-4">
                         <a href="buat_kunjungan.php"
-                          class="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-xl font-semibold shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+                          class="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-3 font-poppins text-sm py-1 rounded-xl font-semibold shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200">
                           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />

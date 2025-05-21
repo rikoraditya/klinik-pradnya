@@ -187,8 +187,8 @@ if (isset($_POST["cari_rm"])) {
                     <td class="border p-2">
                         <div class="flex justify-end">
                             <button onclick="lihatPasien('<?= $row['id']; ?>')"
-                                class="bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs">
-                                View RM
+                                class="bg-gray-500 hover:bg-gray-600 text-white font-poppins px-2 py-1 rounded text-xs">
+                                <i class="fas fa-eye mr-1"></i><span class="">View</span>
                             </button>
                         </div>
                     </td>
