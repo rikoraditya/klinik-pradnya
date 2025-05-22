@@ -462,11 +462,11 @@ if (!isset($_SESSION["login"])) {
                   </div>
                   <div>
                     <label class="block text-gray-700">NIK / No. BPJS</label>
-                    <input type="text" name="nik_bpjs" required placeholder="Masukkan NIK / No. BPJS"
+                    <input type="text" name="nik_bpjs" required placeholder="NIK001 / BPJS001"
                       class="w-full border border-gray-300 rounded-md p-2" />
                     <div class="mt-1 text-xs ml-2 opacity-50">
-                      <li>Masukkan NIK Jika Pasien Umum contoh NIK000...</li>
-                      <li>Masukkan No. BPJS Jika Kepesertaan BPJS contoh: BPJS000...</li>
+                      <li>Masukkan NIK jika pasien umum contoh: NIK001...</li>
+                      <li>Masukkan No. BPJS jika kepesertaan BPJS contoh: BPJS001...</li>
                     </div>
                   </div>
                   <button type="submit" class="w-full hover:bg-green-900 bg-green-700 text-white p-2 rounded-md">

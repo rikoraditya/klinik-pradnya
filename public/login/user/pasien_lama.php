@@ -298,7 +298,7 @@ if ($q && mysqli_num_rows($q) > 0) {
             <!-- Form Pendaftaran -->
             <div class="bg-white p-6 md:h-max rounded-lg shadow-md md:mt-7 font-poppins">
               <h2 class="text-md font-bold mb-4">Pendaftaran Pasien Lama</h2>
-              <form action="../../php/proses_admin.php" method="POST" class="space-y-3 md:space-y-3  text-xs">
+              <form action="../../php/proses_user.php" method="POST" class="space-y-3 md:space-y-3  text-xs">
                 <div class="grid grid-cols-1 gap-4">
                   <div>
                     <label class="block text-gray-700">No. RM</label>

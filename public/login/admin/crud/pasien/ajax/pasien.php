@@ -62,7 +62,6 @@ $JumlahHalaman = $total_pages;
             <th class="border p-2">Tempat Lahir</th>
             <th class="border p-2">Tanggal Lahir</th>
             <th class="border p-2">Alamat</th>
-            <th class="border p-2">NIK / No. BPJS</th>
             <th class="border p-2">Action</th>
         </tr>
     </thead>
@@ -74,15 +73,12 @@ $JumlahHalaman = $total_pages;
             <tr>
                 <td class="border p-2 md"><?= $i; ?></td>
                 <td class="border p-2 truncate w-20 md"><?= $row["nama"]; ?></td>
-                <td class="border p-2 truncate w-20 md">
-                    <?= strlen($row['nik']) > 13 ? substr($row['nik'], 0, 13) . '...' : $row["nik"]; ?>
-                </td>
+                <td class="border p-2 truncate w-20 md"><?= $row["nik"]; ?></td>
                 <td class="border p-2 md"><?= $row["jenis_kelamin"]; ?></td>
                 <td class="border p-2 truncate w-20 md"><?= $row["no_hp"]; ?></td>
                 <td class="border p-2"><?= $row["tempat_lahir"]; ?></td>
                 <td class="border p-2"><?= $row["tanggal_lahir"]; ?></td>
-                <td class="border p-2 truncate w-20 md"><?= $row["alamat"]; ?></td>
-                <td class="border p-2"><?= $row["nik_bpjs"]; ?></td>
+                <td class="border p-2 truncate w-40 md"><?= $row["alamat"]; ?></td>
                 <td class="border p-2">
                     <div class="flex justify-end space-x-1">
                         <a href="create_kunjungan.php?id=<?= $row['id']; ?>"
