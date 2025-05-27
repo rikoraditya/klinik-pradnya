@@ -59,10 +59,11 @@ $JumlahHalaman = $total_pages;
                             Update
                         </a>
 
-                        <a href="delete.php?id=<?= $row['id']; ?>" id="delete-link"
+                        <a href="#" onclick="konfirmasiHapus(<?= $row['id']; ?>)"
                             class="delete-link bg-red-700 hover:bg-red-900 text-white px-2 py-1 rounded text-xs inline-block">
                             Delete
                         </a>
+
                     </div>
                 </td>
 

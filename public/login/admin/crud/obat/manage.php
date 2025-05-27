@@ -558,6 +558,30 @@ if (isset($_POST["cari_obat"])) {
         });
       }
     </script>
+
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+      function konfirmasiHapus(id) {
+        Swal.fire({
+          title: 'Yakin ingin menghapus data ini?',
+          text: 'Data yang dihapus tidak dapat dikembalikan!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Iya, hapus!',
+          cancelButtonText: 'Batal'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Redirect ke delete.php dengan id
+            window.location.href = 'delete.php?id=' + id;
+          }
+        });
+      }
+    </script>
+
 </body>
 
 </html>
