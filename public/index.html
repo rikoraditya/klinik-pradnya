@@ -26,37 +26,62 @@
 <!--JUMBOTRON-->
 <style>
   .slide {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;          /* Gunakan 'contain' jika ingin seluruh gambar terlihat */
+    object-position: center;    /* Pastikan gambar berada di tengah */
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
   }
-  .active {
-      opacity: 1;
+
+  .slide.active {
+    opacity: 1;
+    z-index: 10;
   }
 </style>
- <script>
-  
- </script>
+<!-- JavaScript untuk Auto Slide -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const slides = document.querySelectorAll(".slide");
+    let currentSlide = 0;
+    const totalSlides = slides.length;
 
-<div class="relative mt-2 w-full h-64 md:h-[28rem] overflow-hidden rounded-sm shadow-lg">
-  <img src="img/team.png" class="slide active" alt="Slide 1">
-  <img src="img/bpjs.png" class="slide" alt="Slide 2">
-  <img src="img/pelayanan_gigi.png" class="slide" alt="Slide 3">
-  <div class="absolute inset-0 bg-black bg-opacity-10 flex items-center justify-center">
-  </div>
-</div>
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.remove("active");
+        if (i === index) slide.classList.add("active");
+      });
+    }
 
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % totalSlides;
+      showSlide(currentSlide);
+    }
 
-<!--AKHIR JUMBOTRON-->
-      <button  
+    // Auto-slide setiap 4 detik
+    setInterval(nextSlide, 4000);
+  });
+</script>
+
+  <!-- Jumbotron / Slider -->
+    <div class="relative mt-4 w-full h-64 md:h-[24rem] mx-auto overflow-hidden rounded-sm shadow-lg">
+      <img src="img/team.png" class="slide active" alt="Slide 1">
+      <img src="img/bpjs.png" class="slide" alt="Slide 2">
+      <img src="img/pelayanan_gigi.png" class="slide" alt="Slide 3">
+      <div class="absolute inset-0 bg-black bg-opacity-10 flex items-center justify-center"></div>
+    </div>
+        <button  
   id="closePopup" 
   class="mt-6 bg-gray-400 text-gray-100 px-4 py-2 rounded-full hover:bg-gray-600"
   onclick="sambutanKlinik()">
   X
 </button>
+  </div>
+
+
+<!--AKHIR JUMBOTRON-->
+  
 
 <audio id="alarmSound" src="audio/audioo.mp3" preload="auto"></audio>
 
@@ -440,29 +465,29 @@
   <div class="relative w-full max-w-5xl overflow-hidden px-4 md:px-0">
     <div id="carousel" class="carousel-container flex w-full transition-transform ease-linear duration-300">
         <div class="carousel-item w-full md:w-1/3 flex-shrink-0 p-2">
-            <div class="bg-white w-full h-full md:w-full md:h-full flex flex-col items-center justify-center shadow-lg rounded-lg p-6">
-                <img src="img/sukrata.png" alt="Foto 1" class="w-72 h-72 md:w-60 md:h-60 rounded-full mb-2">
-                <p class="text-md  font-poppins font-semibold bg-gradient-to-r from-green-100 to-green-300 px-4 text-gray-800">Dr,. dr. I Wayan Sukerata, MM</p>
+            <div class="bg-white w-full h-full md:w-full md:h-full flex flex-col items-center justify-center shadow-lg rounded-lg p-3">
+                <img src="img/sukrata.png" alt="Foto 1" class="w-11/12 md:w-60 md:h-60 rounded-full mb-2">
+                <p class="md:text-md text-sm font-poppins font-semibold bg-gradient-to-r from-green-100 to-green-300 px-4 text-gray-800">Dr,. dr. I Wayan Sukerata, MM</p>
                 <p class="text-sm font-poppins text-gray-300">Dokter Umum</p>
             </div>
         </div>
         <div class="carousel-item w-full md:w-1/3 flex-shrink-0 p-2">
             <div class="bg-white w-full h-full md:w-full md:h-full flex flex-col items-center justify-center shadow-lg rounded-lg  p-3">
-                <img src="img/wahyu.png" alt="Foto 2" class="w-72 h-72 md:w-60 md:h-60 rounded-full mb-2">
-                <p class="text-md  md:text-sm font-poppins font-semibold bg-gradient-to-r from-green-100 to-green-300 px-1 text-gray-800">Drg. Ni Komang Sri Wahyundari, S.Ked</p>
+                <img src="img/wahyu.png" alt="Foto 2" class="w-11/12 md:w-60 md:h-60 rounded-full mb-2">
+                <p class="text-sm  md:text-sm font-poppins font-semibold bg-gradient-to-r from-green-100 to-green-300 px-1 text-gray-800">Drg. Ni Komang Sri Wahyundari, S.Ked</p>
                 <p class="text-sm font-poppins text-gray-300">Dokter Gigi</p>
             </div>
         </div>
         <div class="carousel-item w-full md:w-1/3 flex-shrink-0 p-2">
-            <div class="bg-white w-full h-full md:w-full md:h-full flex flex-col items-center justify-center shadow-lg rounded-lg p-6">
-                <img src="img/dokter.jpg" alt="Foto 3" class="w-72 h-72 md:w-60 md:h-60 rounded-full mb-2">
-                <p class="text-md  font-poppins font-semibold bg-gradient-to-r from-green-100 to-green-300 px-2 text-gray-800">Dewi Pransisca Surya, S.Kep., Ns</p>
+            <div class="bg-white w-full h-full md:w-full md:h-full flex flex-col items-center justify-center shadow-lg rounded-lg p-3">
+                <img src="img/wahyu.png" alt="Foto 3" class="w-11/12 md:w-60 md:h-60 rounded-full mb-2">
+                <p class="md:text-md text-sm  font-poppins font-semibold bg-gradient-to-r from-green-100 to-green-300 px-2 text-gray-800">Dewi Pransisca Surya, S.Kep., Ns</p>
                 <p class="text-sm font-poppins text-gray-300">Perawat</p>
             </div>
         </div>
         <div class="carousel-item w-full md:w-1/3 flex-shrink-0 p-2">
-            <div class="bg-white w-full h-full md:w-full md:h-full flex flex-col items-center justify-center shadow-lg rounded-lg p-6">
-                <img src="img/dokter.jpg" alt="Foto 4" class="w-72 h-72 md:w-60 md:h-60 rounded-full mb-2">
+            <div class="bg-white w-full h-full md:w-full md:h-full flex flex-col items-center justify-center shadow-lg rounded-lg p-3">
+                <img src="img/wahyu.png" alt="Foto 4" class="w-11/12 md:w-60 md:h-60 rounded-full mb-2">
                 <p class=" text-md font-poppins font-semibold bg-gradient-to-r from-green-100 to-green-300 px-4 text-gray-800">Ni Putu Ratnawati, Amd.Keb</p>
                 <p class="text-sm font-poppins text-gray-300">Perawat</p>
             </div>

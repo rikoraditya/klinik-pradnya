@@ -376,7 +376,7 @@ if ($stmt) {
                   }
                 </style>
 
-                <div class="relative z-10 max-w-2xl mx-auto mt-12 px-6 pb-4">
+                <div class="relative z-10 max-w-2xl mx-auto mt-12 px- pb-4">
                   <!-- Background kuning kedip -->
                   <div class="absolute inset-0 bg-yellow-100/80 blur-xl opacity-80 rounded-3xl animate-pulse"></div>
 

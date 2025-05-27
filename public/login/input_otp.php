@@ -327,24 +327,24 @@ if (empty($_SESSION['csrf_token'])) {
                         dikirim</p>
 
                     <form id="formCekPasien" method="post" action="verify_otp.php" onsubmit="gabungkanOTP(event)">
-                        <div class="flex justify-center pb-2 text-sm gap-3">
+                        <div class="flex justify-center pb-2 text-sm md:gap-3 gap-2">
                             <input type="text" maxlength="1"
-                                class="otp-input w-11 h-11 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                class="otp-input md:w-11 md:h-11 w-10 h-10 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 required>
                             <input type="text" maxlength="1"
-                                class="otp-input w-11 h-11 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                class="otp-input md:w-11 md:h-11 w-10 h-10 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 required>
                             <input type="text" maxlength="1"
-                                class="otp-input w-11 h-11 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                class="otp-input md:w-11 md:h-11 w-10 h-10 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 required>
                             <input type="text" maxlength="1"
-                                class="otp-input w-11 h-11 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                class="otp-input md:w-11 md:h-11 w-10 h-10 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 required>
                             <input type="text" maxlength="1"
-                                class="otp-input w-11 h-11 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                class="otp-input md:w-11 md:h-11 w-10 h-10 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 required>
                             <input type="text" maxlength="1"
-                                class="otp-input w-11 h-11 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                class="otp-input md:w-11 md:h-11 w-10 h-10 text-center text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 required>
                         </div>
 

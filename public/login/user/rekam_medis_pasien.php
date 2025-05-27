@@ -462,7 +462,7 @@ if (isset($_POST["cari_rm"])) {
 
     <!-- Modal -->
     <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden ">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm md:max-w-xl p-6 sm:p-5">
+        <div class="bg-white rounded-xl shadow-2xl w-11/12 md:w-full max-w-sm md:max-w-xl p-6 sm:p-4">
 
             <!-- Header dengan Icon -->
             <div class="flex items-center mb-5 border-b pb-3 ">

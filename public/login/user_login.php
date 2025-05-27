@@ -475,7 +475,7 @@ require '../../public/php/functions.php'; // koneksi DB
 
 
                     <div class="ml-2 text-xs text-gray-400 mt-4">
-                        <li>Untuk melakukan pendaftaran login terlebih dahulu</li>
+                        <li>Login terlebih dahulu untuk mendaftar</li>
                         <li>Kode verifikasi dikirim melalui Whatsapp</li>
                     </div>
                 </div>

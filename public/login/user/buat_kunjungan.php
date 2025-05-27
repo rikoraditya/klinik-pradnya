@@ -334,8 +334,8 @@ if (!isset($_SESSION["login_user"])) {
                   <input type="text" name="nik_bpjs" required placeholder="MNIK001 / BPJS001"
                     class="w-full border border-gray-300 rounded-md p-2" />
                   <div class="mt-1 text-xs ml-2 opacity-50">
-                    <li>Masukkan NIK jika pasien umum contoh: NIK001...</li>
-                    <li>Masukkan No. BPJS jika kepesertaan BPJS contoh: BPJS001...</li>
+                    <li>Masukkan NIK jika pasien umum contoh</li>
+                    <li>Masukkan No. BPJS jika kepesertaan BPJS</li>
                   </div>
                 </div>
                 <button type="submit" class="w-full hover:bg-green-900 bg-green-700 text-white p-2 rounded-md">
@@ -344,7 +344,7 @@ if (!isset($_SESSION["login_user"])) {
               </form>
 
               <div class="flex items-center space-x-2 mt-3 justify-center">
-                <p class="text-gray-700 font-poppins text-xs">Sudah pernah berobat?
+                <p class="text-gray-700 font-poppins text-xs">Pernah berobat?
                   <a onclick="toggleModal()" class="text-gray-700 font-bold font-poppins cursor-pointer text-xs">
                     Daftar sebagai Pasien Lama
                   </a>
@@ -362,7 +362,7 @@ if (!isset($_SESSION["login_user"])) {
   <!-- Modal Cek Pasien -->
   <div id="modalCekPasien"
     class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden justify-center font-poppins items-center z-40">
-    <div class="bg-white p-6 rounded-lg w-96 shadow-lg relative">
+    <div class="bg-white p-6 rounded-lg md:w-96 w-11/12 shadow-lg relative">
       <h2 class="text-xl font-semibold mb-4">Pasien Lama</h2>
       <form id="formCekPasien" action="cek_pasien.php" method="post">
         <label for="no_rm_cari" class="block text-sm font-medium">Masukkan No. RM</label>
