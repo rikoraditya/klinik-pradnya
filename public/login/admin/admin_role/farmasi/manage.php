@@ -1,6 +1,9 @@
 <?php
 session_start();
+use LDAP\Result;
+
 require '../../../../php/functions.php';
+
 
 if (!isset($_SESSION["login"])) {
   header("location:../../../admin_login.php");
@@ -9,50 +12,25 @@ if (!isset($_SESSION["login"])) {
 
 $username = $_SESSION["username"];
 
-// Jumlah data per halaman
-
+//pagination table
 $limit = 5;
 $page = isset($_GET["halaman"]) ? (int) $_GET["halaman"] : 1;
 $offset = ($page - 1) * $limit;
 
 $HalamanAktif = $page;
-$JumlahData = count(query("SELECT * FROM pasien"));
+$JumlahData = count(query("SELECT * FROM obat"));
 $JumlahHalaman = ceil($JumlahData / $limit);
 
-// Ambil data pasien + kunjungan terbaru
-$pasien = query("
-  SELECT 
-    p.*,
-    a.no_antrian,
-    k.keluhan,
-    k.poli_tujuan,
-    k.tanggal_kunjungan
-  FROM pasien p
-  LEFT JOIN (
-    SELECT *
-    FROM kunjungan
-    WHERE (no_rm, tanggal_kunjungan) IN (
-      SELECT no_rm, MAX(tanggal_kunjungan)
-      FROM kunjungan
-      GROUP BY no_rm
-    )
-  ) k ON k.id = p.id
-  LEFT JOIN antrian a ON a.pasien_id = p.id
-  GROUP BY p.id
-  ORDER BY k.tanggal_kunjungan DESC
-  LIMIT $limit OFFSET $offset;
-");
 
 
-
+$obat = query("SELECT * FROM obat LIMIT $limit OFFSET $offset;");
 
 
 
 //tombol cari
-if (isset($_POST["cari"])) {
-  $pasien = cari($_POST["keyword"]);
+if (isset($_POST["cari_obat"])) {
+  $obat = cari_obat($_POST["keyword"]);
 }
-
 ?>
 
 
@@ -64,10 +42,10 @@ if (isset($_POST["cari"])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard Antrian</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../../../css/style.css" />
 </head>
@@ -90,7 +68,7 @@ if (isset($_POST["cari"])) {
         document.getElementById("loadingOverlay").classList.remove("hidden");
 
         setTimeout(() => {
-          window.location.href = "admin.php";
+          window.location.href = "admin.html";
         }, 2000);
       }
     </script>
@@ -146,40 +124,31 @@ if (isset($_POST["cari"])) {
       </button>
 
       <!-- Dashboard -->
-      <h1 class="text-2xl font-bold font-poppins sidebar-text mt-6">Admin</h1>
+      <h1 class="text-2xl font-bold font-poppins sidebar-text mt-6">Farmasi</h1>
       <nav class="">
-        <div class="mb-2 mt-6">
-          <div class="mb-4">
-            <a href="../../dashboard.php"
-              class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
-              <i class="fas fa-chart-line"></i>
-              <span class="sidebar-text -ml-1">Dashboard</span>
-            </a>
-          </div>
 
+
+        <div class="mb-2">
           <div
             class="flex items-center justify-between text-sm font-poppins cursor-pointer p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded"
-            onclick="toggleMenuPasien('pasienMenu', 'iconPasien')">
-            <div class="flex items-center gap-2">
-              <i class="fas fa-user"></i>
-              <span class="sidebar-text font-poppins">Pasien</span>
+            onclick="toggleMenuObat('obatMenu', 'iconObat')">
+            <div class="flex items-center gap-1">
+              <i class="fas fa-pills"></i>
+              <span class="sidebar-text">Obat</span>
             </div>
-            <i class="fas fa-chevron-down sidebar-text transition-transform duration-300" id="iconPasien"></i>
+            <i class="fas fa-chevron-down sidebar-text transition-transform duration-300" id="iconObat"></i>
           </div>
-
-          <div id="pasienMenu"
-            class="ml-10 font-poppins text-xs space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
+          <div id="obatMenu"
+            class="ml-10 text-xs font-poppins space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
             style="max-height: 0; visibility: visible;">
-            <a href="../pasien/registrasi.php" class="block cursor-pointer hover:text-gray-300">Registrasi</a>
-            <a href="../pasien/manage.php" class="block cursor-pointer hover:text-gray-300">Manage Pasien</a>
+            <a href="tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah Obat</a>
+            <a href="manage.php" class="block cursor-pointer hover:text-gray-300">Manage Obat</a>
           </div>
-
-
 
           <script>
-            function toggleMenuPasien(pasienMenu, iconPasien) {
-              const menu = document.getElementById(pasienMenu);
-              const icon = document.getElementById(iconPasien);
+            function toggleMenuObat(obatMenu, iconObat) {
+              const menu = document.getElementById(obatMenu);
+              const icon = document.getElementById(iconObat);
 
               if (menu.style.maxHeight && menu.style.maxHeight !== "0px") {
                 menu.style.maxHeight = "0px";
@@ -194,65 +163,8 @@ if (isset($_POST["cari"])) {
                 icon.classList.add('rotate-180');
               }
             }
-
-
           </script>
 
-        </div>
-        <div class="mb-2">
-          <div
-            class="flex items-center justify-between text-sm font-poppins cursor-pointer p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded"
-            onclick="toggleMenuDokter('dokterMenu', 'iconDokter')">
-            <div class="flex items-center gap-2">
-              <i class="fas fa-user-md"></i>
-              <span class="sidebar-text">Dokter</span>
-            </div>
-            <i class="fas fa-chevron-down sidebar-text transition-transform duration-300" id="iconDokter"></i>
-          </div>
-          <div id="dokterMenu"
-            class="ml-10 font-poppins text-xs space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
-            style="max-height: 0; visibility: visible;">
-            <a href="../dokter/tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah Dokter</a>
-            <a href="../dokter/manage.php" class="block cursor-pointer hover:text-gray-300">Manage Dokter</a>
-          </div>
-
-          <script>
-            function toggleMenuDokter(dokterMenu, iconDokter) {
-              const menu = document.getElementById(dokterMenu);
-              const icon = document.getElementById(iconDokter);
-
-              if (menu.style.maxHeight && menu.style.maxHeight !== "0px") {
-                menu.style.maxHeight = "0px";
-                icon.classList.remove('rotate-180');
-              } else {
-                // Reset height dulu biar scrollHeight bisa dibaca
-                menu.style.maxHeight = "0px";
-                // Pakai timeout kecil biar animasi kebaca
-                setTimeout(() => {
-                  menu.style.maxHeight = menu.scrollHeight + "px";
-                }, 10);
-                icon.classList.add('rotate-180');
-              }
-            }
-
-
-          </script>
-
-        </div>
-        <div class="mb-2">
-          <a href="../../crud/obat/manage.php"
-            class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
-            <i class="fas fa-pills"></i>
-            <span class="sidebar-text -ml-1">Obat</span>
-          </a>
-        </div>
-
-        <div class="mb-2">
-          <a href="../../crud/rekammedis/manage.php"
-            class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
-            <i class="fas fa-clipboard-list"></i>
-            <span class="sidebar-text ml-1">Rekam Medis</span>
-          </a>
         </div>
 
       </nav>
@@ -354,7 +266,7 @@ if (isset($_POST["cari"])) {
               <p class="text-gray-800 font-semibold">Manage Akun</p>
               <p class="text-sm text-gray-500">Klinik Pradnya Usadha</p>
             </div>
-            <a href="../../reset_pass_admin.php" class="flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100">
+            <a href="reset_pass_admin.php" class="flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100">
               <i class=" text-gray-600 text-sm"></i>
               Pengaturan
             </a>
@@ -389,7 +301,7 @@ if (isset($_POST["cari"])) {
       <!-- Main Content -->
       <main class="flex-1 p-8 ml-64 transition-all duration-300 font-poppins" id="mainContent">
         <h1 class="text-2xl font-bold">Data</h1>
-        <p class="text-gray-600">Manage Pasien</p>
+        <p class="text-gray-600">Manage Obat</p>
 
         <div class="bg-white mt-4 shadow-md rounded-lg p-4">
           <form action="" method="post" class="relative w-full max-w-xs pb-2">
@@ -408,18 +320,12 @@ if (isset($_POST["cari"])) {
 
           <div id="container">
 
-
-
           </div>
-
-
-
-        </div>
-
-
 
       </main>
     </div>
+
+    <!--Logout-->
 
     <script>
       //delete alert
@@ -457,7 +363,7 @@ if (isset($_POST["cari"])) {
 
     </script>
 
-    <!--Logout-->
+
 
     <script>
       function toggleSidebar() {
@@ -488,43 +394,6 @@ if (isset($_POST["cari"])) {
       }
     </script>
 
-
-    <!-- Modal -->
-    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
-      <div class="bg-white rounded-xl shadow-2xl w-full max-w-xl p-6 sm:p-7">
-
-        <!-- Header dengan Icon -->
-        <div class="flex items-center mb-5 border-b pb-3">
-          <!-- Icon Profil -->
-          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-            <svg class="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.9V22h19.2v-2.7c0-3.3-6.4-4.9-9.6-4.9z" />
-            </svg>
-          </div>
-          <!-- Judul -->
-          <h2 class="font-poppins text-xl font-semibold text-gray-800">Data Pasien</h2>
-
-          <!-- Tombol Tutup -->
-          <button onclick="closeModal()" class="ml-auto text-gray-400 hover:text-red-600 text-2xl">&times;</button>
-        </div>
-
-        <!-- Konten Data Pasien -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 text-sm text-gray-700" id="modalContent">
-          <!-- Konten dinamis diisi via JS -->
-        </div>
-
-        <!-- Footer -->
-        <hr class="flex justify-end mt-6 pt-3 border-t">
-        <div class="mt-3 font-poppins p-3 bg-green-800 text-white text-center rounded-xl shadow-md">
-          <h3 class="text-sm font-semibold">Nomor Antrian Pasien</h3>
-          <p class="text-2xl font-bold mt-2" id="nomorAntrian"></p>
-
-        </div>
-      </div>
-    </div>
-
-
     <!--Script JS-->
     <script>
       const keyword = document.getElementById('keyword');
@@ -535,7 +404,7 @@ if (isset($_POST["cari"])) {
         container.innerHTML = '<div class="text-center p-4 text-gray-500">Memuat data...</div>';
 
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', `ajax/pasien.php?keyword=${encodeURIComponent(search)}&halaman=${page}`, true);
+        xhr.open('GET', `ajax/obat.php?keyword=${encodeURIComponent(search)}&halaman=${page}`, true);
         xhr.onreadystatechange = function () {
           if (xhr.readyState === 4 && xhr.status === 200) {
             container.innerHTML = xhr.responseText;
@@ -589,8 +458,6 @@ if (isset($_POST["cari"])) {
         });
       }
     </script>
-
-
 
 </body>
 

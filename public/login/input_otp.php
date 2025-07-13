@@ -301,7 +301,7 @@ if (empty($_SESSION['csrf_token'])) {
 
     <!--Content 1-->
 
-    <div class="bg-gray-100 p-4">
+    <div class="bg-gray-100 p-4 h-screen">
         <div class="max-w-6xl mx-auto mt-10 pb-10">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- Informasi Pendaftaran -->
@@ -322,7 +322,8 @@ if (empty($_SESSION['csrf_token'])) {
                     <h2 class="text-xl font-poppins font-bold mb-4 text-center">Login</h2>
 
                     <!--Form Login-->
-                    <h2 class="text-xl text-center justify-center font-bold text-gray-500 mb-4">Verifikasi Kode OTP</h2>
+                    <h2 class="text-xl text-center justify-center font-bold text-gray-500 mb-4 md:mt-4">Verifikasi Kode
+                        OTP</h2>
                     <p class="text-gray-500 text-sm justify-center text-center mb-6">Masukkan 6 digit kode yang telah
                         dikirim</p>
 

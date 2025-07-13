@@ -10,7 +10,11 @@ use PhpOffice\PhpSpreadsheet\Style\Font;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 
-// Ambil data kunjungan dari antrian dan pasien
+// Ambil parameter bulan & tahun
+$bulan = $_GET['bulan'] ?? date('m');
+$tahun = $_GET['tahun'] ?? date('Y');
+
+// Query data kunjungan sesuai bulan & tahun
 $query = "
 SELECT 
     a.no_antrian,
@@ -26,20 +30,23 @@ SELECT
     a.status_antrian
 FROM antrian a
 JOIN pasien p ON a.pasien_id = p.id
+WHERE 
+    MONTH(a.tanggal_antrian) = '$bulan'
+    AND YEAR(a.tanggal_antrian) = '$tahun'
 ORDER BY a.tanggal_antrian DESC
 ";
 
 $result = mysqli_query($conn, $query);
 
 if (!$result) {
-    die("SQL Error: " . mysqli_error($conn) . "\nQuery: " . $query);
+    die("SQL Error: " . mysqli_error($conn));
 }
 
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 
 $sheet->mergeCells('A1:K1');
-$sheet->setCellValue('A1', 'Rekapitulasi Kunjungan Pasien');
+$sheet->setCellValue('A1', "Rekapitulasi Kunjungan Pasien Bulan $bulan-$tahun");
 $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
 $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
@@ -87,7 +94,7 @@ $sheet->getStyle('A3:K' . ($rowNumber - 1))->getBorders()->getAllBorders()->setB
 
 $writer = new Xlsx($spreadsheet);
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-header('Content-Disposition: attachment;filename="rekap_kunjungan_pasien.xlsx"');
+header('Content-Disposition: attachment;filename="rekap_kunjungan_${tahun}_${bulan}.xlsx"');
 header('Cache-Control: max-age=0');
 $writer->save('php://output');
 exit();

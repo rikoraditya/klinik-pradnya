@@ -36,6 +36,8 @@ require '../../public/php/functions.php'; // koneksi DB
 <!doctype html>
 <html>
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -324,13 +326,13 @@ require '../../public/php/functions.php'; // koneksi DB
 
     <!--Content 1-->
 
-    <div class="bg-gray-100 p-4">
-        <div class="max-w-6xl mx-auto mt-10 pb-10">
+    <div class="bg-gray-100 p-4 h-screen">
+        <div class="max-w-6xl mx-auto mt-10">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- Informasi Pendaftaran -->
                 <div class="font-poppins" data-aos="fade-up" data-aos-duration="2000">
-                    <h2 class="text-green-700 font-bold text-sm">PENDAFTARAN PASIEN RAWAT JALAN</h2>
-                    <h1 class="text-2xl font-bold mt-2">Silakan Login Untuk <br> Melakukan Pendaftaran</h1>
+                    <h2 class="text-green-700 font-bold text-md">PENDAFTARAN PASIEN RAWAT JALAN</h2>
+                    <h1 class="text-3xl font-bold mt-2">Silakan Login Untuk <br> Melakukan Pendaftaran</h1>
                     <img src="img/pendaftaran.PNG" alt="" class="w-full mt-6 -ml-14 hidden md:block">
                 </div>
                 <!-- Form Pendaftaran -->
@@ -346,7 +348,8 @@ require '../../public/php/functions.php'; // koneksi DB
                     <h2 class="text-xl font-poppins font-bold mb-4 text-center">Login</h2>
 
                     <!--Form Login-->
-                    <form id="formCekPasien" method="post" action="send_otp.php" onsubmit="return validatePhone()">
+                    <form class="mt-14" id="formCekPasien" method="post" action="send_otp.php"
+                        onsubmit="return validatePhone()">
                         <label class="block text-xs mb-1 text-left font-medium">Masukkan No. HP</label>
                         <input type="text" name="no_hp" id="no_hp" required pattern="^(08|628)[0-9]{8,12}$"
                             title="Masukkan nomor HP yang dimulai dengan 08 atau 628 dan memiliki 10-14 digit angka"
@@ -488,7 +491,7 @@ require '../../public/php/functions.php'; // koneksi DB
     <!--Akhir Content 1-->
 
     <!--Footer-->
-    <div class=" bg-green-900  text-white font-poppins">
+    <div class=" bg-green-900  text-white font-poppins ">
         <div class="mx-auto pt-8 pb-6 md:pb-4">
             <footer>
                 <div class="px-1 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-justify">

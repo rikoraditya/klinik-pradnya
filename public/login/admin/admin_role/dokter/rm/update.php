@@ -2,7 +2,7 @@
 session_start();
 use LDAP\Result;
 
-require '../../../../php/functions.php';
+require '../../../../../php/functions.php';
 
 
 if (!isset($_SESSION["login"])) {
@@ -12,55 +12,90 @@ if (!isset($_SESSION["login"])) {
 
 $username = $_SESSION["username"];
 
-$id = $_GET["id"];
 $id = $_GET['id'];
+$rekam_medis = query("
+SELECT 
+  kunjungan.id,
+  kunjungan.no_rm,
+  pasien.nama,
+  pasien.jenis_kelamin,
+  pasien.no_hp,
+  pasien.nik,
+  pasien.tanggal_lahir,
+  pasien.tempat_lahir,
+  pasien.alamat,
+  pasien.nik_bpjs,
+  kunjungan.tanggal_kunjungan,
+  kunjungan.poli_tujuan,
+  kunjungan.keluhan,
+  kunjungan.diagnosa,
+  kunjungan.denyut_nadi,
+  kunjungan.laju_pernapasan,
+  dokter.nama AS nama_dokter,
+  kunjungan.jenis_pasien,
 
-$pasien = query("SELECT 
-                  pasien.*,
-                  antrian.no_antrian,
-                  kunjungan.keluhan,
-                  kunjungan.poli_tujuan,
-                  pasien.jenis_kelamin,
-                  kunjungan.tanggal_kunjungan,
-                  kunjungan.jenis_pasien
-                FROM pasien
-                LEFT JOIN antrian ON antrian.pasien_id = pasien.id
-                LEFT JOIN kunjungan ON kunjungan.id = pasien.id
-                WHERE pasien.id = $id
-                ORDER BY kunjungan.tanggal_kunjungan DESC
-                LIMIT 1")[0];
+  GROUP_CONCAT(CONCAT(obat.nama_obat, ' (', kunjungan_obat.jumlah, ') (', kunjungan_obat.dosis, ')') SEPARATOR ', ') AS detail_obat
 
+FROM kunjungan
+LEFT JOIN rekam_medis ON kunjungan.no_rm = rekam_medis.no_rm
+LEFT JOIN dokter ON kunjungan.dokter_id = dokter.id
+LEFT JOIN pasien ON rekam_medis.nik = pasien.nik
+LEFT JOIN kunjungan_obat ON kunjungan.id = kunjungan_obat.id_kunjungan
+LEFT JOIN obat ON kunjungan_obat.kode_obat = obat.kode_obat
+WHERE kunjungan.id = '$id'
+GROUP BY kunjungan.id
+LIMIT 1
+")[0];
+
+
+
+// Ambil daftar obat (untuk dropdown)
+$obat = query("SELECT * FROM obat");
+
+// Ambil daftar dokter (untuk dropdown)
+$dokter = query("SELECT * FROM dokter");
+
+// Ambil daftar obat yang diberikan pada kunjungan ini (jika ada)
+$obat_kunjungan = [];
+if (!empty($rekam_medis['id_kunjungan'])) {
+    $obat_kunjungan = query("
+        SELECT ko.*, o.nama_obat, o.jenis_obat, o.dosis AS dosis_obat, o.keterangan
+        FROM kunjungan_obat ko
+        LEFT JOIN obat o ON ko.kode_obat = o.kode_obat
+        WHERE ko.id_kunjungan = {$rekam_medis['id_kunjungan']}
+    ");
+}
 
 echo "<!DOCTYPE html><html><head>
 <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
 </head><body>";
 
 
-
 if (isset($_POST["submit"])) {
-    $result = updatePasien($_POST);
 
-    if ($result >= 0) {
-        echo "<script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Data Berhasil Disimpan',
-                text: '" . ($result > 0 ? "Perubahan telah dilakukan." : "Tidak ada data yang berubah.") . "',
-                confirmButtonText: 'Kembali'
-            }).then(() => {
-                window.location.href = 'manage.php';
-            });
-        </script>";
+    if (updateRM($_POST) > 0) {
+
+        echo "<script> 
+        Swal.fire({
+            icon: 'success',
+            title: 'Data Berhasil Diubah',
+            confirmButtonText: 'Kembali'
+        }).then(() => {
+            window.location.href = 'manage.php';
+        });
+    </script>";
     } else {
-        echo "<script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Data Gagal Diubah',
-                confirmButtonText: 'Kembali'
-            }).then(() => {
-                window.location.href = 'manage.php';
-            });
-        </script>";
+        $errorMessage = $conn->error ? addslashes($conn->error) : "Terjadi kesalahan saat mengupdate data ";
+        echo "<script> 
+Swal.fire({
+    icon: 'error',
+    title: 'Data Gagal Diubah',
+    text: '" . $errorMessage . "',
+    confirmButtonText: 'Kembali'
+}).then(() => {
+    window.location.href = 'manage.php';
+});
+</script>";
     }
 }
 
@@ -80,7 +115,7 @@ echo "</body></html>";
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../../../../css/style.css" />
+    <link rel="stylesheet" href="../../../../../css/style.css" />
 </head>
 
 <body class="bg-gray-100">
@@ -157,7 +192,7 @@ echo "</body></html>";
             </button>
 
             <!-- Dashboard -->
-            <h1 class="text-2xl font-bold font-poppins sidebar-text mt-6">Admin</h1>
+            <h1 class="text-2xl font-bold font-poppins sidebar-text mt-6">Dokter</h1>
             <nav class="">
                 <div class="mb-2 mt-6">
                     <div class="mb-4">
@@ -168,31 +203,31 @@ echo "</body></html>";
                         </a>
                     </div>
 
+
+                </div>
+
+                <div class="mb-2">
                     <div class="flex items-center justify-between text-sm font-poppins cursor-pointer p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded"
-                        onclick="toggleMenuPasien('pasienMenu', 'iconPasien')">
+                        onclick="toggleMenuRM('rmMenu', 'iconRm')">
                         <div class="flex items-center gap-2">
-                            <i class="fas fa-user"></i>
-                            <span class="sidebar-text font-poppins">Pasien</span>
+                            <i class="fas fa-clipboard-list"></i>
+                            <span class="sidebar-text">Rekam Medis</span>
                         </div>
-                        <i class="fas fa-chevron-down sidebar-text transition-transform duration-300"
-                            id="iconPasien"></i>
+                        <i class="fas fa-chevron-down sidebar-text" id="iconRm"></i>
                     </div>
-
-                    <div id="pasienMenu"
-                        class="ml-10 font-poppins text-xs space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
+                    <div id="rmMenu"
+                        class="ml-10 text-xs font-poppins space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
                         style="max-height: 0; visibility: visible;">
-                        <a href="../pasien/registrasi.php"
-                            class="block cursor-pointer hover:text-gray-300">Registrasi</a>
-                        <a href="../pasien/manage.php" class="block cursor-pointer hover:text-gray-300">Manage
-                            Pasien</a>
+                        <a href="../rekammedis/tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah Rekam
+                            Medis</a>
+                        <a href="../rekammedis/manage.php" class="block cursor-pointer hover:text-gray-300">Manage Rekam
+                            Medis</a>
                     </div>
-
-
 
                     <script>
-                        function toggleMenuPasien(pasienMenu, iconPasien) {
-                            const menu = document.getElementById(pasienMenu);
-                            const icon = document.getElementById(iconPasien);
+                        function toggleMenuRM(rmMenu, iconRm) {
+                            const menu = document.getElementById(rmMenu);
+                            const icon = document.getElementById(iconRm);
 
                             if (menu.style.maxHeight && menu.style.maxHeight !== "0px") {
                                 menu.style.maxHeight = "0px";
@@ -207,69 +242,9 @@ echo "</body></html>";
                                 icon.classList.add('rotate-180');
                             }
                         }
-
-
                     </script>
 
                 </div>
-                <div class="mb-2">
-                    <div class="flex items-center justify-between text-sm font-poppins cursor-pointer p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded"
-                        onclick="toggleMenuDokter('dokterMenu', 'iconDokter')">
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-user-md"></i>
-                            <span class="sidebar-text">Dokter</span>
-                        </div>
-                        <i class="fas fa-chevron-down sidebar-text transition-transform duration-300"
-                            id="iconDokter"></i>
-                    </div>
-                    <div id="dokterMenu"
-                        class="ml-10 font-poppins text-xs space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
-                        style="max-height: 0; visibility: visible;">
-                        <a href="../dokter/tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah
-                            Dokter</a>
-                        <a href="../dokter/manage.php" class="block cursor-pointer hover:text-gray-300">Manage
-                            Dokter</a>
-                    </div>
-
-                    <script>
-                        function toggleMenuDokter(dokterMenu, iconDokter) {
-                            const menu = document.getElementById(dokterMenu);
-                            const icon = document.getElementById(iconDokter);
-
-                            if (menu.style.maxHeight && menu.style.maxHeight !== "0px") {
-                                menu.style.maxHeight = "0px";
-                                icon.classList.remove('rotate-180');
-                            } else {
-                                // Reset height dulu biar scrollHeight bisa dibaca
-                                menu.style.maxHeight = "0px";
-                                // Pakai timeout kecil biar animasi kebaca
-                                setTimeout(() => {
-                                    menu.style.maxHeight = menu.scrollHeight + "px";
-                                }, 10);
-                                icon.classList.add('rotate-180');
-                            }
-                        }
-
-
-                    </script>
-
-                </div>
-                <div class="mb-4">
-                    <a href="crud/obat/manage.php"
-                        class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
-                        <i class="fas fa-pills"></i>
-                        <span class="sidebar-text -ml-1">Obat</span>
-                    </a>
-                </div>
-
-                <div class="mb-2">
-                    <a href="crud/rekammedis/manage.php"
-                        class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
-                        <i class="fas fa-clipboard-list"></i>
-                        <span class="sidebar-text ml-1">Rekam Medis</span>
-                    </a>
-                </div>
-
             </nav>
             <button onclick="openLogoutModal();" data-href="../logout.php"
                 class="flex items-center space-x-2 p-2 w-full font-poppins text-sm text-left hover:bg-red-600 rounded mt-6">
@@ -369,12 +344,13 @@ echo "</body></html>";
                             <p class="text-gray-800 font-semibold">Manage Akun</p>
                             <p class="text-sm text-gray-500">Klinik Pradnya Usadha</p>
                         </div>
-                        <a href="../../reset_pass_admin.php"
+                        <a href="../reset_pass_admin.php"
                             class="flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100">
                             <i class=" text-gray-600 text-sm"></i>
                             Pengaturan
                         </a>
                     </div>
+
             </header>
 
 
@@ -418,97 +394,173 @@ echo "</body></html>";
                 <h1 class="text-2xl font-bold">Data</h1>
                 <p class="text-gray-600">Update Data</p>
                 <div class="max-w-7xl bg-white p-6 rounded-lg shadow-md mt-4">
-                    <h4 class="text-lg font-semibold mb-4">Pasien</h4>
+                    <h4 class="text-lg font-semibold mb-4">Rekam Medis Pasien</h4>
                     <div id="formContainer text-xs">
 
-
-
                         <form action="" method="POST" class="space-y-4 text-xs text-gray-600">
-                            <input type="hidden" name="id" value="<?= $pasien['id']; ?>">
+                            <input type="hidden" name="id" id="id" value="<?= $rekam_medis['id']; ?>">
+                            <div class="grid grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block  font-medium">No. RM</label>
+                                    <input type="text" name="no_rm" class="w-full p-2 border rounded-md"
+                                        value="<?= $rekam_medis['no_rm'] ?? '' ?>" readonly>
+                                </div>
+                                <div>
+                                    <label class="block  font-medium">Nama Pasien</label>
+                                    <input type="text" name="nama" class="w-full p-2 border rounded-md"
+                                        value="<?= $rekam_medis['nama'] ?? '' ?>" readonly>
+                                </div>
+                                <div>
+                                    <label class="block  font-medium">No. KTP</label>
+                                    <input type="text" name="nik" class="w-full p-2 border rounded-md"
+                                        value="<?= $rekam_medis['nik'] ?? '' ?>" readonly>
+                                </div>
 
+                            </div>
                             <div class="grid grid-cols-3 gap-4">
 
                                 <div>
-                                    <label class="block font-medium">Nama Pasien</label>
-                                    <input type="text" name="nama" id="nama" class="w-full p-2 border rounded-md"
-                                        value="<?= htmlspecialchars($pasien['nama'] ?? '') ?>" required>
+                                    <label class="block  font-medium">Jenis Kelamin</label>
+                                    <input type="text" name="jenis_kelamin" class="w-full p-2 border rounded-md"
+                                        value="<?= $rekam_medis['jenis_kelamin'] ?? '' ?>" readonly>
+                                </div>
+                                <div>
+                                    <label class="block  font-medium">No. HP</label>
+                                    <input type="text" name="no_hp" class="w-full p-2 border rounded-md"
+                                        value="<?= $rekam_medis['no_hp'] ?? '' ?>" readonly>
+                                </div>
+                                <div>
+                                    <label class="block  font-medium">Alamat</label>
+                                    <input type="text" name="alamat" class="w-full p-2 border rounded-md"
+                                        value="<?= $rekam_medis['alamat'] ?? '' ?>" readonly>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block  font-medium">Tempat Lahir</label>
+                                    <input type="text" name="tempat_lahir" class="w-full p-2 border rounded-md"
+                                        value="<?= $rekam_medis['tempat_lahir'] ?? '' ?>" readonly>
+                                </div>
+                                <div>
+                                    <label class="block  font-medium">Tanggal Lahir</label>
+                                    <input type="date" name="tanggal_lahir" class="w-full p-2 border rounded-md"
+                                        value="<?= $rekam_medis['tanggal_lahir'] ?? '' ?>" readonly>
+                                </div>
+                                <div>
+                                    <label class="block  font-medium">Tanggal Kunjungan</label>
+                                    <input type="date" name="tanggal_kunjungan" class="w-full p-2 border rounded-md"
+                                        value="<?= $rekam_medis['tanggal_kunjungan'] ?>" readonly>
                                 </div>
 
+                            </div>
+                            <div class="grid grid-cols-4 gap-4">
                                 <div>
-                                    <label class="block font-medium">No. KTP</label>
-                                    <input type="text" name="nik" id="nik" class="w-full p-2 border rounded-md"
-                                        value="<?= htmlspecialchars($pasien['nik'] ?? '') ?>" required pattern="\d{16}">
-                                </div>
-
-                                <?php $jk = isset($pasien['jenis_kelamin']) ? $pasien['jenis_kelamin'] : ''; ?>
-                                <div>
-                                    <label class="block font-medium">Jenis Kelamin</label>
-                                    <select name="jenis_kelamin" id="jenis_kelamin" class="w-full p-2 border rounded-md"
-                                        required>
-
-                                        <option value="Laki-laki" <?= $jk === 'Laki-laki' ? 'selected' : '' ?>>Laki-laki
+                                    <label class="block  font-medium">Poli Tujuan</label>
+                                    <select class="w-full p-2 border rounded-md" name="poli_tujuan">
+                                        <option value="<?= $rekam_medis['poli_tujuan'] ?>"
+                                            <?= ($rekam_medis['poli_tujuan'] ?? '') === $rekam_medis['poli_tujuan'] ? 'selected' : '' ?>>
+                                            <?= $rekam_medis['poli_tujuan'] ?>
                                         </option>
-                                        <option value="Perempuan" <?= $jk === 'Perempuan' ? 'selected' : '' ?>>Perempuan
-                                        </option>
+
                                     </select>
                                 </div>
 
-
-                            </div>
-
-                            <div class="grid grid-cols-3 gap-4">
-
                                 <div>
-                                    <label class="block font-medium">No. HP</label>
-                                    <input type="text" name="no_hp" id="no_hp" class="w-full p-2 border rounded-md"
-                                        value="<?= htmlspecialchars($pasien['no_hp'] ?? '') ?>" required
-                                        pattern="\d{10,13}">
+                                    <label class="block  font-medium">Keluhan</label>
+                                    <input type="text" name="keluhan" class="w-full p-2 border rounded-md"
+                                        value="<?= $rekam_medis['keluhan'] ?>" readonly>
                                 </div>
-
                                 <div>
-                                    <label class="block font-medium">Alamat</label>
-                                    <input type="text" name="alamat" id="alamat" class="w-full p-2 border rounded-md"
-                                        value="<?= htmlspecialchars($pasien['alamat'] ?? '') ?>" required>
+                                    <label class="block  font-medium">Jenis Pasien</label>
+                                    <select name="jenis_pasien" class="w-full p-2 border rounded-md" required>
+
+                                        <option value="<?= $rekam_medis['jenis_pasien']; ?>">
+                                            <?= $rekam_medis['jenis_pasien']; ?>
+                                        </option>
+
+                                    </select>
                                 </div>
-
                                 <div>
-                                    <label class="block font-medium">Tempat Lahir</label>
-                                    <input type="text" name="tempat_lahir" id="tempat_lahir"
-                                        class="w-full p-2 border rounded-md"
-                                        value="<?= htmlspecialchars($pasien['tempat_lahir'] ?? '') ?>" required>
+                                    <label class="block  font-medium">No. NIK/BPJS</label>
+                                    <input type="text" name="nik_bpjs" class="w-full p-2 border rounded-md"
+                                        value="<?= $rekam_medis['nik_bpjs'] ?>" readonly>
                                 </div>
 
                             </div>
 
                             <div class="grid grid-cols-3 gap-4">
-
                                 <div>
-                                    <label class="block font-medium">Tanggal Lahir</label>
-                                    <input type="date" name="tanggal_lahir" id="tanggal_lahir"
+                                    <label class="block  font-medium">Laju Pernapasan</label>
+                                    <input type="text" name="laju_pernapasan" required
                                         class="w-full p-2 border rounded-md"
-                                        value="<?= htmlspecialchars($pasien['tanggal_lahir'] ?? '') ?>" required>
+                                        value="<?= $rekam_medis['laju_pernapasan'] ?>">
                                 </div>
 
                                 <div>
-                                    <label class="block font-medium">NIK / No. BPJS</label>
-                                    <input type="text" name="nik_bpjs" id="nik_bpjs"
-                                        class="w-full p-2 border rounded-md"
-                                        value="<?= htmlspecialchars($pasien['nik_bpjs'] ?? '') ?>" required>
+                                    <label class="block  font-medium">Denyut Nadi</label>
+                                    <input type="text" name="denyut_nadi" required class="w-full p-2 border rounded-md"
+                                        value="<?= $rekam_medis['denyut_nadi'] ?>">
                                 </div>
 
-                                <div></div> <!-- Kosong untuk kolom ketiga -->
+                                <div>
+                                    <label class="block  font-medium">Dokter</label>
+                                    <select name="dokter" class="w-full p-2 border rounded-md" required>
+
+
+                                        <?php foreach ($dokter as $o): ?>
+                                            <option value="<?= $o['nama'] ?>" <?= ($rekam_medis['nama_dokter'] ?? '') === $o['nama'] ? 'selected' : '' ?>>
+                                                <?= $o['nama'] ?>
+
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+
+                                </div>
 
                             </div>
 
+                            <div class="grid grid-cols-1 gap-4">
+                                <div>
+                                    <label class="block font-medium">Obat</label>
+
+                                    <div id="obat-wrapper">
+                                        <?php
+                                        // $rekam_medis['nama_obat'] = "Paracetamol, Amoxicillin";
+                                        $obat_dipilih = explode(', ', $rekam_medis['detail_obat'] ?? '');
+                                        ?>
+
+                                        <select name="obat[]" multiple class="w-full p-2 border rounded-md" required>
+                                            <?php foreach ($obat_dipilih as $nama_obat): ?>
+                                                <option value="<?= htmlspecialchars($nama_obat) ?>" selected>
+                                                    <?= htmlspecialchars($nama_obat) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+
+
+                                    </div>
+
+                                    <button type="button" id="tambah-obat"
+                                        class="mt-2 bg-green-500 text-white px-4 py-2 rounded">+ Tambah Obat</button>
+
+
+                                </div>
+                            </div>
+
+
+                            <div>
+                                <label class="block  font-medium">Diagnosa</label>
+                                <textarea name="diagnosa" required class="w-full p-2 border rounded-md"
+                                    value="<?= $rekam_medis['diagnosa'] ?>"><?= $rekam_medis['diagnosa'] ?></textarea>
+                            </div>
                             <button type="submit" name="submit"
                                 class="mt-4 bg-green-800 hover:bg-green-900 text-white py-2 px-3 rounded-md text-xs">Update</button>
-
                             <a href="manage.php"
-                                class="bg-red-700 hover:bg-red-900 text-white py-2 px-3 rounded-md text-xs relative inline-block">
+                                class="bg-red-700 hover:bg-red-900 text-white py-2 px-3 rounded-md text-xs relative">
                                 Kembali
                             </a>
-                        </form>
 
+                        </form>
                     </div>
 
                 </div>
@@ -545,6 +597,38 @@ echo "</body></html>";
                     return;
                 menu.classList.toggle("hidden");
             }
+        </script>
+
+
+        <!--Scrip tambah Obat-->
+        <script>
+            document.getElementById('tambah-obat').addEventListener('click', function () {
+                const wrapper = document.getElementById('obat-wrapper');
+                const div = document.createElement('div');
+                div.className = 'mb-2 p-2 border rounded-md flex gap-2 items-center';
+
+                div.innerHTML = `
+        <select name="obat[]" class="p-2 border rounded-md" required>
+            <?php foreach ($obat as $o): ?>
+                <option value="<?= $o['nama_obat'] ?>"><?= $o['nama_obat'] ?></option>
+            <?php endforeach; ?>
+        </select>
+
+        <input type="number" name="jumlah[]" class="p-2 border rounded-md w-24" placeholder="Jumlah" required>
+        <input type="text" name="dosis[]" class="p-2 border rounded-md w-32" placeholder="Dosis" required>
+
+        <button type="button" class="remove-obat bg-red-500 text-white px-2 rounded">Hapus</button>
+    `;
+
+                wrapper.appendChild(div);
+            });
+
+            // Hapus baris obat
+            document.addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-obat')) {
+                    e.target.parentElement.remove();
+                }
+            });
         </script>
 </body>
 

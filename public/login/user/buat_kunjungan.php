@@ -249,7 +249,7 @@ if (!isset($_SESSION["login_user"])) {
     </script>
 
     <!-- Main Content -->
-    <main class="flex-1 p-4 transition-all md:ml-48 md:mt-10 duration-300" id="mainContent">
+    <main class="flex-1 p-4 transition-all md:ml-48 md:mt-10 duration-300 " id="mainContent">
       <div class="bg-gray-100">
         <div class="max-w-6xl mx-auto pb-10">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -355,7 +355,11 @@ if (!isset($_SESSION["login_user"])) {
           </div>
         </div>
       </div>
+
     </main>
+
+
+
   </div>
 
 

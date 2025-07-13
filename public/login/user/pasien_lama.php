@@ -282,7 +282,7 @@ if ($q && mysqli_num_rows($q) > 0) {
     <main class="flex-1 p-8 md:ml-64 transition-all duration-300 font-poppins" id="mainContent">
 
       <div class="bg-gray-100">
-        <div class="max-w-6xl mx-auto pb-10">
+        <div class="md:max-w-6xl  mx-auto pb-10">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- Informasi Pendaftaran -->
             <div class="font-poppins" data-aos="fade-up" data-aos-duration="2000">
@@ -296,7 +296,7 @@ if ($q && mysqli_num_rows($q) > 0) {
               <img src="../../img/pendaftaran.PNG" alt="" class="w-10/12 mt-3 -ml- hidden md:block" />
             </div>
             <!-- Form Pendaftaran -->
-            <div class="bg-white p-6 md:h-max rounded-lg shadow-md md:mt-7 font-poppins">
+            <div class="bg-white p-5  md:h-max rounded-lg shadow-md md:mt-7 font-poppins">
               <h2 class="text-md font-bold mb-4">Pendaftaran Pasien Lama</h2>
               <form action="../../php/proses_user.php" method="POST" class="space-y-3 md:space-y-3  text-xs">
                 <div class="grid grid-cols-1 gap-4">

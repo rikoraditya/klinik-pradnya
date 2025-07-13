@@ -10,6 +10,8 @@ if (!isset($_SESSION["login"])) {
   exit;
 }
 
+$username = $_SESSION["username"];
+
 //pagination table
 $limit = 5;
 $page = isset($_GET["halaman"]) ? (int) $_GET["halaman"] : 1;
@@ -418,21 +420,25 @@ if (isset($_POST["cari"])) {
           <div class="flex items-center space-x-2">
             <!-- Ikon Profil Modern dan Teks Admin -->
             <i class="fas fa-user-circle text-gray-600 text-2xl"></i>
-            <span id="dropdownButton" class="text-sm font-medium text-gray-700">Admin</span>
+            <span id="dropdownButton" class="text-sm font-medium text-gray-700">
+              <?php echo htmlspecialchars($username); ?>
+            </span>
+
 
           </div>
           <!-- Dropdown menu -->
           <div id="dropdownMenu"
             class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200">
             <div class="p-4 border-b">
-              <p class="text-gray-800 font-semibold">Admin Panel</p>
+              <p class="text-gray-800 font-semibold">Manage Akun</p>
               <p class="text-sm text-gray-500">Klinik Pradnya Usadha</p>
             </div>
-            <a href="../../reset_pass_admin.php" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
-              <i class="fas fa-lock text-gray-600 text-base pr-2"></i>
-              Akun
+            <a href="../reset_pass_admin.php" class="flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100">
+              <i class=" text-gray-600 text-sm"></i>
+              Pengaturan
             </a>
           </div>
+
 
       </header>
 

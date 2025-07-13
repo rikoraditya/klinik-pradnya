@@ -14,28 +14,47 @@ require '../php/functions.php';
 if (isset($_POST["login"])) {
   $username = $_POST["username"];
   $password = $_POST["password"];
+  $role = $_POST["role"];
 
-  // Query tanpa spasi yang salah
-  $result = mysqli_query($conn, "SELECT * FROM admin WHERE username = '$username'");
+  if (empty($role)) {
+    echo "<script>alert('Silakan pilih role login!');</script>";
+    exit;
+  }
+
+  $result = mysqli_query($conn, "SELECT * FROM admin WHERE username = '$username' AND role = '$role'");
 
   if (mysqli_num_rows($result) === 1) {
     $row = mysqli_fetch_assoc($result);
 
-    // Bandingkan password langsung (karena tidak pakai password_hash)
     if ($password === $row["password"]) {
       $_SESSION["login"] = true;
       $_SESSION["username"] = $row["username"];
-      header("Location: admin/dashboard.php");
+      $_SESSION["role"] = $row["role"];
+
+      switch ($row["role"]) {
+        case 'admin':
+          header("Location: admin/dashboard.php");
+          break;
+        case 'dokter':
+          header("Location: admin/admin_role/dokter/dashboard.php");
+          break;
+        case 'farmasi':
+          header("Location: admin/admin_role/farmasi/manage.php");
+          break;
+        default:
+          session_destroy();
+          header("Location: login.php");
+          break;
+      }
       exit;
     } else {
-      $error = 'Password salah!';
-      echo "<script>alert('$error');</script>";
+      echo "<script>alert('Password salah!');</script>";
     }
   } else {
-    $error = 'Username tidak ditemukan!';
-    echo "<script>alert('$error');</script>";
+    echo "<script>alert('Username atau role tidak sesuai!');</script>";
   }
 }
+
 ?>
 
 
@@ -80,16 +99,25 @@ if (isset($_POST["login"])) {
 
 <body class="flex items-center justify-center h-screen bg-gray-100">
   <div class="bg-white p-8 rounded-lg shadow-lg w-96">
-    <img src="../img/profil.png" alt="" class="w-20 pb-3 mx-auto" />
+    <img src="../img/logo.JPG" alt="" class="w-32 pb-3 mx-auto" />
     <h2 class="text-xl font-poppins font-bold mb-4 text-center">
-      Login Admin
+      SIM-KLINIK
     </h2>
     <form id="formAdmin" method="post" action="">
+      <label class="block text-xs mb-1">Login Sebagai</label>
+      <select name="role" id="role" class="w-full text-xs px-2 py-2 border rounded mb-4" required>
+        <option value="admin">Admin</option>
+        <option value="dokter">Dokter</option>
+        <option value="farmasi">Farmasi</option>
+
+      </select>
       <label class="block text-xs mb-1">Username</label>
       <input type="text" name="username" id="username" class="w-full text-xs px-3 py-2 border rounded mb-2" required />
+
       <label class="block text-xs mb-1">Password</label>
-      <input type="password" name="password" id="password" class="w-full px-3 text-xs py-2 border rounded mb-4"
+      <input type="password" name="password" id="password" class="w-full px-3 text-xs py-2 border rounded mb-2"
         required />
+
       <button type="submit" id="submitBtn" name="login" formaction=""
         class="w-full text-xs bg-green-600 hover:bg-green-800 text-white py-2 rounded">
         Login

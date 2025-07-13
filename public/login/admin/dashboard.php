@@ -7,6 +7,8 @@ if (!isset($_SESSION["login"])) {
   exit;
 }
 
+$username = $_SESSION["username"];
+
 $poli_umum = query("SELECT COUNT(*) AS total FROM antrian WHERE poli_tujuan = 'Poli Umum'")[0]['total'];
 $poli_gigi = query("SELECT COUNT(*) AS total FROM antrian WHERE poli_tujuan = 'Poli Gigi'")[0]['total'];
 
@@ -227,82 +229,19 @@ $antrian = query("
 
         </div>
         <div class="mb-2">
-          <div
-            class="flex items-center justify-between text-sm font-poppins cursor-pointer p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded"
-            onclick="toggleMenuObat('obatMenu', 'iconObat')">
-            <div class="flex items-center gap-1">
-              <i class="fas fa-pills"></i>
-              <span class="sidebar-text">Obat</span>
-            </div>
-            <i class="fas fa-chevron-down sidebar-text transition-transform duration-300" id="iconObat"></i>
-          </div>
-          <div id="obatMenu"
-            class="ml-10 text-xs font-poppins space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
-            style="max-height: 0; visibility: visible;">
-            <a href="crud/obat/tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah Obat</a>
-            <a href="crud/obat/manage.php" class="block cursor-pointer hover:text-gray-300">Manage Obat</a>
-          </div>
-
-          <script>
-            function toggleMenuObat(obatMenu, iconObat) {
-              const menu = document.getElementById(obatMenu);
-              const icon = document.getElementById(iconObat);
-
-              if (menu.style.maxHeight && menu.style.maxHeight !== "0px") {
-                menu.style.maxHeight = "0px";
-                icon.classList.remove('rotate-180');
-              } else {
-                // Reset height dulu biar scrollHeight bisa dibaca
-                menu.style.maxHeight = "0px";
-                // Pakai timeout kecil biar animasi kebaca
-                setTimeout(() => {
-                  menu.style.maxHeight = menu.scrollHeight + "px";
-                }, 10);
-                icon.classList.add('rotate-180');
-              }
-            }
-          </script>
-
+          <a href="crud/obat/manage.php"
+            class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
+            <i class="fas fa-pills"></i>
+            <span class="sidebar-text -ml-1">Obat</span>
+          </a>
         </div>
+
         <div class="mb-2">
-          <div
-            class="flex items-center justify-between text-sm font-poppins cursor-pointer p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded"
-            onclick="toggleMenuRM('rmMenu', 'iconRm')">
-            <div class="flex items-center gap-2">
-              <i class="fas fa-clipboard-list"></i>
-              <span class="sidebar-text">Rekam Medis</span>
-            </div>
-            <i class="fas fa-chevron-down sidebar-text" id="iconRm"></i>
-          </div>
-          <div id="rmMenu"
-            class="ml-10 text-xs font-poppins space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
-            style="max-height: 0; visibility: visible;">
-            <a href="crud/rekammedis/tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah Rekam
-              Medis</a>
-            <a href="crud/rekammedis/manage.php" class="block cursor-pointer hover:text-gray-300">Manage Rekam
-              Medis</a>
-          </div>
-
-          <script>
-            function toggleMenuRM(rmMenu, iconRm) {
-              const menu = document.getElementById(rmMenu);
-              const icon = document.getElementById(iconRm);
-
-              if (menu.style.maxHeight && menu.style.maxHeight !== "0px") {
-                menu.style.maxHeight = "0px";
-                icon.classList.remove('rotate-180');
-              } else {
-                // Reset height dulu biar scrollHeight bisa dibaca
-                menu.style.maxHeight = "0px";
-                // Pakai timeout kecil biar animasi kebaca
-                setTimeout(() => {
-                  menu.style.maxHeight = menu.scrollHeight + "px";
-                }, 10);
-                icon.classList.add('rotate-180');
-              }
-            }
-          </script>
-
+          <a href="crud/rekammedis/manage.php"
+            class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
+            <i class="fas fa-clipboard-list"></i>
+            <span class="sidebar-text ml-1">Rekam Medis</span>
+          </a>
         </div>
       </nav>
       <button onclick="openLogoutModal();" data-href="../logout.php"
@@ -390,21 +329,25 @@ $antrian = query("
           <div class="flex items-center space-x-2">
             <!-- Ikon Profil Modern dan Teks Admin -->
             <i class="fas fa-user-circle text-gray-600 text-2xl"></i>
-            <span id="dropdownButton" class="text-sm font-medium text-gray-700">Admin</span>
+            <span id="dropdownButton" class="text-sm font-medium text-gray-700">
+              <?php echo htmlspecialchars($username); ?>
+            </span>
+
 
           </div>
           <!-- Dropdown menu -->
           <div id="dropdownMenu"
             class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200">
             <div class="p-4 border-b">
-              <p class="text-gray-800 font-semibold">Admin Panel</p>
+              <p class="text-gray-800 font-semibold">Manage Akun</p>
               <p class="text-sm text-gray-500">Klinik Pradnya Usadha</p>
             </div>
-            <a href="reset_pass_admin.php" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
-              <i class="fas fa-lock text-gray-600 text-base pr-2"></i>
-              Akun
+            <a href="reset_pass_admin.php" class="flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100">
+              <i class=" text-gray-600 text-sm"></i>
+              Pengaturan
             </a>
           </div>
+
 
       </header>
 
@@ -463,38 +406,119 @@ $antrian = query("
 
         <div class="bg-white shadow-md rounded-lg p-4">
 
-          <div class="flex justify-between items-center pb-2">
-            <!-- Kolom kiri: Form pencarian -->
-            <form action="" method="post" class="relative w-full max-w-xs">
-              <input type="text" name="keyword" id="keyword" autocomplete="off" autofocus placeholder="Cari data..."
-                class="w-full pl-8 pr-3 py-1.5 text-xs rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 transition placeholder-gray-400" />
-
-              <!-- Ikon pencarian -->
-              <div class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
-                <svg class="w-3.5 h-3.5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
-                  viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M21 21l-4.35-4.35M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z" />
-                </svg>
+          <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-2 pb-2">
+            <!-- Pencarian & Filter Tanggal -->
+            <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+              <!-- Form pencarian -->
+              <div class="relative w-full md:w-64">
+                <input type="text" name="keyword" id="keyword" autocomplete="off" placeholder="Cari data..."
+                  class="w-full pl-8 pr-3 py-1.5 text-xs rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 transition placeholder-gray-400" />
+                <div class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+                  <svg class="w-3.5 h-3.5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M21 21l-4.35-4.35M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z" />
+                  </svg>
+                </div>
               </div>
-            </form>
+              <!-- Filter tanggal -->
+              <input type="date" id="tanggalFilter" name="tanggal" value="<?= date('Y-m-d') ?>"
+                class="border border-gray-300 text-xs px-2 py-1 rounded">
+              <label class="flex items-center cursor-pointer">
+                <input type="checkbox" id="tampilkanSemua" class="sr-only peer">
+                <div
+                  class="w-10 h-5 bg-gray-300 rounded-full relative transition-colors duration-300 peer-checked:bg-green-500 before:content-[''] before:absolute before:top-0.5 before:left-0.5 before:w-4 before:h-4 before:bg-white before:rounded-full before:transition-all peer-checked:before:translate-x-5">
+                </div>
+                <span class="ml-3 text-xs text-gray-700">Tampilkan Semua</span>
+              </label>
 
 
 
-            <!-- Kolom kanan: Tombol export -->
-            <button onclick="window.location.href='export_exel.php'"
-              class="bg-[#18c161] hover:bg-[#1e623b] text-white text-xs py-2 px-3 rounded-md flex items-center gap-2 shadow-sm transition">
-              <!-- Ikon Excel (customized for Excel brand) -->
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current text-white" viewBox="0 0 24 24">
-                <path
-                  d="M19 2H8a2 2 0 0 0-2 2v3H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1v3a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2ZM8 4h11v16H8v-3h6a1 1 0 1 0 0-2H5V9h9a1 1 0 1 0 0-2H8V4Zm1.67 8.66 1.26 2.67a.75.75 0 0 1-1.34.68L9 13.34l-.59 1.26a.75.75 0 1 1-1.34-.68l1.26-2.67-1.26-2.66a.75.75 0 1 1 1.34-.68L9 10.66l.59-1.26a.75.75 0 0 1 1.34.68l-1.26 2.66Z" />
-              </svg>
-              <span class="font-medium">Download</span>
-            </button>
+            </div>
+
+            <!-- Tombol export -->
+            <div class="flex space-x-2">
+              <button onclick="openExportModal()"
+                class="bg-[#18c161] hover:bg-[#1e623b] text-white text-xs py-2 px-3 rounded-md flex items-center gap-2 shadow-sm transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current text-white" viewBox="0 0 24 24">
+                  <path
+                    d="M19 2H8a2 2 0 0 0-2 2v3H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1v3a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2ZM8 4h11v16H8v-3h6a1 1 0 1 0 0-2H5V9h9a1 1 0 1 0 0-2H8V4Zm1.67 8.66 1.26 2.67a.75.75 0 0 1-1.34.68L9 13.34l-.59 1.26a.75.75 0 1 1-1.34-.68l1.26-2.67-1.26-2.66a.75.75 0 1 1 1.34-.68L9 10.66l.59-1.26a.75.75 0 0 1 1.34.68l-1.26 2.66Z" />
+                </svg>
+                <span class="font-medium">Download</span>
+              </button>
+
+              <!--Modal Download-->
+              <div id="exportModal"
+                class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+                <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 font-poppins">
+                  <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold">Pilih Periode Rekap</h2>
+                    <button onclick="closeExportModal()"
+                      class="text-gray-400 hover:text-red-600 text-2xl">&times;</button>
+                  </div>
+
+                  <form action="export_exel.php" method="get" class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium mb-1">Bulan</label>
+                      <select name="bulan" class="w-full border p-2 rounded" required>
+                        <option value="">-- Pilih Bulan --</option>
+                        <?php
+                        for ($i = 1; $i <= 12; $i++) {
+                          $bulanNama = date('F', mktime(0, 0, 0, $i, 10));
+                          echo "<option value='$i'>$bulanNama</option>";
+                        }
+                        ?>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium mb-1">Tahun</label>
+                      <select name="tahun" class="w-full border p-2 rounded" required>
+                        <option value="">-- Pilih Tahun --</option>
+                        <?php
+                        $tahunSekarang = date('Y');
+                        for ($y = $tahunSekarang; $y >= $tahunSekarang - 5; $y--) {
+                          echo "<option value='$y'>$y</option>";
+                        }
+                        ?>
+                      </select>
+                    </div>
+
+                    <div class="flex justify-end gap-2 pt-2">
+                      <button type="button" onclick="closeExportModal()"
+                        class="bg-gray-300 hover:bg-gray-400 text-sm px-3 py-1 rounded">Batal</button>
+                      <button type="submit"
+                        class="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1 rounded">Download
+                        Rekap</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
 
 
 
+              <script>
+                function openExportModal() {
+                  document.getElementById('exportModal').classList.remove('hidden');
+                }
+                function closeExportModal() {
+                  document.getElementById('exportModal').classList.add('hidden');
+                }
+              </script>
+
+              <!--Modal Akhir Download-->
+
+              <button onclick="window.location.href='backup.php'"
+                class="bg-yellow-500 hover:bg-yellow-600 text-white text-xs py-2 px-3 rounded-md flex items-center gap-2 shadow-sm transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current text-white" viewBox="0 0 24 24">
+                  <path
+                    d="M12 2a10 10 0 0 0-7.48 16.94l-2.12 2.12a1 1 0 0 0 1.42 1.42l2.12-2.12A10 10 0 1 0 12 2Zm1 14h-2v-2h2Zm0-4h-2V6h2Z" />
+                </svg>
+                <span class="font-medium">Backup SQL</span>
+              </button>
+            </div>
           </div>
+
+
 
 
           <div id="container">
@@ -516,10 +540,15 @@ $antrian = query("
 
     function loadTable(page = 1) {
       const search = keyword?.value.trim() || '';
+      const tanggalInput = document.getElementById('tanggalFilter');
+      const tampilkanSemua = document.getElementById('tampilkanSemua')?.checked;
+
+      const tanggal = tampilkanSemua ? '' : (tanggalInput?.value || '');
+
       container.innerHTML = '<div class="text-center p-4 text-gray-500">Memuat data...</div>';
 
       const xhr = new XMLHttpRequest();
-      xhr.open('GET', `../../js/ajax/pasien.php?keyword=${encodeURIComponent(search)}&halaman=${page}`, true);
+      xhr.open('GET', `../../js/ajax/pasien.php?keyword=${encodeURIComponent(search)}&tanggal=${encodeURIComponent(tanggal)}&halaman=${page}`, true);
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
           container.innerHTML = xhr.responseText;
@@ -529,6 +558,8 @@ $antrian = query("
       xhr.send();
     }
 
+
+
     // Saat halaman dimuat, langsung ambil data awal
     window.addEventListener('DOMContentLoaded', () => {
       loadTable(1);
@@ -536,6 +567,21 @@ $antrian = query("
 
     // Event pencarian otomatis
     keyword?.addEventListener('keyup', () => loadTable(1));
+    document.getElementById('tanggalFilter')?.addEventListener('change', () => loadTable(1));
+    document.getElementById('tampilkanSemua')?.addEventListener('change', () => loadTable(1));
+
+    // Event ketika checkbox tampilkan semua diubah
+    document.getElementById('tampilkanSemua')?.addEventListener('change', function () {
+      if (this.checked) {
+        document.getElementById('tanggalFilter').value = '';
+      } else {
+        document.getElementById('tanggalFilter').value = '<?= date('Y-m-d') ?>';
+      }
+      loadTable(1);
+    });
+
+
+
 
     // Pasang ulang event tombol pagination setelah konten baru di-load
     function setupPaginationEvents() {

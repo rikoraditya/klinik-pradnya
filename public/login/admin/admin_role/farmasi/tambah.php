@@ -11,28 +11,7 @@ if (!isset($_SESSION["login"])) {
 }
 
 $username = $_SESSION["username"];
-
-//pagination table
-$limit = 5;
-$page = isset($_GET["halaman"]) ? (int) $_GET["halaman"] : 1;
-$offset = ($page - 1) * $limit;
-
-$HalamanAktif = $page;
-$JumlahData = count(query("SELECT * FROM obat"));
-$JumlahHalaman = ceil($JumlahData / $limit);
-
-
-
-$obat = query("SELECT * FROM obat LIMIT $limit OFFSET $offset;");
-
-
-
-//tombol cari
-if (isset($_POST["cari_obat"])) {
-  $obat = cari_obat($_POST["keyword"]);
-}
 ?>
-
 
 <!DOCTYPE html>
 <html lang="id">
@@ -42,10 +21,9 @@ if (isset($_POST["cari_obat"])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard Antrian</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../../../css/style.css" />
 </head>
@@ -68,7 +46,7 @@ if (isset($_POST["cari_obat"])) {
         document.getElementById("loadingOverlay").classList.remove("hidden");
 
         setTimeout(() => {
-          window.location.href = "admin.html";
+          window.location.href = "admin.php";
         }, 2000);
       }
     </script>
@@ -126,38 +104,28 @@ if (isset($_POST["cari_obat"])) {
       <!-- Dashboard -->
       <h1 class="text-2xl font-bold font-poppins sidebar-text mt-6">Admin</h1>
       <nav class="">
-        <div class="mb-2 mt-6">
-          <div class="mb-4">
-            <a href="../../dashboard.php"
-              class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
-              <i class="fas fa-chart-line"></i>
-              <span class="sidebar-text -ml-1">Dashboard</span>
-            </a>
-          </div>
 
+        <div class="mb-2">
           <div
             class="flex items-center justify-between text-sm font-poppins cursor-pointer p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded"
-            onclick="toggleMenuPasien('pasienMenu', 'iconPasien')">
-            <div class="flex items-center gap-2">
-              <i class="fas fa-user"></i>
-              <span class="sidebar-text font-poppins">Pasien</span>
+            onclick="toggleMenuObat('obatMenu', 'iconObat')">
+            <div class="flex items-center gap-1">
+              <i class="fas fa-pills"></i>
+              <span class="sidebar-text">Obat</span>
             </div>
-            <i class="fas fa-chevron-down sidebar-text transition-transform duration-300" id="iconPasien"></i>
+            <i class="fas fa-chevron-down sidebar-text transition-transform duration-300" id="iconObat"></i>
           </div>
-
-          <div id="pasienMenu"
-            class="ml-10 font-poppins text-xs space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
+          <div id="obatMenu"
+            class="ml-10 text-xs font-poppins space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
             style="max-height: 0; visibility: visible;">
-            <a href="../pasien/registrasi.php" class="block cursor-pointer hover:text-gray-300">Registrasi</a>
-            <a href="../pasien/manage.php" class="block cursor-pointer hover:text-gray-300">Manage Pasien</a>
+            <a href="tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah Obat</a>
+            <a href="manage.php" class="block cursor-pointer hover:text-gray-300">Manage Obat</a>
           </div>
-
-
 
           <script>
-            function toggleMenuPasien(pasienMenu, iconPasien) {
-              const menu = document.getElementById(pasienMenu);
-              const icon = document.getElementById(iconPasien);
+            function toggleMenuObat(obatMenu, iconObat) {
+              const menu = document.getElementById(obatMenu);
+              const icon = document.getElementById(iconObat);
 
               if (menu.style.maxHeight && menu.style.maxHeight !== "0px") {
                 menu.style.maxHeight = "0px";
@@ -172,64 +140,8 @@ if (isset($_POST["cari_obat"])) {
                 icon.classList.add('rotate-180');
               }
             }
-
-
           </script>
 
-        </div>
-        <div class="mb-2">
-          <div
-            class="flex items-center justify-between text-sm font-poppins cursor-pointer p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded"
-            onclick="toggleMenuDokter('dokterMenu', 'iconDokter')">
-            <div class="flex items-center gap-2">
-              <i class="fas fa-user-md"></i>
-              <span class="sidebar-text">Dokter</span>
-            </div>
-            <i class="fas fa-chevron-down sidebar-text transition-transform duration-300" id="iconDokter"></i>
-          </div>
-          <div id="dokterMenu"
-            class="ml-10 font-poppins text-xs space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
-            style="max-height: 0; visibility: visible;">
-            <a href="../dokter/tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah Dokter</a>
-            <a href="../dokter/manage.php" class="block cursor-pointer hover:text-gray-300">Manage Dokter</a>
-          </div>
-
-          <script>
-            function toggleMenuDokter(dokterMenu, iconDokter) {
-              const menu = document.getElementById(dokterMenu);
-              const icon = document.getElementById(iconDokter);
-
-              if (menu.style.maxHeight && menu.style.maxHeight !== "0px") {
-                menu.style.maxHeight = "0px";
-                icon.classList.remove('rotate-180');
-              } else {
-                // Reset height dulu biar scrollHeight bisa dibaca
-                menu.style.maxHeight = "0px";
-                // Pakai timeout kecil biar animasi kebaca
-                setTimeout(() => {
-                  menu.style.maxHeight = menu.scrollHeight + "px";
-                }, 10);
-                icon.classList.add('rotate-180');
-              }
-            }
-
-
-          </script>
-
-        </div>
-        <div class="mb-2">
-          <a href="manage.php"
-            class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
-            <i class="fas fa-pills"></i>
-            <span class="sidebar-text -ml-1">Obat</span>
-          </a>
-        </div>
-        <div class="mb-2">
-          <a href="../../crud/rekammedis/manage.php"
-            class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
-            <i class="fas fa-clipboard-list"></i>
-            <span class="sidebar-text ml-1">Rekam Medis</span>
-          </a>
         </div>
 
       </nav>
@@ -366,69 +278,57 @@ if (isset($_POST["cari_obat"])) {
       <!-- Main Content -->
       <main class="flex-1 p-8 ml-64 transition-all duration-300 font-poppins" id="mainContent">
         <h1 class="text-2xl font-bold">Data</h1>
-        <p class="text-gray-600">Manage Obat</p>
+        <p class="text-gray-600">Tambah Obat</p>
 
-        <div class="bg-white mt-4 shadow-md rounded-lg p-4">
-          <form action="" method="post" class="relative w-full max-w-xs pb-2">
-            <input type="text" name="keyword" id="keyword" autocomplete="off" autofocus placeholder="Cari data..."
-              class="w-full pl-8 pr-3 py-1.5 text-xs rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400 transition placeholder-gray-400" />
+        <div class="max-w-full mt-4 mx-auto bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-bold mb-4">Form Data Obat</h2>
+          <form action="../../../../php/proses_obat.php" method="post" enctype="multipart/form-data">
+            <div class="grid grid-cols-2 gap-4 font-poppins text-xs">
 
-            <!-- Ikon pencarian -->
-            <div class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none pb-2">
-              <svg class="w-3.5 h-3.5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M21 21l-4.35-4.35M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z" />
-              </svg>
+              <!-- Nama Obat -->
+              <div>
+                <label class="block text-gray-700 font-semibold mb-2">Nama Obat</label>
+                <input type="text" required name="nama_obat" class="w-full p-2 border rounded-lg" />
+              </div>
+              <!--Jenis Obat-->
+              <div>
+                <label class="block text-gray-700 font-semibold mb-2">Jenis Obat</label>
+                <select name="jenis_obat" required class="w-full border p-2 rounded-lg">
+                  <option value="">...</option>
+                  <option value="Tablet">Tablet</option>
+                  <option value="Sirup">Sirup</option>
+                  <option value="Salep">Salep</option>
+                  <option value="Kapsul">Kapsul</option>
+                </select>
+              </div>
+              <!--Dosis-->
+
+              <div>
+                <label class="block text-gray-700 font-semibold mb-2">Dosis</label>
+                <textarea name="dosis" required class="w-full border border-gray-300 rounded-md p-2"></textarea>
+              </div>
+
+              <!--Keterangan-->
+              <div>
+                <label class="block text-gray-700 font-semibold mb-2">Keterangan</label>
+                <textarea name="keterangan" required class="w-full border border-gray-300 rounded-md p-2"></textarea>
+              </div>
+            </div>
+
+            <!-- Tombol -->
+            <div class="mt-4 flex space-x-2">
+              <button type="submit" name="submit"
+                class="bg-green-600 hover:bg-green-800 text-xs text-white px-4 py-2 rounded-lg">
+                Tambah
+              </button>
+
             </div>
           </form>
-
-          <div id="container">
-
-          </div>
-
+        </div>
       </main>
     </div>
 
     <!--Logout-->
-
-    <script>
-      //delete alert
-      // Fungsi untuk pasang event Swal ke tombol delete
-      function bindDeleteButtons() {
-        var deleteLinks = container.querySelectorAll('.delete-link');
-
-        deleteLinks.forEach(function (link) {
-          // Hapus event listener lama sebelum menambahkan yang baru
-          var newLink = link.cloneNode(true);
-          link.parentNode.replaceChild(newLink, link);
-
-          newLink.addEventListener('click', function (e) {
-            e.preventDefault(); // Cegah langsung hapus
-
-            Swal.fire({
-              title: 'Yakin ingin hapus?',
-              text: 'Data yang dihapus tidak dapat dikembalikan!',
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonText: 'Hapus',
-              cancelButtonText: 'Batal'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                window.location.href = newLink.href;
-              }
-            });
-          });
-        });
-      }
-
-      // Jalankan sekali saat halaman awal
-      bindDeleteButtons();
-
-
-    </script>
-
-
 
     <script>
       function toggleSidebar() {
@@ -458,72 +358,6 @@ if (isset($_POST["cari_obat"])) {
         menu.classList.toggle("hidden");
       }
     </script>
-
-    <!--Script JS-->
-    <script>
-      const keyword = document.getElementById('keyword');
-      const container = document.getElementById('container');
-
-      function loadTable(page = 1) {
-        const search = keyword?.value.trim() || '';
-        container.innerHTML = '<div class="text-center p-4 text-gray-500">Memuat data...</div>';
-
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', `ajax/obat.php?keyword=${encodeURIComponent(search)}&halaman=${page}`, true);
-        xhr.onreadystatechange = function () {
-          if (xhr.readyState === 4 && xhr.status === 200) {
-            container.innerHTML = xhr.responseText;
-            setupPaginationEvents(); // Penting!
-          }
-        };
-        xhr.send();
-      }
-
-      // Saat halaman dimuat, langsung ambil data awal
-      window.addEventListener('DOMContentLoaded', () => {
-        loadTable(1);
-      });
-
-      // Event pencarian otomatis
-      keyword?.addEventListener('keyup', () => loadTable(1));
-
-      // Pasang ulang event tombol pagination setelah konten baru di-load
-      function setupPaginationEvents() {
-        const buttons = container.querySelectorAll('.pagination button[data-page]');
-        buttons.forEach(button => {
-          button.addEventListener('click', function () {
-            const page = parseInt(this.dataset.page);
-            if (!isNaN(page)) {
-              loadTable(page);
-            }
-          });
-        });
-      }
-    </script>
-
-    <!-- SweetAlert2 CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-      function konfirmasiHapus(id) {
-        Swal.fire({
-          title: 'Yakin ingin menghapus data ini?',
-          text: 'Data yang dihapus tidak dapat dikembalikan!',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#d33',
-          cancelButtonColor: '#3085d6',
-          confirmButtonText: 'Iya, hapus!',
-          cancelButtonText: 'Batal'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // Redirect ke delete.php dengan id
-            window.location.href = 'delete.php?id=' + id;
-          }
-        });
-      }
-    </script>
-
 </body>
 
 </html>

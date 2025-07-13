@@ -9,6 +9,8 @@ if (!isset($_SESSION["login"])) {
   header("location:../../../admin_login.php");
   exit;
 }
+
+$username = $_SESSION["username"];
 ?>
 
 <!DOCTYPE html>
@@ -184,83 +186,20 @@ if (!isset($_SESSION["login"])) {
           </script>
 
         </div>
-        <div class="mb-2">
-          <div
-            class="flex items-center justify-between text-sm font-poppins cursor-pointer p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded"
-            onclick="toggleMenuObat('obatMenu', 'iconObat')">
-            <div class="flex items-center gap-1">
-              <i class="fas fa-pills"></i>
-              <span class="sidebar-text">Obat</span>
-            </div>
-            <i class="fas fa-chevron-down sidebar-text transition-transform duration-300" id="iconObat"></i>
-          </div>
-          <div id="obatMenu"
-            class="ml-10 text-xs font-poppins space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
-            style="max-height: 0; visibility: visible;">
-            <a href="../obat/tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah Obat</a>
-            <a href="../obat/manage.php" class="block cursor-pointer hover:text-gray-300">Manage Obat</a>
-          </div>
-
-          <script>
-            function toggleMenuObat(obatMenu, iconObat) {
-              const menu = document.getElementById(obatMenu);
-              const icon = document.getElementById(iconObat);
-
-              if (menu.style.maxHeight && menu.style.maxHeight !== "0px") {
-                menu.style.maxHeight = "0px";
-                icon.classList.remove('rotate-180');
-              } else {
-                // Reset height dulu biar scrollHeight bisa dibaca
-                menu.style.maxHeight = "0px";
-                // Pakai timeout kecil biar animasi kebaca
-                setTimeout(() => {
-                  menu.style.maxHeight = menu.scrollHeight + "px";
-                }, 10);
-                icon.classList.add('rotate-180');
-              }
-            }
-          </script>
-
+        <div class="mb-4">
+          <a href="../../crud/obat/manage.php"
+            class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
+            <i class="fas fa-pills"></i>
+            <span class="sidebar-text -ml-1">Obat</span>
+          </a>
         </div>
+
         <div class="mb-2">
-          <div
-            class="flex items-center justify-between text-sm font-poppins cursor-pointer p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded"
-            onclick="toggleMenuRM('rmMenu', 'iconRm')">
-            <div class="flex items-center gap-2">
-              <i class="fas fa-clipboard-list"></i>
-              <span class="sidebar-text">Rekam Medis</span>
-            </div>
-            <i class="fas fa-chevron-down sidebar-text" id="iconRm"></i>
-          </div>
-          <div id="rmMenu"
-            class="ml-10 text-xs font-poppins space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
-            style="max-height: 0; visibility: visible;">
-            <a href="../rekammedis/tambah.php" class="block cursor-pointer hover:text-gray-300">Tambah Rekam
-              Medis</a>
-            <a href="../rekammedis/manage.php" class="block cursor-pointer hover:text-gray-300">Manage Rekam
-              Medis</a>
-          </div>
-
-          <script>
-            function toggleMenuRM(rmMenu, iconRm) {
-              const menu = document.getElementById(rmMenu);
-              const icon = document.getElementById(iconRm);
-
-              if (menu.style.maxHeight && menu.style.maxHeight !== "0px") {
-                menu.style.maxHeight = "0px";
-                icon.classList.remove('rotate-180');
-              } else {
-                // Reset height dulu biar scrollHeight bisa dibaca
-                menu.style.maxHeight = "0px";
-                // Pakai timeout kecil biar animasi kebaca
-                setTimeout(() => {
-                  menu.style.maxHeight = menu.scrollHeight + "px";
-                }, 10);
-                icon.classList.add('rotate-180');
-              }
-            }
-          </script>
-
+          <a href="../../crud/rekammedis/manage.php"
+            class="flex items-center gap-2 text-sm font-poppins p-2 hover:bg-gray-700 hover:bg-opacity-30 rounded">
+            <i class="fas fa-clipboard-list"></i>
+            <span class="sidebar-text ml-1">Rekam Medis</span>
+          </a>
         </div>
       </nav>
       <button onclick="openLogoutModal();" data-href="../logout.php"
@@ -349,19 +288,22 @@ if (!isset($_SESSION["login"])) {
           <div class="flex items-center space-x-2">
             <!-- Ikon Profil Modern dan Teks Admin -->
             <i class="fas fa-user-circle text-gray-600 text-2xl"></i>
-            <span id="dropdownButton" class="text-sm font-medium text-gray-700">Admin</span>
+            <span id="dropdownButton" class="text-sm font-medium text-gray-700">
+              <?php echo htmlspecialchars($username); ?>
+            </span>
+
 
           </div>
           <!-- Dropdown menu -->
           <div id="dropdownMenu"
             class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200">
             <div class="p-4 border-b">
-              <p class="text-gray-800 font-semibold">Admin Panel</p>
+              <p class="text-gray-800 font-semibold">Manage Akun</p>
               <p class="text-sm text-gray-500">Klinik Pradnya Usadha</p>
             </div>
-            <a href="../../reset_pass_admin.php" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
-              <i class="fas fa-lock text-gray-600 text-base pr-2"></i>
-              Akun
+            <a href="../../reset_pass_admin.php" class="flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100">
+              <i class=" text-gray-600 text-sm"></i>
+              Pengaturan
             </a>
           </div>
 

@@ -2,47 +2,62 @@
 require '../../php/functions.php';
 
 $keyword = $_GET["keyword"] ?? '';
-$page = $_GET["halaman"] ?? 1;
+$tanggal = $_GET["tanggal"] ?? '';
+$page = isset($_GET["halaman"]) ? (int) $_GET["halaman"] : 1;
 $limit = 5;
 $offset = ($page - 1) * $limit;
 
-// Query utama
+// Membuat kondisi WHERE dinamis
+$where = [];
+
+if (!empty($keyword)) {
+    $escaped_keyword = mysqli_real_escape_string($conn, $keyword);
+    $where[] = "(
+        antrian.no_antrian LIKE '%$escaped_keyword%' OR
+        pasien.nama LIKE '%$escaped_keyword%' OR
+        pasien.nik LIKE '%$escaped_keyword%' OR
+        pasien.no_hp LIKE '%$escaped_keyword%' OR
+        antrian.poli_tujuan LIKE '%$escaped_keyword%' OR
+        antrian.status_antrian LIKE '%$escaped_keyword%'
+    )";
+}
+
+if (!empty($tanggal)) {
+    $escaped_tanggal = mysqli_real_escape_string($conn, $tanggal);
+    $where[] = "DATE(antrian.tanggal_antrian) = '$escaped_tanggal'";
+}
+
+// Gabungkan semua kondisi
+$where_sql = '';
+if (!empty($where)) {
+    $where_sql = "WHERE " . implode(" AND ", $where);
+}
+
+// Query utama dengan kondisi
 $antrian = query("
-  SELECT 
-    antrian.id,
-    antrian.no_antrian,
-    pasien.nama,
-    pasien.jenis_kelamin,
-    pasien.no_hp,
-    pasien.nik,
-    antrian.poli_tujuan,
-    antrian.tanggal_antrian,
-    antrian.status_antrian
-  FROM antrian
-  INNER JOIN pasien ON antrian.pasien_id = pasien.id
-  WHERE 
-    antrian.no_antrian LIKE '%$keyword%' OR
-    pasien.nama LIKE '%$keyword%' OR
-    pasien.nik LIKE '%$keyword%' OR
-    pasien.no_hp LIKE '%$keyword%' OR
-    antrian.poli_tujuan LIKE '%$keyword%' OR
-    antrian.status_antrian LIKE '%$keyword%'
-  ORDER BY antrian.id DESC
-  LIMIT $limit OFFSET $offset
+    SELECT 
+        antrian.id,
+        antrian.no_antrian,
+        pasien.nama,
+        pasien.jenis_kelamin,
+        pasien.no_hp,
+        pasien.nik,
+        antrian.poli_tujuan,
+        antrian.tanggal_antrian,
+        antrian.status_antrian
+    FROM antrian
+    INNER JOIN pasien ON antrian.pasien_id = pasien.id
+    $where_sql
+    ORDER BY antrian.id DESC
+    LIMIT $limit OFFSET $offset
 ");
 
-// Total data untuk pagination
+// Query total data
 $total_query = "
-  SELECT COUNT(*) AS total
-  FROM antrian
-  INNER JOIN pasien ON antrian.pasien_id = pasien.id
-  WHERE 
-    antrian.no_antrian LIKE '%$keyword%' OR
-    pasien.nama LIKE '%$keyword%' OR
-    pasien.nik LIKE '%$keyword%' OR
-    pasien.no_hp LIKE '%$keyword%' OR
-    antrian.poli_tujuan LIKE '%$keyword%' OR
-    antrian.status_antrian LIKE '%$keyword%'
+    SELECT COUNT(*) AS total
+    FROM antrian
+    INNER JOIN pasien ON antrian.pasien_id = pasien.id
+    $where_sql
 ";
 $total_result = mysqli_query($conn, $total_query);
 $total_data = mysqli_fetch_assoc($total_result)['total'];
@@ -51,6 +66,7 @@ $total_pages = ceil($total_data / $limit);
 $HalamanAktif = $page;
 $JumlahHalaman = $total_pages;
 ?>
+
 
 <table class="w-full border-collapse border border-gray-300">
     <thead class="bg-gray-200">

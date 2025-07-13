@@ -58,9 +58,31 @@ if ($stmt) {
 
   if ($result && mysqli_num_rows($result) > 0) {
     $row = mysqli_fetch_assoc($result);
+
+    // Hitung sisa antrian
+    $stmtSisa = $conn->prepare("
+  SELECT COUNT(*) AS sisa
+  FROM antrian
+  WHERE status_antrian IN ('menunggu', 'dipanggil')
+    AND tanggal_antrian = ?
+    AND poli_tujuan = ?
+    AND no_antrian < ?
+");
+    $stmtSisa->bind_param("ssi", $row["tanggal_antrian"], $row["poli_tujuan"], $row["no_antrian"]);
+    $stmtSisa->execute();
+    $resultSisa = $stmtSisa->get_result();
+    $rowSisa = $resultSisa->fetch_assoc();
+    $sisaAntrian = $rowSisa['sisa'];
+
+    // Tambah 1 jika pasien ini belum selesai
+    if ($row["status_antrian"] === 'menunggu' || $row["status_antrian"] === 'dipanggil') {
+      $sisaAntrian += 1;
+    }
+
+    $stmtSisa->close();
+
   } else {
     $notif = "
-
 <strong>Catatan:</strong>
 <ol class='pl-4' font-poppins style='list-style-type: decimal; padding-left: 1.25rem;'>
   <li>Jika anda melakukan pendaftaran sebagai pasien baru, anda dapat langsung datang ke klinik untuk konfirmasi data diri kepada petugas ketika pertama kali melakukan pendaftaran!.</li>
@@ -70,18 +92,12 @@ if ($stmt) {
 <p class='mt-4'>Terima kasih atas perhatian Anda.<br><strong>#We Care With Cencerity</strong></p>
 ";
 
-
-
     $info = "
 <p class='mb-2 font-bold text-yellow-400 animate-pulse glow-text'>
   Anda belum melakukan pendaftaran hari ini.
 </p>
 ";
-
-
-
   }
-
 
   mysqli_stmt_close($stmt);
 } else {
@@ -474,6 +490,7 @@ if ($stmt) {
                         'Tanggal Kunjungan' => $row["tanggal_antrian"],
                         'Poli Tujuan' => $row["poli_tujuan"],
                         'Status Antrian' => $row["status_antrian"],
+                        'Sisa Antrian' => isset($sisaAntrian) ? $sisaAntrian : 0,
                       ];
 
                       foreach ($dataPasien as $label => $value):

@@ -1,5 +1,5 @@
 <?php
-require '../../../../php/functions.php';
+require '../../../../../php/functions.php';
 header('Content-Type: application/json');
 
 if (isset($_GET['id'])) {
@@ -20,7 +20,7 @@ if (isset($_GET['id'])) {
             kunjungan.poli_tujuan,
             kunjungan.keluhan,
             kunjungan.diagnosa,
-            kunjungan.tindakan,
+             kunjungan.tindakan,
             kunjungan.denyut_nadi,
             kunjungan.laju_pernapasan,
             dokter.nama AS nama_dokter,

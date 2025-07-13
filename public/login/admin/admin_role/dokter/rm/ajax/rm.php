@@ -1,5 +1,5 @@
 <?php
-require '../../../../../php/functions.php';
+require '../../../../../../php/functions.php';
 
 $keyword = $_GET["keyword"] ?? '';
 $page = $_GET["halaman"] ?? 1;
@@ -90,7 +90,12 @@ $JumlahHalaman = $total_pages;
                             class="bg-gray-500 hover:bg-gray-600 text-white font-poppins px-2 py-1 rounded text-xs">
                             <i class="fas fa-eye mr-1"></i><span class="">View</span>
                         </button>
-
+                        <a href="update.php?id=<?= $row['id']; ?>"
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs inline-block">Update</a>
+                        <a href="#" onclick="konfirmasiHapus(<?= $row['id']; ?>)"
+                            class="delete-link bg-red-700 hover:bg-red-900 text-white px-2 py-1 rounded text-xs inline-block">
+                            Delete
+                        </a>
 
                     </div>
                 </td>

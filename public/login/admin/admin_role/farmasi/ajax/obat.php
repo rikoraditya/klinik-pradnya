@@ -39,7 +39,7 @@ $JumlahHalaman = $total_pages;
             <th class="border p-2">Jenis Obat</th>
             <th class="border p-2">Dosis</th>
             <th class="border p-2">Keterangan</th>
-
+            <th class="border p-2">Action</th>
         </tr>
     </thead>
     <tbody class="text-xs">
@@ -55,7 +55,20 @@ $JumlahHalaman = $total_pages;
                 <td class="border p-2 truncate md w-40"><?= $row["jenis_obat"]; ?></td>
                 <td class="border p-2 truncate md w-80"><?= $row["dosis"]; ?></td>
                 <td class="border p-2 truncate md w-80"><?= $row["keterangan"]; ?></td>
+                <td class="border p-2">
+                    <div class="flex justify-end space-x-1">
+                        <a href="update.php?id=<?= $row['id']; ?>"
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs inline-block">
+                            Update
+                        </a>
 
+                        <a href="#" onclick="konfirmasiHapus(<?= $row['id']; ?>)"
+                            class="delete-link bg-red-700 hover:bg-red-900 text-white px-2 py-1 rounded text-xs inline-block">
+                            Delete
+                        </a>
+
+                    </div>
+                </td>
             </tr>
 
             <?php $i++; ?>
